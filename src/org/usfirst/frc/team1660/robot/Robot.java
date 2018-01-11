@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
+
+
 /**
  * This is a demo program showing how to use Mecanum control with the RobotDrive
  * class.
@@ -24,13 +28,18 @@ public class Robot extends IterativeRobot {
 
 	private MecanumDrive m_robotDrive;
 	private Joystick m_stick;
-
-	@Override
+    private AHRS ahrs;
+    
+    
 	public void robotInit() {
-		Spark frontLeft = new Spark(kFrontLeftChannel);
-		Spark backLeft = new Spark(kBackLeftChannel);
-		Spark frontRight = new Spark(kFrontRightChannel);
-		Spark backRight = new Spark(kBackRightChannel);
+
+		WPI_TalonSRX frontLeft = new WPI_TalonSRX(kFrontLeftChannel);
+		WPI_TalonSRX backLeft = new WPI_TalonSRX(kBackLeftChannel);
+		WPI_TalonSRX frontRight = new WPI_TalonSRX(kFrontRightChannel);
+		WPI_TalonSRX backRight = new WPI_TalonSRX(kBackRightChannel);
+
+		Spark newMotor = new Spark(5);
+
 
 		// Invert the left side motors.
 		// You may need to change or remove this to match your robot.
@@ -42,7 +51,16 @@ public class Robot extends IterativeRobot {
 		m_stick = new Joystick(kJoystickChannel);
 	}
 
-	@Override
+	/* AUTONOMOUS MODE */
+	public void autonomousInit() {
+	}	
+	public void autonomousPeriodic() {
+
+	}
+
+	/* TELEOP MODE */
+	public void teleopInit() {
+	}
 	public void teleopPeriodic() {
 		// Use the joystick X axis for lateral movement, Y axis for forward
 		// movement, and Z axis for rotation.
