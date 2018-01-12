@@ -23,13 +23,13 @@ public class Robot extends IterativeRobot {
 	private static final int kBackLeftChannel = 3;
 	private static final int kFrontRightChannel = 1;
 	private static final int kBackRightChannel = 0;
-
+	private static final int kClimbMotorChannel = 4;
 	private static final int kJoystickChannel = 0;
 
 	private MecanumDrive m_robotDrive;
 	private Joystick m_stick;
     private AHRS ahrs;
-    
+    WPI_TalonSRX climbMotor = new WPI_TalonSRX(kClimbMotorChannel);
     
 	public void robotInit() {
 
@@ -38,6 +38,9 @@ public class Robot extends IterativeRobot {
 		WPI_TalonSRX frontRight = new WPI_TalonSRX(kFrontRightChannel);
 		WPI_TalonSRX backRight = new WPI_TalonSRX(kBackRightChannel);
 
+		
+		
+	
 		Spark newMotor = new Spark(5);
 
 
@@ -49,6 +52,12 @@ public class Robot extends IterativeRobot {
 		m_robotDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
 
 		m_stick = new Joystick(kJoystickChannel);
+	}
+	
+	
+	public void climbDown() {
+	climbMotor.set(-1.0);
+		
 	}
 
 	/* AUTONOMOUS MODE */
