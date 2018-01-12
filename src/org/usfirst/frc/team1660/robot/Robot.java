@@ -17,6 +17,7 @@ import com.kauailabs.navx.frc.AHRS;
  * This is a demo program showing how to use Mecanum control with the RobotDrive
  * class.
  */
+ 
 
 public class Robot extends IterativeRobot {
 	private static final int kFrontLeftChannel = 2;
@@ -25,25 +26,24 @@ public class Robot extends IterativeRobot {
 	private static final int kBackRightChannel = 0;
 	private static final int kClimbManipChannel = 4;
 	private static final int kSwitchBoi = 5; //lol we can switch the name l8r
-
+	private static final int kClimbMotorChannel = 4;
 	private static final int kJoystickChannel = 0;
 
 	private MecanumDrive m_robotDrive;
 	private Joystick m_stick;
     private AHRS ahrs;
+
+    WPI_TalonSRX climbMotor = new WPI_TalonSRX(kClimbMotorChannel);
+	WPI_TalonSRX spitMotor = new WPI_TalonSRX(5);
     
     WPI_TalonSRX climbManip = new WPI_TalonSRX(kClimbManipChannel);
 	
-    
     public void robotInit() {
 
 		WPI_TalonSRX frontLeft = new WPI_TalonSRX(kFrontLeftChannel);
 		WPI_TalonSRX backLeft = new WPI_TalonSRX(kBackLeftChannel);
 		WPI_TalonSRX frontRight = new WPI_TalonSRX(kFrontRightChannel);
 		WPI_TalonSRX backRight = new WPI_TalonSRX(kBackRightChannel);
-
-		Spark newMotor = new Spark(5);
-
 
 		// Invert the left side motors.
 		// You may need to change or remove this to match your robot.
@@ -62,6 +62,16 @@ public class Robot extends IterativeRobot {
 		climbManip.set(1.0);
 	}
 	
+	public void climbDown() {
+	climbMotor.set(-1.0);
+		
+	}
+
+public void spit(){
+	spitMotor.set(1.0);
+	// Kwaku Boafo
+}
+
 	/* AUTONOMOUS MODE */
 	public void autonomousInit() {
 		//autocode goes here @AmadouGamby & @marlahna
