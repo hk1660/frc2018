@@ -23,6 +23,8 @@ public class Robot extends IterativeRobot {
 	private static final int kBackLeftChannel = 3;
 	private static final int kFrontRightChannel = 1;
 	private static final int kBackRightChannel = 0;
+	private static final int kClimbManipChannel = 4;
+	private static final int kSwitchBoi = 5; //lol we can switch the name l8r
 
 	private static final int kJoystickChannel = 0;
 
@@ -30,8 +32,10 @@ public class Robot extends IterativeRobot {
 	private Joystick m_stick;
     private AHRS ahrs;
     
+    WPI_TalonSRX climbManip = new WPI_TalonSRX(kClimbManipChannel);
+	
     
-	public void robotInit() {
+    public void robotInit() {
 
 		WPI_TalonSRX frontLeft = new WPI_TalonSRX(kFrontLeftChannel);
 		WPI_TalonSRX backLeft = new WPI_TalonSRX(kBackLeftChannel);
@@ -49,19 +53,29 @@ public class Robot extends IterativeRobot {
 		m_robotDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
 
 		m_stick = new Joystick(kJoystickChannel);
+		
+		
 	}
-
+	/* CLIMB UP @marlahna @amadou*/
+	public void climbUp() {
+		//bring arm up?
+		climbManip.set(1.0);
+	}
+	
 	/* AUTONOMOUS MODE */
 	public void autonomousInit() {
-		//autocode goes here
-		
+		//autocode goes here @AmadouGamby & @marlahna
+		// timer.reset(); // Resets the timer to 0
+	     //timer.start(); // Start counting
 	}	
 	public void autonomousPeriodic() {
 
 	}
 
-	/* TELEOP MODE */
-	public void teleopInit() {
+	/* TELEOP MODE */ 
+	public void teleopInit() { 
+		
+		
 	}
 	public void teleopPeriodic() {
 		// Use the joystick X axis for lateral movement, Y axis for forward
