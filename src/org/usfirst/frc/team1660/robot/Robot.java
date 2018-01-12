@@ -53,6 +53,8 @@ public class Robot extends IterativeRobot {
 
 	/* AUTONOMOUS MODE */
 	public void autonomousInit() {
+		//autocode goes here
+		
 	}	
 	public void autonomousPeriodic() {
 
