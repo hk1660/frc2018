@@ -12,10 +12,11 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/FRC2018/docs/CTRE_Phoenix-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/navx_frc.jar">
+	<classpathentry kind="lib" path="lib/navx_frc.jar" sourcepath="lib/navx_frc.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/FRC2018/lib/navx_frc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
