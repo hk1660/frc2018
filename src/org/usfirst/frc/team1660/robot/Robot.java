@@ -93,4 +93,16 @@ public void spit(){
 		m_robotDrive.driveCartesian(m_stick.getX(), m_stick.getY(),
 				m_stick.getZ(), 0.0);
 	}
+	
+	
+	
+	//method to get the value from the armabot encoder- lakiera and pinzon
+	public int getEncoder(){
+		
+		
+		
+	}
+	
+	
+	
 }
