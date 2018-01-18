@@ -5,21 +5,16 @@
 package org.usfirst.frc.team1660.robot;
 
 
-/*----IMPORTED LIBRARIES-------*/
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
-
-
-public class Robot extends IterativeRobot {
+public class Robot<m_robotDrive> extends IterativeRobot {
 
 	/*----DECLARED GLOBAL VARIABLES-------*/
 	private static final int kFrontLeftChannel = 2;
@@ -31,7 +26,7 @@ public class Robot extends IterativeRobot {
 	private static final int kJoystickChannel = 0;
 
 	private MecanumDrive m_robotDrive;
-	private Joystick m_stick;
+	private Joystick m_stick1;
 	private AHRS navx;
 
 	WPI_TalonSRX climbMotor = new WPI_TalonSRX(kClimbMotorChannel);
@@ -41,11 +36,31 @@ public class Robot extends IterativeRobot {
 	double roboAngle = 0.0;
 	double zeroedYawPoint = 0.0;
 
+	//JOYSTICK
+	final int A_BUTTON = 1;
+	final int B_BUTTON = 2;
+	final int X_BUTTON = 3;
+	final int Y_BUTTON = 4;
+	final int LB_BUTTON = 5;
+	final int RB_BUTTON = 6;
+	final int BACK_BUTTON = 7;
+	final int START_BUTTON = 8;
+	final int LEFT_JOY_BUTTON = 9;
+	final int RIGHT_JOY_BUTTON = 10;
+	final int LEFT_X_AXIS = 0;
+	final int LEFT_Y_AXIS = 1;
+	final int LT_AXIS = 2;
+	final int RT_AXIS = 3;
+	final int RIGHT_X_AXIS = 4;
+	final int RIGHT_Y_AXIS = 5;
+	final int POV_UP = 0;
+	final int POV_LEFT = 270;
+	final int POV_DOWN = 180;
+	final int POV_RIGHT = 90;
 
-	
-
-    
-   
+	Joystick driverStick = new Joystick(0);
+	Joystick manipStick = new Joystick(1);
+	private Joystick m_stick;
 	
     public void robotInit() {
 
@@ -70,7 +85,7 @@ public class Robot extends IterativeRobot {
 
 		m_robotDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
 
-		m_stick = new Joystick(kJoystickChannel);
+		m_stick1 = new Joystick(kJoystickChannel);
 		
 		
 	}
@@ -104,8 +119,8 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		// Use the joystick X axis for lateral movement, Y axis for forward
 		// movement, and Z axis for rotation.
-		m_robotDrive.driveCartesian(m_stick.getX(), m_stick.getY(),
-				m_stick.getZ(), 0.0);
+		m_robotDrive.driveCartesian(m_stick1.getX(), m_stick1.getY(),
+				m_stick1.getZ(), 0.0);
 	}
 
 
