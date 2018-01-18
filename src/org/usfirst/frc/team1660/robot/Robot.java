@@ -122,6 +122,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		mecDrive.driveCartesian(driverStick.getX(), driverStick.getY(), driverStick.getZ(), 0.0);
 		
 		getCurrentAngle();
+		getEncoder();
 
 	}
 
@@ -152,12 +153,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 
 	
-	//method to get the value from the Lift encoder- lakiera and pinzon
-	public int getEncoder(){
-		return 0;
-	}
 
-	
+	//method to get the value from the armabot encoder- lakiera and pinzon
+	public int getEncoder(){
+		
+		int x = liftMotor.getSelectedSensorPosition(0);
+		SmartDashboard.putNumber("encoderPosition", x);
+		return x;
+	}	
 	
 	
 	
