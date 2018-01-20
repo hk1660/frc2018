@@ -124,7 +124,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		
 		getCurrentAngle();
 		getEncoder();
-
+		resetAngle();
 	}
 
 
@@ -147,19 +147,36 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		return squared;
 	}
 	
-	// Method to calculate current angle of robot based off of the field -Aldenis
 	public int getCurrentAngle(){
-		int moddedAngle = Math.floorMod((int)navx.getAngle(), 360);
-		int moddedZeroedYawPoint = Math.floorMod((int)zeroedYawPoint, 360);
-		int modAngle = Math.floorMod((moddedAngle - moddedZeroedYawPoint), 360);
+		//int moddedAngle = Math.floorMod((int)navx.getAngle(), 360);
+		//int moddedZeroedYawPoint = Math.floorMod((int)zeroedYawPoint, 360);
+		//int modAngle = Math.floorMod((moddedAngle - moddedZeroedYawPoint), 360);
 
-		SmartDashboard.putNumber("modAngle", modAngle);
-		return modAngle;
+		float moddedAngle = navx.getYaw();
+		//float moddedZeroedYawPoint = navx.get
+		
+		SmartDashboard.putNumber("moddedAngle", moddedAngle);
+		//SmartDashboard.putNumber("moddedZeroedYawPoint", moddedZeroedYawPoint);
+		//SmartDashboard.putNumber("modAngle", modAngle);
+		
+		System.out.println("moddedAngle:"+moddedAngle);
+		//System.out.println("moddedZeroedYawPoint:"+moddedZeroedYawPoint);
+		//System.out.println("modAngle:"+modAngle);
+		//return modAngle;
+		return 0;
 	}
 	
 	//Basic method to climb down -Aldenis
 	public void climbDown() {
 		liftMotor.set(-1.0);
+		
+	}
+	
+	public void resetAngle(){
+		if (driverStick.getRawButton(START_BUTTON)) {
+			zeroedYawPoint = navx.getAngle();
+			
+		}
 	}
 	
 	
