@@ -69,22 +69,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	final int POV_DOWN = 180;
 	final int POV_RIGHT = 90;
 
-	Joystick driverStick = new Joystick(0);
-	Joystick manipStick = new Joystick(1);
-/*	public void checkDriving()
-	{
 
-		double threshold = 0.11;
-		double strafe = squareInput(driverStick.getRawAxis(STRAFE_AXIS)) ; // right and left on the left thumb stick?
-		double moveValue = squareInput(driverStick.getRawAxis(FORWARDBACKWARD_AXIS));// up and down on left thumb stick?
-		double rotateValue = squareInput(driverStick.getRawAxis(TURNSIDEWAYS_AXIS));// right and left on right thumb stick
-		double angle = ahrs.getAngle();
 
-		//Kill Ghost motors & turn-off Auto methods if a joystick is pushed	 - Nana B. & Mathew W.
-		if(moveValue > -threshold && moveValue < threshold) {
-			moveValue = 0.0;
-		} */
-	private Joystick m_stick;
+
 	
     public void robotInit() {
 
@@ -145,6 +132,21 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	/*----- CUSTOM METHODS -----*/
 
+	public void checkDriving() {
+
+		double strafe = squareIt(driverStick.getRawAxis(RIGHT_X_AXIS)) ; // right and left on the left thumb stick?
+		double forward = squareIt(driverStick.getRawAxis(RIGHT_Y_AXIS));// up and down on left thumb stick?
+		double turn = squareIt(driverStick.getRawAxis(LEFT_X_AXIS));// right and left on right thumb stick
+
+		mecDrive.driveCartesian(forward, strafe, turn);
+	}
+	
+	public double squareIt(double joy) {
+		double squared = joy * joy;
+	//SmartDashboard.putNumber(key, value)
+		return squared;
+	}
+	
 	// Method to calculate current angle of robot based off of the field -Aldenis
 	public int getCurrentAngle(){
 		int moddedAngle = Math.floorMod((int)navx.getAngle(), 360);
