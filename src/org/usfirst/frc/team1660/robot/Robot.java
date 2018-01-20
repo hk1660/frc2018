@@ -83,23 +83,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 	}
 	
-	public void checkDriving()
-	{
-
-		double threshold = 0.11;
-		double strafe = squareInput(driverStick.getRawAxis(STRAFE_AXIS)) ; // right and left on the left thumb stick?
-		double moveValue = squareInput(driverStick.getRawAxis(FORWARDBACKWARD_AXIS));// up and down on left thumb stick?
-		double rotateValue = squareInput(driverStick.getRawAxis(TURNSIDEWAYS_AXIS));// right and left on right thumb stick
-		double angle = ahrs.getAngle();
-
-		//Kill Ghost motors & turn-off Auto methods if a joystick is pushed	 - Nana B. & Mathew W.
-		if(moveValue > -threshold && moveValue < threshold) {
-			moveValue = 0.0;
-		}
-	}
-	
-	private Joystick m_stick;
-	
     public void robotInit() {
 
     	//Drivetrain Initializations
@@ -151,7 +134,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		
 		getCurrentAngle();
 		getEncoder();
-
+		resetAngle();
 	}
 
 
@@ -159,19 +142,51 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	/*----- CUSTOM METHODS -----*/
 
-	// Method to calculate current angle of robot based off of the field -Aldenis
-	public int getCurrentAngle(){
-		int moddedAngle = Math.floorMod((int)navx.getAngle(), 360);
-		int moddedZeroedYawPoint = Math.floorMod((int)zeroedYawPoint, 360);
-		int modAngle = Math.floorMod((moddedAngle - moddedZeroedYawPoint), 360);
+	public void checkDriving() {
 
-		SmartDashboard.putNumber("modAngle", modAngle);
-		return modAngle;
+		double strafe = squareIt(driverStick.getRawAxis(RIGHT_X_AXIS)) ; // right and left on the left thumb stick?
+		double forward = squareIt(driverStick.getRawAxis(RIGHT_Y_AXIS));// up and down on left thumb stick?
+		double turn = squareIt(driverStick.getRawAxis(LEFT_X_AXIS));// right and left on right thumb stick
+
+		mecDrive.driveCartesian(forward, strafe, turn);
+	}
+	
+	public double squareIt(double joy) {
+		double squared = joy * joy;
+	//SmartDashboard.putNumber(key, value)
+		return squared;
+	}
+	
+	public int getCurrentAngle(){
+		//int moddedAngle = Math.floorMod((int)navx.getAngle(), 360);
+		//int moddedZeroedYawPoint = Math.floorMod((int)zeroedYawPoint, 360);
+		//int modAngle = Math.floorMod((moddedAngle - moddedZeroedYawPoint), 360);
+
+		float moddedAngle = navx.getYaw();
+		//float moddedZeroedYawPoint = navx.get
+		
+		SmartDashboard.putNumber("moddedAngle", moddedAngle);
+		//SmartDashboard.putNumber("moddedZeroedYawPoint", moddedZeroedYawPoint);
+		//SmartDashboard.putNumber("modAngle", modAngle);
+		
+		System.out.println("moddedAngle:"+moddedAngle);
+		//System.out.println("moddedZeroedYawPoint:"+moddedZeroedYawPoint);
+		//System.out.println("modAngle:"+modAngle);
+		//return modAngle;
+		return 0;
 	}
 	
 	//Basic method to climb down -Aldenis
 	public void climbDown() {
 		liftMotor.set(-1.0);
+		
+	}
+	
+	public void resetAngle(){
+		if (driverStick.getRawButton(START_BUTTON)) {
+			zeroedYawPoint = navx.getAngle();
+			
+		}
 	}
 	
 	
