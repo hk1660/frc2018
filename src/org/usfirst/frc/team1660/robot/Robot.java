@@ -21,6 +21,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	/*----DECLARED GLOBAL VARIABLES-------*/
 	
+	AHRS ahrs;
+	
 	//Drivetrain Declarations
 	private static final int kFrontLeftChannel = 2;
 	private static final int kBackLeftChannel = 3;
@@ -43,7 +45,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	WPI_TalonSRX liftMotor;
 	WPI_TalonSRX mouthMotor;
-
 
 	//JOYSTICK - Nana B. & Mathew W.
 	Joystick driverStick = new Joystick(0);
@@ -68,10 +69,19 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	final int POV_LEFT = 270;
 	final int POV_DOWN = 180;
 	final int POV_RIGHT = 90;
+	
+	final int FORWARDBACKWARD_AXIS = LEFT_Y_AXIS; //Left joystick up and down
+	final int TURNSIDEWAYS_AXIS = RIGHT_X_AXIS; //Right joystick side to side
+	final int STRAFE_AXIS = LEFT_X_AXIS; //Left joystick side to side
 
-
-
-
+	public double squareInput(double x) {
+		if(x > 0 ) {
+			return Math.pow(x, 4);
+		}
+		else{
+			return -1*Math.pow(x, 4); 
+		}
+	}
 	
     public void robotInit() {
 
