@@ -36,7 +36,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	double roboAngle = 0.0;
 	double zeroedYawPoint = 0.0;
 
-	
 	//Manipulator Declarations
 	private static final int kMouthMotorChannel = 4;
 	private static final int kLiftMotorChannel = 5;	
@@ -46,7 +45,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	WPI_TalonSRX mouthMotor;
 
 
-	//JOYSTICKS
+	//JOYSTICK - Nana B. & Mathew W.
 	Joystick driverStick = new Joystick(0);
 	Joystick manipStick = new Joystick(1);
 	final int A_BUTTON = 1;
@@ -70,7 +69,22 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	final int POV_DOWN = 180;
 	final int POV_RIGHT = 90;
 
+	Joystick driverStick = new Joystick(0);
+	Joystick manipStick = new Joystick(1);
+/*	public void checkDriving()
+	{
 
+		double threshold = 0.11;
+		double strafe = squareInput(driverStick.getRawAxis(STRAFE_AXIS)) ; // right and left on the left thumb stick?
+		double moveValue = squareInput(driverStick.getRawAxis(FORWARDBACKWARD_AXIS));// up and down on left thumb stick?
+		double rotateValue = squareInput(driverStick.getRawAxis(TURNSIDEWAYS_AXIS));// right and left on right thumb stick
+		double angle = ahrs.getAngle();
+
+		//Kill Ghost motors & turn-off Auto methods if a joystick is pushed	 - Nana B. & Mathew W.
+		if(moveValue > -threshold && moveValue < threshold) {
+			moveValue = 0.0;
+		} */
+	private Joystick m_stick;
 	
     public void robotInit() {
 
