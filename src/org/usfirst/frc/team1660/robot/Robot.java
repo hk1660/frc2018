@@ -34,7 +34,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	
 	private AHRS navx;
 	double roboAngle = 0.0;
-	double zeroedYawPoint = 0.0;
+	double fieldAngleDifference = 0.0;
 
 	//Manipulator Declarations
 	private static final int kMouthMotorChannel = 4;
@@ -118,13 +118,13 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		
 	}
 	public void teleopPeriodic() {
-		// Use the joystick X axis for lateral movement, Y axis for forward
-		// movement, and Z axis for rotation.
-		mecDrive.driveCartesian(driverStick.getX(), driverStick.getY(), driverStick.getZ(), 0.0);
+		
+		checkDriving();
+		checkResetAngle();
 		
 		getCurrentAngle();
 		getEncoder();
-		resetAngle();
+		
 	}
 
 
@@ -148,22 +148,28 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 	
 	public int getCurrentAngle(){
-		//int moddedAngle = Math.floorMod((int)navx.getAngle(), 360);
-		//int moddedZeroedYawPoint = Math.floorMod((int)zeroedYawPoint, 360);
-		//int modAngle = Math.floorMod((moddedAngle - moddedZeroedYawPoint), 360);
+		int rawAngle = Math.floorMod((int)navx.getAngle(), 360);
+		fieldAngleDifference = Math.floorMod((int)fieldAngleDifference, 360);
+		int fieldAngle = Math.floorMod((rawAngle -(int) fieldAngleDifference), 360);
 
-		float moddedAngle = navx.getYaw();
-		//float moddedZeroedYawPoint = navx.get
+		//float rawAngle = navx.getYaw();
+		//float moddedfieldAngleDifference = navx.get
 		
-		SmartDashboard.putNumber("moddedAngle", moddedAngle);
-		//SmartDashboard.putNumber("moddedZeroedYawPoint", moddedZeroedYawPoint);
-		//SmartDashboard.putNumber("modAngle", modAngle);
+		SmartDashboard.putNumber("rawAngle", rawAngle);
+		//SmartDashboard.putNumber("moddedfieldAngleDifference", moddedfieldAngleDifference);
+		SmartDashboard.putNumber("fieldAngle", fieldAngle);
 		
-		System.out.println("moddedAngle:"+moddedAngle);
-		//System.out.println("moddedZeroedYawPoint:"+moddedZeroedYawPoint);
-		//System.out.println("modAngle:"+modAngle);
-		//return modAngle;
-		return 0;
+		System.out.println("rawAngle:"+rawAngle);
+		//System.out.println("moddedfieldAngleDifference:"+moddedfieldAngleDifference);
+		System.out.println("fieldAngle:"+fieldAngle);
+		return fieldAngle;
+
+	}
+
+	public void checkResetAngle(){
+		if (driverStick.getRawButton(START_BUTTON)) {
+			fieldAngleDifference = navx.getAngle();		
+		}
 	}
 	
 	//Basic method to climb down -Aldenis
@@ -172,12 +178,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		
 	}
 	
-	public void resetAngle(){
-		if (driverStick.getRawButton(START_BUTTON)) {
-			zeroedYawPoint = navx.getAngle();
-			
-		}
-	}
+
 	
 	
 	// Basic method for robot to spit out a PowerCube -Kwaku Boafo
