@@ -72,7 +72,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	private final int POV_DOWN = 180;
 	private final int POV_RIGHT = 90;
 
-	
+
 	/*----- REQUIRED FRC MAIN METHODS -----*/
 	public void robotInit() {
 
@@ -129,8 +129,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 
 
-	
-	
+
+
 	/*------------------------- CUSTOM METHODS -------------------------*/
 
 	/*----- JOYSTICK METHODS -----*/
@@ -146,7 +146,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	//method to square the joystick values to provide less sensitivity for small movements -Matthew W
 	public double squareIt(double joy) {
-		
+
 		double squared = joy * joy;
 
 		//what happens if the value is negative? do we really want to make every joystick value positive?
@@ -156,7 +156,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	//joystick method to manually resets the robot to the field's orientation -Aldenis G
 	public void checkResetAngle(){
-		
+
 		if (driverStick.getRawButton(START_BUTTON)) {
 			resetAngle();
 		}
@@ -164,10 +164,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 
 	/*----- SENSOR METHODS -----*/
-	
+
 	//method to update the angle the robot is facing on the field -Aldenis G
 	public int getCurrentAngle(){
-		
+
 		int rawAngle = Math.floorMod((int)navx.getAngle(), 360);
 		fieldAngleDifference = Math.floorMod((int)fieldAngleDifference, 360);
 		int fieldAngle = Math.floorMod((rawAngle -(int) fieldAngleDifference), 360);
@@ -179,14 +179,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		return fieldAngle;
 	}
-	
+
 	public void resetAngle() {
 		fieldAngleDifference = navx.getAngle();
 	}
-	
+
 	//method to get the value from the armabot encoder- lakiera and pinzon
 	public int getEncoder(){
-		
+
 		int x = liftMotor.getSelectedSensorPosition(0);
 		SmartDashboard.putNumber("encoderPosition", x);
 		return x;
@@ -194,7 +194,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 
 	/*----- BASIC ROBOT MOTION METHODS -----*/
-	
+
 	//Basic method to climb down -Aldenis
 	public void climbDown() {
 		liftMotor.set(-1.0);
@@ -204,12 +204,12 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	public void spit(){
 		mouthMotor.set(1.0);
 	}
-	
-	
-	
+
+
+
 	/*----- AUTONOMOUS STRATEGY METHODS -----*/
-	
-	
+
+
 
 
 
