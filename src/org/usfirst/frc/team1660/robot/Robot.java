@@ -144,7 +144,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double turn = squareIt(driverStick.getRawAxis(LEFT_X_AXIS));// right and left on right thumb stick
 
 		//we think the parameters were wrong: S>T>F not F>S>T
-		mecDrive.driveCartesian(strafe, -turn, forward);
+		mecDrive.driveCartesian(strafe, -turn, -forward, getCurrentAngle());
+		
 	}
 
 	//method to square the joystick values to provide less sensitivity for small movements -Matthew W
