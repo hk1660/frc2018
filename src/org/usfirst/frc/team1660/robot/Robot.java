@@ -26,10 +26,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	AHRS ahrs;
 
 	//Drivetrain Declarations
-	private static final int kFrontLeftChannel = 2;
-	private static final int kBackLeftChannel = 3;
-	private static final int kFrontRightChannel = 1;
-	private static final int kBackRightChannel = 0;
+	private static final int kFrontLeftChannel = 1;
+	private static final int kBackLeftChannel = 2;
+	private static final int kFrontRightChannel = 3;
+	private static final int kBackRightChannel = 4;
 	private WPI_TalonSRX frontLeft;
 	private WPI_TalonSRX backLeft;
 	private WPI_TalonSRX frontRight;
@@ -85,7 +85,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		frontLeft.setInverted(true);	// Invert the left side motors (Is this needed?)
 		backLeft.setInverted(true);		// Invert the left side motors (Is this needed?)
 
-		mecDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
+		//we think the constructor switched the 3rd & 4th parameters
+		mecDrive = new MecanumDrive(frontLeft, backLeft, backRight, frontRight);
+		
 
 
 		//Manipulator Initializations
@@ -141,7 +143,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double forward = squareIt(driverStick.getRawAxis(RIGHT_Y_AXIS));// up and down on left thumb stick?
 		double turn = squareIt(driverStick.getRawAxis(LEFT_X_AXIS));// right and left on right thumb stick
 
-		mecDrive.driveCartesian(forward, strafe, turn);
+		//we think the parameters were wrong: S>T>F not F>S>T
+		mecDrive.driveCartesian(strafe, -turn, forward);
 	}
 
 	//method to square the joystick values to provide less sensitivity for small movements -Matthew W
@@ -149,8 +152,12 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		double squared = joy * joy;
 
+		
 		//what happens if the value is negative? do we really want to make every joystick value positive?
-
+		if(joy < 0) {
+			squared *= -1;
+		}
+		
 		return squared;
 	}
 
