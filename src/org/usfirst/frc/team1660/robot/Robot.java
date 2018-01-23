@@ -24,6 +24,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	/*----DECLARED GLOBAL VARIABLES-------*/
 
 	AHRS ahrs;
+	boolean autoDriveFlag = false;	//automatic driving
 
 	//Drivetrain Declarations
 	private static final int kFrontLeftChannel = 1;
@@ -39,6 +40,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	private AHRS navx;
 	double roboAngle = 0.0;
 	double fieldAngleDifference = 0.0;
+	double lastUsedAngle;
 
 	//Manipulator Declarations
 	private static final int kMouthMotorChannel = 4;
@@ -118,8 +120,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	//TELEOP MODE
 	public void teleopInit() { 
-
+		resetAngle();  //delete later
 	}
+	
 	public void teleopPeriodic() {
 
 		checkDriving();
@@ -129,9 +132,94 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		getEncoder();
 
 	}
+	/*
+	//this changes the driving to be based on direct voltage input
+	public void changeDrivingToVoltage(){
+		this.frontLeft.changeControlMode(WPI_TalonSRX.TalonControlMode.Voltage);
+		this.backLeft.changeControlMode(WPI_TalonSRX.TalonControlMode.Voltage);
+		this.frontRight.changeControlMode(WPI_TalonSRX.TalonControlMode.Voltage);
+		this.backRight.changeControlMode(WPI_TalonSRX.TalonControlMode.Voltage);
+	}
+	*/
+	//This changes the driving to be based on percentage of voltage
+	public void changeDrivingToPercent(){
+		
+		
+		frontLeft.changeControlMode(WPI_TalonSRX.ControlMode.PercentOutput);
+		backLeft.changeControlMode(WPI_TalonSRX.ControlMode.PercentOutput);
+		frontRight.changeControlMode(WPI_TalonSRX.ControlMode.PercentOutput);
+		backRight.changeControlMode(WPI_TalonSRX.ControlMode.PercentOutput);
+		mecDrive.setMaxOutput(1.0);	
+	}
+	
+	public double autoTurnSpeed (double futureAngle){
+		changeDrivingToPercent();
+		double actualangle = this.getCurrentAngle();
+		double diff = futureAngle - actualangle;	//positive deg for right turns
+		// make the diff-values range from  -179 to 179
+		if (diff > 180){ 			//to handle extra large right turns
+			diff = diff - 360;
+		} else if (diff < -180){	//to handle extra large left turns
+			diff = diff + 360;
+			
+		}
+		return diff;
+	}
+		
+	public void autoTurn(int futureAngle){
+
+		//find correct speed to turn
+		double desired_speed = autoTurnSpeed(futureAngle);
+
+		double strafeSpeedLeft= driverStick.getRawAxis(LT_AXIS);
+		double strafeSpeedRight = driverStick.getRawAxis(RT_AXIS);
+		double strafeSpeedActual=0;
+		double minMotorSpeed = .3;
+		if(strafeSpeedLeft>0){
+			strafeSpeedActual=((Math.pow(strafeSpeedLeft,2))/.3)+minMotorSpeed;
+			strafeSpeedActual=strafeSpeedActual*-1;
+		}
+		else if (strafeSpeedRight>0){
+			strafeSpeedActual=(Math.pow(strafeSpeedRight,2)/.3)+minMotorSpeed;
+		}
+
+		//keep turning until within the tolerance from desired angle
+		mecDrive.driveCartesian(strafeSpeedActual, desired_speed, getCurrentAngle());
+	}
+	
+	// method to turn robot to different angles automatically @aldenis @marlahna
+	public void checkAutoTurn(){
+
+		if(driverStick.getPOV()==this.POV_LEFT){
+			autoDriveFlag = true;
+			this.autoTurn(300);		//aiming at the Right Peg
+			this.lastUsedAngle=300;
+
+		}
+		else if(driverStick.getPOV()==this.POV_DOWN){
+			autoDriveFlag = true;
+			this.autoTurn(180);	//heading back towards driverStation
+			this.lastUsedAngle=180;
+
+		}
+		else if(driverStick.getPOV()==this.POV_RIGHT){
+			autoDriveFlag = true;
+			this.autoTurn(60);		//aiming at the Left Peg
+			this.lastUsedAngle=60;
+
+		}
+		else if(driverStick.getPOV()==this.POV_UP){
+			autoDriveFlag = true;
+			this.autoTurn(0);	//heading away from driverStation
+			this.lastUsedAngle=0;
+		}
+		else{
+			autoDriveFlag=false;
+		}
+	}
 
 
-
+*/
 
 	/*------------------------- CUSTOM METHODS -------------------------*/
 
@@ -144,7 +232,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double turn = squareIt(driverStick.getRawAxis(LEFT_X_AXIS));// right and left on right thumb stick
 
 		//we think the parameters were wrong: S>T>F not F>S>T
-		mecDrive.driveCartesian(strafe, -turn, -forward, getCurrentAngle());
+		mecDrive.driveCartesian(-strafe, -turn, -forward, getCurrentAngle());
 		
 	}
 
