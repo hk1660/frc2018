@@ -136,18 +136,4 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	/*----- AUTONOMOUS STRATEGY METHODS -----*/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
