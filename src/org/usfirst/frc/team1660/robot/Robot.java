@@ -74,12 +74,12 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 
 	//AUTONOMOUS MODE
-	public void autonomousInit() {
+/*	public void autonomousInit() {
 		//autocode that is used for every strategy goes here @AmadouGamby & @marlahna
 		// timer.reset(); // Resets the timer to 0
 		//timer.start(); // Start counting
 		hkdrive.resetAngle();
-	}	
+	}*/	
 	public void autonomousPeriodic() {
 
 	}
@@ -92,10 +92,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	public void teleopPeriodic() {
 
 		hkdrive.checkDriving();
-		hkdrive.checkResetAngle();
+	//	hkdrive.checkResetAngle();
 
 		
-		hkdrive.getCurrentAngle();
+	//	hkdrive.getCurrentAngle();
 		this.getEncoder();
 
 	}
