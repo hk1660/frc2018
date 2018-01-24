@@ -10,8 +10,7 @@ public class Lift {
 	
 	private Joystick manipStick;
 	private WPI_TalonSRX liftMotor;
-	private static final int kLiftMotorChannel = 5;	
-	
+	private static final int kLiftMotorChannel = 7;	
 	
 	
 	public Lift(Joystick manipStick) {

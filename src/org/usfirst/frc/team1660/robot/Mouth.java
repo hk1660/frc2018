@@ -10,8 +10,8 @@ public class Mouth {
 	private Joystick manipStick;
 	private WPI_TalonSRX mouthMotorLeft;
 	private WPI_TalonSRX mouthMotorRight;
-	private final int kMouthMotorChannelRight = 4;
-	private final int kMouthMotorChannelLeft = 5;
+	private final int kMouthMotorChannelRight = 5;
+	private final int kMouthMotorChannelLeft = 6;
 	private final int kMouthLimitPort = 0;
 	private DigitalInput limitSwitchMouth;
 	private boolean isUp;

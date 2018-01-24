@@ -41,9 +41,9 @@ public class HKDrive {
 
 	//Joystick fields
 	private Joystick driverStick;
-	private int FORWARD_AXIS = Robot.RIGHT_Y_AXIS;
-	private int STRAFE_AXIS = Robot.RIGHT_X_AXIS;
-	private int TURN_AXIS = Robot.LEFT_X_AXIS;
+	private int FORWARD_AXIS = XboxButtons.RIGHT_Y_AXIS;
+	private int STRAFE_AXIS = XboxButtons.RIGHT_X_AXIS;
+	private int TURN_AXIS = XboxButtons.LEFT_X_AXIS;
 	
 	
 	public HKDrive(Joystick joy){
@@ -108,7 +108,7 @@ public class HKDrive {
 	//joystick method to manually resets the robot to the field's orientation -Aldenis G
 	public void checkResetAngle(){
 
-		if (driverStick.getRawButton(Robot.START_BUTTON)) {
+		if (driverStick.getRawButton(XboxButtons.START_BUTTON)) {
 			resetAngle();
 		}
 	}
@@ -123,8 +123,8 @@ public class HKDrive {
 		double desired_speed = autoTurnSpeed(futureAngle);
 
 		//Ability to Strafe while maintaining the desired angle
-		double strafeSpeedLeft= driverStick.getRawAxis(Robot.LT_AXIS);
-		double strafeSpeedRight = driverStick.getRawAxis(Robot.RT_AXIS);
+		double strafeSpeedLeft= driverStick.getRawAxis(XboxButtons.LT_AXIS);
+		double strafeSpeedRight = driverStick.getRawAxis(XboxButtons.RT_AXIS);
 		double strafeSpeedActual;
 		double minMotorSpeed = 0.3;
 		if(strafeSpeedLeft>0) {
@@ -142,25 +142,25 @@ public class HKDrive {
 	// method to turn robot to different angles automatically @aldenis @marlahna
 	public void checkAutoTurn(){
 
-		if(driverStick.getPOV()==Robot.POV_LEFT){
+		if(driverStick.getPOV()==XboxButtons.POV_LEFT){
 			autoDriveFlag = true;
 			autoTurn(270);		//aiming to the RIGHT
 			this.lastUsedAngle = 270;
 
 		}
-		else if(driverStick.getPOV()==Robot.POV_DOWN){
+		else if(driverStick.getPOV()==XboxButtons.POV_DOWN){
 			autoDriveFlag = true;
 			autoTurn(180);	//heading back towards driverStation
 			this.lastUsedAngle = 180;
 
 		}
-		else if(driverStick.getPOV()==Robot.POV_RIGHT){
+		else if(driverStick.getPOV()==XboxButtons.POV_RIGHT){
 			autoDriveFlag = true;
 			autoTurn(90);		//aiming to the RIGHT
 			this.lastUsedAngle = 90;
 
 		}
-		else if(driverStick.getPOV()==Robot.POV_UP){
+		else if(driverStick.getPOV()==XboxButtons.POV_UP){
 			autoDriveFlag = true;
 			autoTurn(0);	//heading away from driverStation
 			this.lastUsedAngle = 0;
