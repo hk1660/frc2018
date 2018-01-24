@@ -64,12 +64,11 @@ public class HKDrive {
 		mecDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
 
 		//navx intialization
-		/*try {
+		try {
 			navx = new AHRS(SPI.Port.kMXP); //navX-MXP initialized with (SPI, I2C, TTL UART) and USB //http://navx-mxp.kauailabs.com/guidance/selecting-an-interface.
 		} catch (RuntimeException ex ) {
 			DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
 		}
-		*/
 	}
 
 
