@@ -84,7 +84,7 @@ public class HKDrive {
 		if(autoDriveFlag == false ){
 
 			//we think the parameters were wrong: S>T>F not F>S>T, actually... S>F>T
-			mecDrive.driveCartesian(-strafe, -forward, turn, 0);
+			mecDrive.driveCartesian(strafe, -forward, turn, 0);
 			//mecDrive.driveCartesian(-strafe, -turn, -forward, getCurrentAngle());
 
 			//Prints
