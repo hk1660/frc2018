@@ -17,7 +17,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 
-//@Amadou @Shivanie 
 public class HKDrive {
 
 	/*----DECLARED GLOBAL VARIABLES-------*/
@@ -197,7 +196,7 @@ public class HKDrive {
 			desired_speed = -desired_speed;
 		} else if(diff < -angle_tolerance){ // left hand turn +speed
 			desired_speed = desired_speed;		
-		}else{
+		} else{
 			desired_speed = 0.0;
 		}
 
