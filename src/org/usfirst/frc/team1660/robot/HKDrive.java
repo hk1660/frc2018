@@ -29,10 +29,10 @@ public class HKDrive {
 	private MecanumDrive mecDrive;
 	private AHRS navx;
 	
-	private static final int kFrontLeftChannel = 1;
-	private static final int kBackLeftChannel = 2;
-	private static final int kFrontRightChannel = 3;
-	private static final int kBackRightChannel = 4;
+	private static final int kFrontLeftChannel = 3;
+	private static final int kBackLeftChannel = 4;
+	private static final int kFrontRightChannel = 2;
+	private static final int kBackRightChannel = 1;
 	
 	double fieldAngleDifference = 0.0;
 	double roboAngle = 0.0;
@@ -41,9 +41,9 @@ public class HKDrive {
 
 	//Joystick fields
 	private Joystick driverStick;
-	private int FORWARD_AXIS = XboxButtons.RIGHT_Y_AXIS;
-	private int STRAFE_AXIS = XboxButtons.RIGHT_X_AXIS;
-	private int TURN_AXIS = XboxButtons.LEFT_X_AXIS;
+	private int FORWARD_AXIS = XboxButtons.LEFT_Y_AXIS;
+	private int STRAFE_AXIS = XboxButtons.LEFT_X_AXIS;
+	private int TURN_AXIS = XboxButtons.RIGHT_X_AXIS;
 	
 	
 	public HKDrive(Joystick joy){
@@ -83,8 +83,8 @@ public class HKDrive {
 		//MECANUM -Malachi P
 		if(autoDriveFlag == false ){
 
-			//we think the parameters were wrong: S>T>F not F>S>T
-			mecDrive.driveCartesian(-strafe, -turn, -forward, 0);
+			//we think the parameters were wrong: S>T>F not F>S>T, actually... S>F>T
+			mecDrive.driveCartesian(-strafe, -forward, turn, 0);
 			//mecDrive.driveCartesian(-strafe, -turn, -forward, getCurrentAngle());
 
 			//Prints
