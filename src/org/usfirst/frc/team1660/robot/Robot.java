@@ -88,6 +88,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		hkdrive.getCurrentAngle();
 		this.getEncoder();
+		
+		hkdrive.checkAutoTurn();
 
 	}
 

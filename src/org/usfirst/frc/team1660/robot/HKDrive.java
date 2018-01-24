@@ -145,25 +145,25 @@ public class HKDrive {
 		if(driverStick.getPOV()==Robot.POV_LEFT){
 			autoDriveFlag = true;
 			autoTurn(270);		//aiming to the RIGHT
-			this.lastUsedAngle=270;
+			this.lastUsedAngle = 270;
 
 		}
 		else if(driverStick.getPOV()==Robot.POV_DOWN){
 			autoDriveFlag = true;
 			autoTurn(180);	//heading back towards driverStation
-			this.lastUsedAngle=180;
+			this.lastUsedAngle = 180;
 
 		}
 		else if(driverStick.getPOV()==Robot.POV_RIGHT){
 			autoDriveFlag = true;
 			autoTurn(90);		//aiming to the RIGHT
-			this.lastUsedAngle=90;
+			this.lastUsedAngle = 90;
 
 		}
 		else if(driverStick.getPOV()==Robot.POV_UP){
 			autoDriveFlag = true;
 			autoTurn(0);	//heading away from driverStation
-			this.lastUsedAngle=0;
+			this.lastUsedAngle = 0;
 		}
 		else{
 			autoDriveFlag=false;
