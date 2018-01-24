@@ -36,8 +36,11 @@ public class Mouth {
 		mouthMotorRight.set(-1.0);
 	}
 	
-	//eat method
-	
+	//eat method by Kwaku, does takes in the power cube  
+	public void eat(){
+	  mouthMotorLeft.set(-1.0);
+	  mouthMotorRight.set(1.0);
+	}
 	
 	
 	//check eat/spit/mouth method
