@@ -28,12 +28,12 @@ public class HKDrive {
 	private WPI_TalonSRX backRight;
 	private MecanumDrive mecDrive;
 	private AHRS navx;
-	
+
 	private static final int kFrontLeftChannel = 3;
 	private static final int kBackLeftChannel = 7;//temp 4
 	private static final int kFrontRightChannel = 2;
 	private static final int kBackRightChannel = 1;
-	
+
 	double fieldAngleDifference = 0.0;
 	double roboAngle = 0.0;
 	double lastUsedAngle;
@@ -44,11 +44,11 @@ public class HKDrive {
 	private int FORWARD_AXIS = XboxButtons.LEFT_Y_AXIS;
 	private int STRAFE_AXIS = XboxButtons.LEFT_X_AXIS;
 	private int TURN_AXIS = XboxButtons.RIGHT_X_AXIS;
-	
-	
+
+
 	public HKDrive(Joystick joy){
 		this.driverStick = joy;
-		
+
 	}
 
 	//HKDrive init method
@@ -112,11 +112,11 @@ public class HKDrive {
 			resetAngle();
 		}
 	}
-	
+
 	public void resetAngle() {
 		fieldAngleDifference = navx.getAngle();
 	}
-	
+
 	public void autoTurn(int futureAngle){
 
 		//find correct speed to turn
@@ -169,8 +169,8 @@ public class HKDrive {
 			autoDriveFlag=false;
 		}
 	}
-	
-	
+
+
 	public double autoTurnSpeed (double futureAngle){
 		//changeDrivingToPercent();  //do this manually with each "set" command
 		double actualangle = this.getCurrentAngle();
@@ -201,7 +201,7 @@ public class HKDrive {
 
 		SmartDashboard.putNumber("AutoTurn Speed", desired_speed);
 		System.out.println("ANGLE: "+ actualangle + " DIFF IS: " + diff + " DESIRED SPEED IS " + desired_speed);
-	
+
 		return desired_speed;	
 	}
 
@@ -220,6 +220,6 @@ public class HKDrive {
 		return fieldAngle;
 	}
 
-	
+
 
 }

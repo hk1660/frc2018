@@ -10,32 +10,25 @@ package org.usfirst.frc.team1660.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 
 public class Robot<m_robotDrive> extends IterativeRobot {
 
-	//JOYSTICK - Nana B. & Mathew W.
 	Joystick driverStick = new Joystick(0);
 	Joystick manipStick = new Joystick(1);
 	HKDrive hkdrive = new HKDrive(driverStick);
 	Lift liftMani = new Lift(manipStick);
 	Mouth mouthMani = new Mouth(manipStick);
 	Lidar laser = new Lidar();
-	
-	
+
+
 	/*----- REQUIRED FRC MAIN METHODS -----*/
 	public void robotInit() {
 
 		hkdrive.driveInit();		//intialize the HKDrive speed controllers
 		liftMani.liftInit();
 		mouthMani.mouthInit();
-
 		laser.initLidar();
 	}
 
@@ -47,7 +40,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		//timer.start(); // Start counting
 		hkdrive.resetAngle();
 	}
-	
+
 	public void autonomousPeriodic() {
 
 	}
@@ -56,7 +49,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	public void teleopInit() { 
 		//hkdrive.resetAngle();  //delete later
 	}
-	
+
 	public void teleopPeriodic() {
 
 		hkdrive.checkDriving();
@@ -68,19 +61,16 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.elevatorLift(10);
 
 		laser.getDistance();
-		
+
 
 	}
 
 
-	
+
 	/*------------------------- CUSTOM METHODS -------------------------*/
 
 	/*----- JOYSTICK METHODS -----*/
-	
-		
 
-		
 
 	/*----- SENSOR METHODS -----*/
 
