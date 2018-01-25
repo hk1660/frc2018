@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class Mouth {
 	
-	private Joystick manipStick;
+	private Joystick maniStick;
 	private WPI_TalonSRX mouthMotorLeft;
 	private WPI_TalonSRX mouthMotorRight;
 	private final int kMouthMotorChannelRight = 5;
@@ -17,8 +17,8 @@ public class Mouth {
 	private boolean isUp;
 	
 	
-	public Mouth(Joystick manipStick) {
-		this.manipStick = manipStick;
+	public Mouth(Joystick maniStick) {
+		this.maniStick = maniStick;
 	}
 
 

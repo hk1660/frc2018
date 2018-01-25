@@ -22,7 +22,7 @@ public class Lift {
 	private static final double kI = 0.0;
 	private static final double kD = 0.0;
 
-	int rawPerRev = 8200;
+	int rawPerRev = -8200;  //neg numbers go up in air
 
 	//height setpoints in inches
 	double bottomHeight = 0.0;
@@ -42,6 +42,8 @@ public class Lift {
 	public void liftInit() {
 
 		liftMotor = new WPI_TalonSRX(kLiftMotorChannel); //A.K.A Elevator/Climb maniulator
+		liftMotor.setInverted(true);
+
 		liftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, kPidIdx, ktimeout);
 
 		// set closed loop gains in desired slot
@@ -57,9 +59,9 @@ public class Lift {
 
 		// zero the sensor
 		liftMotor.setSelectedSensorPosition(0, kPidIdx, ktimeout);
-		
+
 		manualFlag = false;
-		
+
 		this.setEncoderZero();
 		this.elevatorLift(0);
 
@@ -90,7 +92,7 @@ public class Lift {
 
 
 
-	//method to convert height in inches off the ground to raw units
+	//method to convert height in inches off the ground to raw units -pinzon & lakiera
 	public int convert(double height) {
 		double diameter = 1.66; //inches
 		double circumference = diameter * Math.PI;	//inches/rev
@@ -104,7 +106,7 @@ public class Lift {
 
 
 
-	//joystick method to make the lift move to a specific height
+	//joystick method to make the lift move to a specific height -pinzon & lakiera
 	public void  checkLiftPoints() {
 		int c = -1;
 
@@ -142,6 +144,7 @@ public class Lift {
 			}
 		}
 
+		SmartDashboard.putBoolean("liftManualFlag", manualFlag);
 	}
 
 	//method to lift up (to a SET Position) -mathew & marlahna
