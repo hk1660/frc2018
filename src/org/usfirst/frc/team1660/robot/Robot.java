@@ -28,12 +28,15 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	Mouth mouthMani = new Mouth(manipStick);
 	Lidar lidar = new Lidar();
 	
+	
 	/*----- REQUIRED FRC MAIN METHODS -----*/
 	public void robotInit() {
 
 		hkdrive.driveInit();		//intialize the HKDrive speed controllers
 		liftMani.liftInit();
 		mouthMani.mouthInit();
+		
+		
 	}
 
 	//AUTONOMOUS MODE
@@ -62,7 +65,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.checkResetAngle();
 
 		liftMani.getEncoder();
-		
+		liftMani.elevatorLift(10);
 
 
 	}

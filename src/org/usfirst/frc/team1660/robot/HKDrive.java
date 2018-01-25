@@ -30,7 +30,7 @@ public class HKDrive {
 	private AHRS navx;
 	
 	private static final int kFrontLeftChannel = 3;
-	private static final int kBackLeftChannel = 4;
+	private static final int kBackLeftChannel = 7;//temp 4
 	private static final int kFrontRightChannel = 2;
 	private static final int kBackRightChannel = 1;
 	
