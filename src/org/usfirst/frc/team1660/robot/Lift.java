@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Lift {
 
 	private WPI_TalonSRX liftMotor;
-	private Joystick manipStick;
+	private Joystick maniStick;
 	private int LIFT_AXIS = XboxButtons.LEFT_Y_AXIS;
 
 	private static final int kLiftMotorChannel = 7;
@@ -21,15 +21,27 @@ public class Lift {
 	private static final double kP = 0.2;
 	private static final double kI = 0.0;
 	private static final double kD = 0.0;
-		
 
-	public Lift(Joystick manipStick) {
-		this.manipStick = manipStick;
+	int rawPerRev = 8200;
+
+	//height setpoints in inches
+	double bottomHeight = 0.0;
+	double topHeight = 36.0;
+	double switchHeight = .0;
+	double exchangeHeight = 2.0;
+	double tierHeight = 11.0;
+
+	boolean manualFlag;
+
+
+
+	public Lift(Joystick maniStick) {
+		this.maniStick = maniStick;
 	}
 
 	public void liftInit() {
 
-		liftMotor = new WPI_TalonSRX(kLiftMotorChannel); //A.K.A Elevator/Climb Manipulator
+		liftMotor = new WPI_TalonSRX(kLiftMotorChannel); //A.K.A Elevator/Climb maniulator
 		liftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, kPidIdx, ktimeout);
 
 		// set closed loop gains in desired slot
@@ -45,6 +57,11 @@ public class Lift {
 
 		// zero the sensor
 		liftMotor.setSelectedSensorPosition(0, kPidIdx, ktimeout);
+		
+		manualFlag = false;
+		
+		this.setEncoderZero();
+		this.elevatorLift(0);
 
 	}
 
@@ -57,17 +74,73 @@ public class Lift {
 		return x;
 	}
 
+	//joystick method to zero encoder -pinzon & lakiera
+	public void checkEncoderZero() {
+		if(maniStick.getRawButton(XboxButtons.BACK_BUTTON)==true) {
+			this.setEncoderZero();
+		}
+
+	}
+
+	//base method to set the encoder value to zero -pinzon & lakiera
+	public void setEncoderZero() {
+		liftMotor.setSelectedSensorPosition(0, this.kPidIdx, this.ktimeout);
+
+	}
+
+
+
+	//method to convert height in inches off the ground to raw units
+	public int convert(double height) {
+		double diameter = 1.66; //inches
+		double circumference = diameter * Math.PI;	//inches/rev
+		double revs = height / circumference;
+		int raw = (int) revs * this.rawPerRev;
+
+		//SmartDashboard.putNumber(", value)
+
+		return raw;
+	}
+
+
+
+	//joystick method to make the lift move to a specific height
+	public void  checkLiftPoints() {
+		int c = -1;
+
+		if (maniStick.getPOV()==XboxButtons.POV_UP) {
+			manualFlag = false;
+
+			if(manualFlag == false) {
+				c = this.convert(topHeight);
+				elevatorLift(c);
+			}
+
+		}
+
+		SmartDashboard.putNumber("LiftButtonHeight", c);
+
+	}
+
 
 	//method to lift up (With Joystick) - mathew & marlahna
 	public void checkElevatorLift() {
 
 		double thresh = 0.1;
-		double liftJoyValue = manipStick.getRawAxis(LIFT_AXIS);
+		double liftJoyValue = maniStick.getRawAxis(LIFT_AXIS);
 		SmartDashboard.putNumber("Lift Axis", liftJoyValue);
 
+
 		if (Math.abs(liftJoyValue) > thresh) {
-			liftMotor.set(ControlMode.PercentOutput, liftJoyValue);
-		} 
+			manualFlag = true;
+			if(manualFlag == true) {
+				liftMotor.set(ControlMode.PercentOutput, liftJoyValue);
+			}
+		} else { 
+			if(manualFlag == true) {
+				liftMotor.set(ControlMode.PercentOutput, 0);
+			}
+		}
 
 	}
 

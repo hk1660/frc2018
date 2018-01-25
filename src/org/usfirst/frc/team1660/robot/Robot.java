@@ -16,11 +16,12 @@ import edu.wpi.first.wpilibj.Joystick;
 public class Robot<m_robotDrive> extends IterativeRobot {
 
 	Joystick driverStick = new Joystick(0);
-	Joystick manipStick = new Joystick(1);
+	Joystick maniStick = new Joystick(1);
 	HKDrive hkdrive = new HKDrive(driverStick);
-	Lift liftMani = new Lift(manipStick);
-	Mouth mouthMani = new Mouth(manipStick);
+	Lift liftMani = new Lift(maniStick);
+	Mouth mouthMani = new Mouth(maniStick);
 	Lidar laser = new Lidar();
+	
 
 
 	/*----- REQUIRED FRC MAIN METHODS -----*/
@@ -58,8 +59,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.checkResetAngle();
 
 		liftMani.getEncoder();
-		liftMani.elevatorLift(10);
-
+		//liftMani.elevatorLift(10);
+		liftMani.checkEncoderZero();
+		liftMani.checkLiftPoints();
+		liftMani.checkElevatorLift();
+		
 		laser.getDistance();
 
 
