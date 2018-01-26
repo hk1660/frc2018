@@ -45,21 +45,19 @@ public class Mouth {
 	
 	
 	//check eat/spit/mouth method
-	public void checkEat(){
-		if(manipStick.getRawButton(XboxButtons.A_BUTTON) == true  ){
+	public void checkEatSpit(){
+		if(maniStick.getRawButton(XboxButtons.A_BUTTON) == true  ){
 			eat();
 		}
-	}
-	
-	public void checkSpit(){
-		if(manipStick.getRawButton(XboxButtons.B_BUTTON)== true){
+		if(maniStick.getRawButton(XboxButtons.B_BUTTON)== true){
 			spit();
 		}
 	}
 	
 	
-	
-	//check limit switch value and return it (accessor)
-	
+	//check limit switch value and return it (accessor) -kwaku
+	public boolean isPowercube() {
+		return this.limitSwitchMouth.get();
+	}
 	
 }

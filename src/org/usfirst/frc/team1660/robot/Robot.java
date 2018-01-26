@@ -58,11 +58,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.getCurrentAngle();
 		hkdrive.checkResetAngle();
 
-		mouthMani.checkEat();
-		mouthMani.checkSpit();
+		mouthMani.checkEatSpit();
 		
 		liftMani.getEncoder();
-		//liftMani.elevatorLift(10);
 		liftMani.checkEncoderZero();
 		liftMani.checkLiftPoints();
 		liftMani.checkElevatorLift();
@@ -75,14 +73,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 
 	/*------------------------- CUSTOM METHODS -------------------------*/
-
-	/*----- JOYSTICK METHODS -----*/
-
-
-	/*----- SENSOR METHODS -----*/
-
-	/*----- BASIC ROBOT MOTION METHODS -----*/
-
 
 	/*----- AUTONOMOUS STRATEGY METHODS -----*/
 
