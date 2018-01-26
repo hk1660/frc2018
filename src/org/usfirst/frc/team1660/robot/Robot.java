@@ -9,8 +9,10 @@ package org.usfirst.frc.team1660.robot;
 /*-----IMPORTED LIBRARIES-----*/
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 
 
 public class Robot<m_robotDrive> extends IterativeRobot {
@@ -21,25 +23,54 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
 	Lidar laser = new Lidar();
+	SendableChooser strategy = new SendableChooser();
 	
 
 
 	/*----- REQUIRED FRC MAIN METHODS -----*/
 	public void robotInit() {
-
-		hkdrive.driveInit();		//intialize the HKDrive speed controllers
+		hkdrive.driveInit();		//Initialize the HKDrive speed controllers
 		liftMani.liftInit();
 		mouthMani.mouthInit();
 		laser.initLidar();
+		
+		/* Auto mode strategies */
+		strategy.addDefault("Red Alliance: Left Switch Pad", new Integer(1));
+/*		strategy.addObject("Red Alliance: Right Switch Pad", new Integer(2));
+		strategy.addObject("Blue Alliance: Left Switch Pad", new Integer(3));
+		strategy.addObject("Blue Alliance: Right Switch Pad", new Integer(4));
+		SmartDashboard.putData("strategy selector", strategy); */
 	}
 
 	//AUTONOMOUS MODE
+	
+	/* Autonomous Stuff \o/ -Khalil */
 	public void autonomousInit() {
-		//autocode that is used for every strategy goes here @AmadouGamby & @marlahna
-		//Create an auto timer here
-		// timer.reset(); // Resets the timer to 0
-		//timer.start(); // Start counting
+		Timer timerAuto = new Timer();
+		timerAuto.start();
+		//int currentStrategy = (int) strategy.getSelected(); 
+
 		hkdrive.resetAngle();
+		while(isAutonomous() && isEnabled()){ 
+
+			double timerA = timerAuto.get();
+			SmartDashboard.putNumber("AutoTimer",timerA);
+			
+/* 			Strategies need to be made before this is continued further
+ * 
+ * 			Odd: Left Pad
+ * 			Even: Right Pad
+ * 			1 & 2: Red Alliance 
+ * 			3 & 4: Blue Alliance
+ * 
+ * 			if(currentStrategy == 1) {
+ * 		} else if (currentStrategy == 2){
+ * 		} else if (currentStrategy == 3){
+ * 		} else if (currentStrategy == 4){
+ * 		} 
+*/	
+			
+		}
 	}
 
 	public void autonomousPeriodic() {
@@ -59,7 +90,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.checkResetAngle();
 
 		mouthMani.checkEatSpit();
-		mouthMani.isPowercube();
 		
 		liftMani.getEncoder();
 		liftMani.checkEncoderZero();
@@ -78,3 +108,5 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	/*----- AUTONOMOUS STRATEGY METHODS -----*/
 
 }
+
+
