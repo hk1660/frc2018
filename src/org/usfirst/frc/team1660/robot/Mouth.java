@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Mouth {
 	
@@ -14,7 +15,7 @@ public class Mouth {
 	private final int kMouthMotorChannelLeft = 6;
 	private final int kMouthLimitPort = 0;
 	private DigitalInput limitSwitchMouth;
-	private boolean isUp;
+	private boolean isUpFlag;
 	
 	
 	public Mouth(Joystick maniStick) {
@@ -57,7 +58,9 @@ public class Mouth {
 	
 	//check limit switch value and return it (accessor) -kwaku
 	public boolean isPowercube() {
-		return this.limitSwitchMouth.get();
+		boolean isPC = this.limitSwitchMouth.get();
+		SmartDashboard.putBoolean("isPC?", isPC);
+		return isPC;
 	}
 	
 }
