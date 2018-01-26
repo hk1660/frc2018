@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -14,23 +15,33 @@ public class Lift {
 	private int LIFT_AXIS = XboxButtons.LEFT_Y_AXIS;
 
 	private static final int kLiftMotorChannel = 7;
+	
+	private final int kLiftLimitTop = 1;
+	private DigitalInput limitSwitchLiftTop;
+	private final int kLiftLimitBottom = 1;
+	private DigitalInput limitSwitchLiftBottom;
+	
+	
+	
 	private static final int kSlotIdx = 0;
 	private static final int kPidIdx = 0;
 	private static final int ktimeout = 10; //number of ms to update closed-loop control
 	private static final double kF = 0.2;
-	private static final double kP = 0.2;
+	private static final double kP = 0.3;
 	private static final double kI = 0.0;
 	private static final double kD = 0.0;
 
-	int rawPerRev = -8200;  //neg numbers go up in air
-
+	int rawPerRev = -13300 - 2347 + 700;  //neg numbers go up in air
+	//int rawPerRev = -8200;  //neg numbers go up in air
 	//height setpoints in inches
 	double bottomHeight = 0.0;
-	double topHeight = 36.0;
-	double switchHeight = .0;
+	double topHeight = 30.0;
+	double switchHeight = 20.0;
 	double exchangeHeight = 2.0;
 	double tierHeight = 11.0;
-
+	
+	int liftButtonHeight = -1;
+	
 	boolean manualFlag;
 
 
@@ -97,32 +108,52 @@ public class Lift {
 		double diameter = 1.66; //inches
 		double circumference = diameter * Math.PI;	//inches/rev
 		double revs = height / circumference;
-		int raw = (int) revs * this.rawPerRev;
+		double raw =  revs * this.rawPerRev;
 
 		//SmartDashboard.putNumber(", value)
 
-		return raw;
+		return (int)raw;
 	}
 
 
 
-	//joystick method to make the lift move to a specific height -pinzon & lakiera
+	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal Einstein
 	public void  checkLiftPoints() {
-		int c = -1;
+		
 
+		if (maniStick.getPOV()==XboxButtons.LB_BUTTON) {
+			manualFlag = false;
+			liftButtonHeight = this.convert(topHeight);
+		}
+		if (maniStick.getPOV()==XboxButtons.POV_DOWN) {
+			manualFlag = false;
+			liftButtonHeight = this.convert(bottomHeight);
+		}
 		if (maniStick.getPOV()==XboxButtons.POV_UP) {
 			manualFlag = false;
-
+			liftButtonHeight = this.convert(switchHeight);
+		}
+		if (maniStick.getPOV()==XboxButtons.POV_RIGHT) {
+			manualFlag = false;
+			liftButtonHeight = this.convert(exchangeHeight);
+		}
+		if (maniStick.getPOV()==XboxButtons.POV_LEFT) {
+			manualFlag = false;
+			liftButtonHeight = this.convert(tierHeight);
+		}
+			
+			
 			if(manualFlag == false) {
-				c = this.convert(topHeight);
-				elevatorLift(c);
+
+				elevatorLift(liftButtonHeight);
 			}
 
+			SmartDashboard.putNumber("LiftButtonHeight", liftButtonHeight);
 		}
 
-		SmartDashboard.putNumber("LiftButtonHeight", c);
 
-	}
+
+	
 
 
 	//method to lift up (With Joystick) - mathew & marlahna

@@ -59,6 +59,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.checkResetAngle();
 
 		mouthMani.checkEatSpit();
+		mouthMani.isPowercube();
 		
 		liftMani.getEncoder();
 		liftMani.checkEncoderZero();
