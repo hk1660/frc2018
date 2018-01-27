@@ -15,13 +15,12 @@ public class Lift {
 	private int LIFT_AXIS = XboxButtons.LEFT_Y_AXIS;
 
 	private static final int kLiftMotorChannel = 7;
-	
+
 	private final int kLiftLimitTop = 1;
-	private DigitalInput limitSwitchLiftTop;
+	private DigitalInput limitLiftTop = new DigitalInput(1);
 	private final int kLiftLimitBottom = 1;
-	private DigitalInput limitSwitchLiftBottom;
-	
-	
+	private DigitalInput limitLiftBottom = new DigitalInput(2);
+
 	private static final int kSlotIdx = 0;
 	private static final int kPidIdx = 0;
 	private static final int ktimeout = 10; //number of ms to update closed-loop control
@@ -32,19 +31,16 @@ public class Lift {
 
 	int rawPerRev = -13300 - 2347 + 700;  //neg numbers go up in air
 	//int rawPerRev = -8200;  //neg numbers go up in air
-	
+
 	//height setpoints in inches
 	double bottomHeight = 0.0;
 	double topHeight = 30.0;
 	double switchHeight = 20.0;
 	double exchangeHeight = 2.0;
 	double tierHeight = 11.0;
-	
 	int liftButtonHeight = -1;
-	
+
 	boolean manualFlag;
-
-
 
 	public Lift(Joystick maniStick) {
 		this.maniStick = maniStick;
@@ -98,10 +94,7 @@ public class Lift {
 	//base method to set the encoder value to zero -pinzon & lakiera
 	public void setEncoderZero() {
 		liftMotor.setSelectedSensorPosition(0, this.kPidIdx, this.ktimeout);
-
 	}
-
-
 
 	//method to convert height in inches off the ground to raw units -pinzon & lakiera
 	public int convert(double height) {
@@ -117,10 +110,8 @@ public class Lift {
 
 
 
-	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal Einstein
+	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal
 	public void  checkLiftPoints() {
-		
-
 		if (maniStick.getPOV()==XboxButtons.LB_BUTTON) {
 			manualFlag = false;
 			liftButtonHeight = this.convert(topHeight);
@@ -140,51 +131,67 @@ public class Lift {
 		if (maniStick.getPOV()==XboxButtons.POV_LEFT) {
 			manualFlag = false;
 			liftButtonHeight = this.convert(tierHeight);
+		}		
+		if(manualFlag == false) {
+			elevatorLift(liftButtonHeight);
 		}
-			
-			
-			if(manualFlag == false) {
+		SmartDashboard.putNumber("LiftButtonHeight", liftButtonHeight);
+	}
 
-				elevatorLift(liftButtonHeight);
-			}
-
-			SmartDashboard.putNumber("LiftButtonHeight", liftButtonHeight);
-		}
-
-
-
-	
-
-
-	//method to lift up (With Joystick) - mathew & marlahna
+	//Method to move the elevator up & down- mathew & marlahna
 	public void checkElevatorLift() {
 
 		double thresh = 0.1;
 		double liftJoyValue = maniStick.getRawAxis(LIFT_AXIS);
 		SmartDashboard.putNumber("Lift Axis", liftJoyValue);
 
+		/*  */
+		Boolean botVal = limitLiftBottom.get();
+		Boolean topVal = limitLiftTop.get();
 
 		if (Math.abs(liftJoyValue) > thresh) {
 			manualFlag = true;
-			if(manualFlag == true) {
+			if(botVal && liftJoyValue < 0) {
+				SmartDashboard.putString("Limits", "STOP! Bottom limit has been hit");
+				liftMotor.set(ControlMode.PercentOutput, 0.0);
+			}
+			else if(topVal && liftJoyValue > 0) {
+				SmartDashboard.putString("Limits", "STOP! Top limit has been hit");
+				liftMotor.set(ControlMode.PercentOutput, 0.0);
+			}
+			else if(manualFlag == true) {
 				liftMotor.set(ControlMode.PercentOutput, liftJoyValue);
 			}
 		} else { 
 			if(manualFlag == true) {
-				liftMotor.set(ControlMode.PercentOutput, 0);
+				liftMotor.set(ControlMode.PercentOutput, 0.0);
 			}
+
 		}
 
 		SmartDashboard.putBoolean("liftManualFlag", manualFlag);
 	}
 
+	
+	/*	WIP	*/
 	//method to lift up (to a SET Position) -mathew & marlahna
 	public void elevatorLift(double setHeight) {
 
 		SmartDashboard.putNumber("setHeight", setHeight);
-		liftMotor.set(ControlMode.MotionMagic, setHeight); 
+		Boolean botVal = limitLiftBottom.get();
+		Boolean topVal = limitLiftTop.get();
+		if(botVal) {
+			SmartDashboard.putString("Limits", "STOP! Bottom limit has been hit");
+			liftMotor.set(ControlMode.PercentOutput, 0.0);
+		}
+		else if(topVal) {
+			SmartDashboard.putString("Limits", "STOP! Top limit has been hit");
+			liftMotor.set(ControlMode.PercentOutput, 0.0);
+		}
+		else if(manualFlag == true) {
+			liftMotor.set(ControlMode.MotionMagic, setHeight);
+		}
 	}
-
 
 	//Basic method to climb down -Aldenis
 	public void climbDown() {

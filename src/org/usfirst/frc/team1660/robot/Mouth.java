@@ -45,7 +45,7 @@ public class Mouth {
 	  mouthMotorRight.set(speed);
 	}
 	
-	//not moving method by Mal Einstein, method to hold the box
+	//not moving method by Mal, method to hold the box
 	public void shutUp(){
 	  mouthMotorLeft.set(0);
 	  mouthMotorRight.set(0);
