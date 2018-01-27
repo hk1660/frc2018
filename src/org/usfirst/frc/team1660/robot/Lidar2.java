@@ -28,7 +28,12 @@ public class Lidar2 {
 	private static final int UPDATE_PERIOD = 20; // in milliseconds
 	private static final int RETRY_COUNT = 50;
 
-	public Lidar2(Port port, byte address) {
+	Port port;
+	byte address;
+	
+	public Lidar2() {
+		port = I2C.Port.kMXP;
+		address = (byte) 0x62;
 		i2c = new I2C(port, address);
 
 		setup();
@@ -46,9 +51,17 @@ public class Lidar2 {
 	// Distance in cm
 	public int getDistance() {
 		SmartDashboard.putNumber("LidarDistance",distance);
+		System.out.println("Lidar: " + distance);
 		return distance;
 	}
+	
+	public void checkLidar() {
+		
+		//if()
+	}
 
+	
+	
 	public void setup() {
 		i2c.write(LIDAR_SIG_COUNT, 0x80);
 		sleep(1);

@@ -153,8 +153,6 @@ public class Lift {
 
 
 
-	
-
 
 	//method to lift up (With Joystick) - mathew & marlahna
 	public void checkElevatorLift() {

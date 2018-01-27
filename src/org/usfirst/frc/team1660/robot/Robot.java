@@ -23,7 +23,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
 	//Lidar laser = new Lidar();
-	Lidar2 laser2 = new Lidar2(I2C.Port.kMXP, (byte) 0x62);
+	Lidar2 laser2;
 	SendableChooser strategy = new SendableChooser();
 	
 
@@ -33,7 +33,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.driveInit();		//Initialize the HKDrive speed controllers
 		liftMani.liftInit();
 		mouthMani.mouthInit();
-		laser2.setup();
+		//laser.initLidar();
+		laser2 = new Lidar2();
 		
 		/* Auto mode strategies */
 		strategy.addDefault("Red Alliance: Left Switch Pad", new Integer(1));
@@ -97,6 +98,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkLiftPoints();
 		liftMani.checkElevatorLift();
 		
+		//laser.getDistance();
 		laser2.getDistance();
 
 

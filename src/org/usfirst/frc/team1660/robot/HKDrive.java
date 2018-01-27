@@ -87,9 +87,9 @@ public class HKDrive {
 			//we think the parameters were wrong: S>T>F not F>S>T, actually... S>F>T
 			
 			if(fieldDrivingFlag) {
-				mecDrive.driveCartesian(strafe, -forward, turn, navx.getAngle());
+				mecDrive.driveCartesian(-strafe, forward, turn, navx.getAngle());
 			}	else {
-				mecDrive.driveCartesian(strafe, -forward, turn, 0);
+				mecDrive.driveCartesian(-strafe, forward, turn, 0);
 			}
 				
 			
@@ -140,7 +140,7 @@ public class HKDrive {
 
 		//find correct speed to turn
 		double desired_speed = autoTurnSpeed(futureAngle);
-
+/*
 		//Ability to Strafe while maintaining the desired angle
 		double strafeSpeedLeft= driverStick.getRawAxis(XboxButtons.LT_AXIS);
 		double strafeSpeedRight = driverStick.getRawAxis(XboxButtons.RT_AXIS);
@@ -153,9 +153,10 @@ public class HKDrive {
 		} else {
 			strafeSpeedActual = 0.0;
 		}
-
+*/
 		//keep turning until within the tolerance from desired angle
-		mecDrive.driveCartesian(strafeSpeedActual, desired_speed, 0.0, 0.0);
+		mecDrive.driveCartesian(0.0, 0.0, desired_speed, 0.0);
+		//mecDrive.driveCartesian(strafeSpeedActual, desired_speed, 0.0, 0.0);
 	}
 
 	// method to turn robot to different angles automatically @aldenis @marlahna
@@ -187,6 +188,8 @@ public class HKDrive {
 		else{
 			autoDriveFlag=false;
 		}
+		
+		SmartDashboard.putNumber("LastUsedAngle",lastUsedAngle);
 	}
 
 
@@ -203,11 +206,12 @@ public class HKDrive {
 		SmartDashboard.putNumber("AutoTurn Diff", diff);
 
 		double angle_tolerance = 5.0;
-		double min_speed = 0.4;
+		double min_speed = 0.2;
 		double desired_speed;
-
+		double max_speed = 0.6;
+		
 		//adjust speeds to decrease as you approach the desired angle
-		desired_speed = (1.0-min_speed) * (Math.abs(diff)/180) + min_speed;
+		desired_speed = (max_speed-min_speed) * (Math.abs(diff)/180) + min_speed;
 
 		// assigning speed based on positive or negative - Kahlil & Malachi P
 		if(diff > angle_tolerance ){  //right hand turn - speed
