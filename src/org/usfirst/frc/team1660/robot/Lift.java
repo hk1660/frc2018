@@ -22,7 +22,6 @@ public class Lift {
 	private DigitalInput limitSwitchLiftBottom;
 	
 	
-	
 	private static final int kSlotIdx = 0;
 	private static final int kPidIdx = 0;
 	private static final int ktimeout = 10; //number of ms to update closed-loop control
@@ -33,6 +32,7 @@ public class Lift {
 
 	int rawPerRev = -13300 - 2347 + 700;  //neg numbers go up in air
 	//int rawPerRev = -8200;  //neg numbers go up in air
+	
 	//height setpoints in inches
 	double bottomHeight = 0.0;
 	double topHeight = 30.0;
@@ -79,7 +79,7 @@ public class Lift {
 	}
 
 
-	//method to get the value from the armabot encoder- lakiera and pinzon
+	//method to get the value from the encoder- lakiera and pinzon (Black side faces LEFT, Silver side faces RIGHT)
 	public int getEncoder(){
 
 		int x = liftMotor.getSelectedSensorPosition(kPidIdx);

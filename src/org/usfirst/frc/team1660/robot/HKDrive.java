@@ -113,23 +113,22 @@ public class HKDrive {
 		return squared;
 	}
 
+	public void checkFieldFlag() {
+		if(driverStick.getRawButton(XboxButtons.RB_BUTTON )) {
+			fieldDrivingFlag = true;
+		}
+		if(driverStick.getRawButton(XboxButtons.LB_BUTTON )) {
+			fieldDrivingFlag = false;	
+		}
+		SmartDashboard.putBoolean("FieldDriveFlag?", fieldDrivingFlag);
+	}
+
 	//joystick method to manually resets the robot to the field's orientation -Aldenis G
 	public void checkResetAngle(){
 
 		if (driverStick.getRawButton(XboxButtons.START_BUTTON)) {
 			resetAngle();
 		}
-
-		if(driverStick.getRawButton(XboxButtons.RB_BUTTON )) {
-
-			fieldDrivingFlag = true;
-		}
-		if(driverStick.getRawButton(XboxButtons.LB_BUTTON )) {
-
-			fieldDrivingFlag = false;	
-		}
-
-		SmartDashboard.putBoolean("FieldDriveFlag?", fieldDrivingFlag);
 	}
 
 	public void resetAngle() {
@@ -243,7 +242,7 @@ public class HKDrive {
 	public void goForwardPercentOutput(double speed){
 		this.mecDrive.driveCartesian(0.0, speed, 0.0);
 	}
-	
+
 	public void stop(){
 		this.mecDrive.driveCartesian(0.0, 0.0, 0.0);
 	}

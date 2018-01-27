@@ -1,4 +1,10 @@
+/* Class to use Garmin Lidar_Lite_v3 sensor
+ * Code based off of Carlos (FRC Team 103)
+ * https://www.chiefdelphi.com/forums/showthread.php?threadid=160611
+ */
+
 package org.usfirst.frc.team1660.robot;
+
 
 import java.nio.ByteBuffer;
 import java.util.TimerTask;
@@ -24,12 +30,19 @@ public class Lidar2 {
 	private static final int LIDAR_ACQ_CONFIG = 0x04;
 	private static final int LIDAR_THRESHOLD_BYPASS = 0x1c;
 	private static final int LIDAR_DISTANCE_REGISTER = 0x8f;
+	
+	private static final int LIDAR_ADDR = 0x62;
 
 	private static final int UPDATE_PERIOD = 20; // in milliseconds
 	private static final int RETRY_COUNT = 50;
 
-	public Lidar2(Port port, byte address) {
-		i2c = new I2C(port, address);
+	Port port = I2C.Port.kMXP;
+	//Port port = I2C.Port.kOnboard;
+
+	
+	public Lidar2() {
+
+		i2c = new I2C(port, LIDAR_ADDR);
 
 		setup();
 
@@ -44,9 +57,16 @@ public class Lidar2 {
 	}
 
 	// Distance in cm
-	public int getDistance() {
-		SmartDashboard.putNumber("LidarDistance",distance);
+	public int getDistance_cm() {
+		SmartDashboard.putNumber("LidarDistance_cm",distance);
 		return distance;
+	}
+	
+	// Distance in inches
+	public double getDistance_inches() {
+		double inches = distance * 2.54;
+		SmartDashboard.putNumber("LidarDistance_in",inches);
+		return inches;
 	}
 
 	public void setup() {

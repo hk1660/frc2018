@@ -28,7 +28,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
 	//Lidar laser = new Lidar();
-	Lidar2 laser2;
+	Lidar2 laser2 = new Lidar2();
 	SendableChooser strategy = new SendableChooser();
 	SendableChooser position = new SendableChooser();
 	Timer timerAuto = new Timer();
@@ -40,20 +40,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.liftInit();
 		mouthMani.mouthInit();
 		//laser.initLidar();
-		laser2 = new Lidar2();
-		
-		/* Auto mode strategies */
-		strategy.addDefault("move Forward", new Integer(1));
-		strategy.addObject("move to Switch", new Integer(2));
-		strategy.addObject("move to Scale", new Integer(3));
-		SmartDashboard.putData("strategy selector", strategy); 
 
-		position.addDefault("Left", new Integer(1));
-		position.addObject("Right", new Integer(2));
-		position.addObject("Center", new Integer(3));
-		SmartDashboard.putData("position selector", position); 
 	}
 
+	
 	//AUTONOMOUS MODE
 
 	/* Autonomous Stuff \o/ -Khalil */
@@ -61,6 +51,19 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		//AUTO_INIT
 
+		// Auto mode strategies setup
+		strategy.addDefault("runGoForwardOnly", new Integer(1));
+		strategy.addObject("runToSwitchSimpleDrop", new Integer(2));
+		strategy.addObject("runToSwitchDecideDirectionDrop", new Integer(3));
+		strategy.addObject("runToScaleDrop", new Integer(4));
+		SmartDashboard.putData("strategy selector", strategy); 
+
+		position.addDefault("Left", new Integer(1));
+		position.addObject("Middle", new Integer(2));
+		position.addObject("Right", new Integer(3));
+		SmartDashboard.putData("position selector", position); 
+
+		
 		//gets the direction of our alliance plates from FMS (OurSwitch > Scale > OtherSwitch)
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		char rowOne;
@@ -84,10 +87,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			rowTwo = gameData.charAt(1);
 			rowThree = gameData.charAt(2);
 
-			/* 			Strategies need to be made before this is continued further
-
-			 */
-
+			//deciding on which strategy to run
 			if(currentStrategy == 1) {
 				runGoForwardOnly(autoTime, currentPosition);
 			} else if (currentStrategy == 2){
@@ -101,55 +101,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 
 	}
-	
-	public void runGoForwardOnly(double timeA, int position ) {
-
-		//go forward for times 0.0 - 2.0
-		if(timeA < 2.0){
-			hkdrive.goForwardPercentOutput(0.5);
-		}
-		
-		//stop
-		else {
-			hkdrive.stop();
-		}
-
-
-	}
-
-	public void runToSwitchSimpleDrop(double timeB, int position, char row) {
-
-		//go forward for times 0.0 - 2.0
-		if(timeB < 2.0){
-			hkdrive.goForwardPercentOutput(0.5);
-		}
-		
-		//spit out powercube
-		else if(timeB > 2.0 && timeB < 3.0){
-			hkdrive.goForwardPercentOutput(0.5);
-		}
-
-		//stop
-		else {
-			hkdrive.stop();
-		}
-
-	}
-
-	public void runToSwitchDecideDirectionDrop(double timeC, int position, char row) {
-
-
-	}
-
-	public void runToScaleDrop(double timeD, int position, char row) {
-
-
-	}
 
 
 	//TELEOP MODE
 	public void teleopInit() { 
-		//hkdrive.resetAngle();  //delete later
+
 	}
 
 	public void teleopPeriodic() {
@@ -167,15 +123,62 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkElevatorLift();
 
 		//laser.getDistance();
-		laser2.getDistance();
+		laser2.getDistance_inches();
 
 	}
 
 
 
-	/*------------------------- CUSTOM METHODS -------------------------*/
 
 	/*----- AUTONOMOUS STRATEGY METHODS -----*/
+	
+	//AUTO STRATEGY #1: Go forward for 2 seconds and cross the autoline -Marlahna
+	public void runGoForwardOnly(double timeA, int position ) {
+
+		//go forward for times 0.0 - 2.0
+		if(timeA < 2.0){
+			hkdrive.goForwardPercentOutput(0.5);
+		}
+		
+		//stop
+		else {
+			hkdrive.stop();
+		}
+	}
+
+	//AUTO STRATEGY #2: Go forward to a particular plate of our switch, drop off the powercube if its the correct one -Marlahna
+	public void runToSwitchSimpleDrop(double timeB, int position, char row) {
+
+		//go forward for times 0.0 - 2.0
+		if(timeB < 2.0){
+			hkdrive.goForwardPercentOutput(0.5);
+		}
+
+		//spit out powercube
+		else if(timeB > 2.0 && timeB < 3.0){
+			hkdrive.goForwardPercentOutput(0.5);
+		}
+
+		//stop
+		else {
+			hkdrive.stop();
+		}
+	}
+
+	//AUTO STRATEGY #3: Based on the correct location of our alliance's switch plate, travel in that direction and drop off a powercube
+	public void runToSwitchDecideDirectionDrop(double timeC, int position, char row) {
+
+	}
+
+	//AUTO STRATEGY #4: Go forward to the scale and drop off a cube if its the correct plate
+	public void runToScaleDrop(double timeD, int position, char row) {
+
+
+	}
+
+
+
+
 
 
 }
