@@ -6,6 +6,11 @@
 
 package org.usfirst.frc.team1660.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.DriverStation;
+
 /*-----IMPORTED LIBRARIES-----*/
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -22,61 +27,124 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	HKDrive hkdrive = new HKDrive(driverStick);
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
-	//Lidar laser = new Lidar();
-	Lidar2 laser2 = new Lidar2(I2C.Port.kMXP, (byte) 0x62);
+	Lidar laser = new Lidar();
 	SendableChooser strategy = new SendableChooser();
-	
-
+	SendableChooser position = new SendableChooser();
+	Timer timerAuto = new Timer();
 
 	/*----- REQUIRED FRC MAIN METHODS -----*/
 	public void robotInit() {
+
 		hkdrive.driveInit();		//Initialize the HKDrive speed controllers
 		liftMani.liftInit();
 		mouthMani.mouthInit();
-		laser2.setup();
-		
+		laser.initLidar();
+
+
 		/* Auto mode strategies */
-		strategy.addDefault("Red Alliance: Left Switch Pad", new Integer(1));
-/*		strategy.addObject("Red Alliance: Right Switch Pad", new Integer(2));
-		strategy.addObject("Blue Alliance: Left Switch Pad", new Integer(3));
-		strategy.addObject("Blue Alliance: Right Switch Pad", new Integer(4));
-		SmartDashboard.putData("strategy selector", strategy); */
+		strategy.addDefault("move Forward", new Integer(1));
+		strategy.addObject("move to Switch", new Integer(2));
+		strategy.addObject("move to Scale", new Integer(3));
+		SmartDashboard.putData("strategy selector", strategy); 
+
+		position.addDefault("Left", new Integer(1));
+		position.addObject("Right", new Integer(2));
+		position.addObject("Center", new Integer(3));
+		SmartDashboard.putData("position selector", position); 
 	}
 
 	//AUTONOMOUS MODE
-	
-	/* Autonomous Stuff \o/ -Khalil */
-	public void autonomousInit() {
-		Timer timerAuto = new Timer();
-		timerAuto.start();
-		//int currentStrategy = (int) strategy.getSelected(); 
 
+	/* Autonomous Stuff \o/ -Khalil */
+	public void autonomous() {
+
+		//AUTO_INIT
+
+		//gets the direction of our alliance plates from FMS (OurSwitch > Scale > OtherSwitch)
+		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		char rowOne;
+		char rowTwo;
+		char rowThree;
+
+		timerAuto.start();
+		int currentStrategy = (int) strategy.getSelected();
+		int currentPosition = (int) position.getSelected();
 		hkdrive.resetAngle();
+
+		//AUTO_PERIODIC
 		while(isAutonomous() && isEnabled()){ 
 
-			double timerA = timerAuto.get();
-			SmartDashboard.putNumber("AutoTimer",timerA);
-			
-/* 			Strategies need to be made before this is continued further
- * 
- * 			Odd: Left Pad
- * 			Even: Right Pad
- * 			1 & 2: Red Alliance 
- * 			3 & 4: Blue Alliance
- * 
- * 			if(currentStrategy == 1) {
- * 		} else if (currentStrategy == 2){
- * 		} else if (currentStrategy == 3){
- * 		} else if (currentStrategy == 4){
- * 		} 
-*/	
-			
+			//get current Auto time for SmartDash
+			double autoTime = timerAuto.get();
+			SmartDashboard.putNumber("autoTime",autoTime);
+
+			//stores the plate colors
+			rowOne = gameData.charAt(0);
+			rowTwo = gameData.charAt(1);
+			rowThree = gameData.charAt(2);
+
+			/* 			Strategies need to be made before this is continued further
+
+			 */
+
+			if(currentStrategy == 1) {
+				runGoForwardOnly(autoTime, currentPosition);
+			} else if (currentStrategy == 2){
+				runToSwitchSimpleDrop(autoTime, currentPosition, rowOne);
+			} else if (currentStrategy == 3){
+				runToSwitchDecideDirectionDrop(autoTime, currentPosition, rowTwo);
+			} else if (currentStrategy == 4){
+				runToScaleDrop(autoTime, currentPosition, rowTwo);
+			}
+
 		}
-	}
-
-	public void autonomousPeriodic() {
 
 	}
+	
+	public void runGoForwardOnly(double timeA, int position ) {
+
+		//go forward for times 0.0 - 2.0
+		if(timeA < 2.0){
+			hkdrive.goForwardPercentOutput(0.5);
+		}
+		
+		//stop
+		else {
+			hkdrive.stop();
+		}
+
+
+	}
+
+	public void runToSwitchSimpleDrop(double timeB, int position, char row) {
+
+		//go forward for times 0.0 - 2.0
+		if(timeB < 2.0){
+			hkdrive.goForwardPercentOutput(0.5);
+		}
+		
+		//spit out powercube
+		else if(timeB > 2.0 && timeB < 3.0){
+			hkdrive.goForwardPercentOutput(0.5);
+		}
+
+		//stop
+		else {
+			hkdrive.stop();
+		}
+
+	}
+
+	public void runToSwitchDecideDirectionDrop(double timeC, int position, char row) {
+
+
+	}
+
+	public void runToScaleDrop(double timeD, int position, char row) {
+
+
+	}
+
 
 	//TELEOP MODE
 	public void teleopInit() { 
@@ -91,13 +159,13 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.checkResetAngle();
 
 		mouthMani.checkEatSpit();
-		
+
 		liftMani.getEncoder();
 		liftMani.checkEncoderZero();
 		liftMani.checkLiftPoints();
 		liftMani.checkElevatorLift();
-		
-		laser2.getDistance();
+
+		laser.getDistance();
 
 
 	}
@@ -107,6 +175,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	/*------------------------- CUSTOM METHODS -------------------------*/
 
 	/*----- AUTONOMOUS STRATEGY METHODS -----*/
+
 
 }
 

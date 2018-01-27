@@ -39,7 +39,7 @@ public class HKDrive {
 	double lastUsedAngle;
 	boolean autoDriveFlag = false;	//automatic driving
 	boolean fieldDrivingFlag = false; //is using field-oriented driving
-	
+
 	//Joystick fields
 	private Joystick driverStick;
 	private int FORWARD_AXIS = XboxButtons.LEFT_Y_AXIS;
@@ -85,14 +85,14 @@ public class HKDrive {
 		if(autoDriveFlag == false ){
 
 			//we think the parameters were wrong: S>T>F not F>S>T, actually... S>F>T
-			
+
 			if(fieldDrivingFlag) {
 				mecDrive.driveCartesian(strafe, -forward, turn, navx.getAngle());
 			}	else {
 				mecDrive.driveCartesian(strafe, -forward, turn, 0);
 			}
-				
-			
+
+
 			//mecDrive.driveCartesian(-strafe, -turn, -forward, getCurrentAngle());
 
 			//Prints
@@ -119,16 +119,16 @@ public class HKDrive {
 		if (driverStick.getRawButton(XboxButtons.START_BUTTON)) {
 			resetAngle();
 		}
-		
+
 		if(driverStick.getRawButton(XboxButtons.RB_BUTTON )) {
-			
+
 			fieldDrivingFlag = true;
 		}
 		if(driverStick.getRawButton(XboxButtons.LB_BUTTON )) {
-			
+
 			fieldDrivingFlag = false;	
 		}
-		
+
 		SmartDashboard.putBoolean("FieldDriveFlag?", fieldDrivingFlag);
 	}
 
@@ -237,6 +237,15 @@ public class HKDrive {
 		System.out.println("fieldAngle:"+fieldAngle);
 
 		return fieldAngle;
+	}
+
+
+	public void goForwardPercentOutput(double speed){
+		this.mecDrive.driveCartesian(0.0, speed, 0.0);
+	}
+	
+	public void stop(){
+		this.mecDrive.driveCartesian(0.0, 0.0, 0.0);
 	}
 
 
