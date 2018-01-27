@@ -27,7 +27,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	HKDrive hkdrive = new HKDrive(driverStick);
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
-	Lidar laser = new Lidar();
+	//Lidar laser = new Lidar();
+	Lidar2 laser2;
 	SendableChooser strategy = new SendableChooser();
 	SendableChooser position = new SendableChooser();
 	Timer timerAuto = new Timer();
@@ -38,9 +39,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.driveInit();		//Initialize the HKDrive speed controllers
 		liftMani.liftInit();
 		mouthMani.mouthInit();
-		laser.initLidar();
-
-
+		//laser.initLidar();
+		laser2 = new Lidar2();
+		
 		/* Auto mode strategies */
 		strategy.addDefault("move Forward", new Integer(1));
 		strategy.addObject("move to Switch", new Integer(2));
@@ -165,8 +166,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkLiftPoints();
 		liftMani.checkElevatorLift();
 
-		laser.getDistance();
-
+		//laser.getDistance();
+		laser2.getDistance();
 
 	}
 
