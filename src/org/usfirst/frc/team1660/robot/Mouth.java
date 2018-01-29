@@ -11,9 +11,6 @@ public class Mouth {
 	private Joystick maniStick;
 	private WPI_TalonSRX mouthMotorLeft;
 	private WPI_TalonSRX mouthMotorRight;
-	private final int kMouthMotorChannelRight = 6;
-	private final int kMouthMotorChannelLeft = 5;
-	private final int kMouthLimitPort = 0;
 	private DigitalInput limitSwitchMouth;
 	private boolean isUpFlag;
 	
@@ -25,12 +22,10 @@ public class Mouth {
 
 
 	public void mouthInit() {
-		mouthMotorLeft = new WPI_TalonSRX(kMouthMotorChannelLeft);
-		mouthMotorRight = new WPI_TalonSRX(kMouthMotorChannelRight);
-		limitSwitchMouth = new DigitalInput(kMouthLimitPort);
+		mouthMotorLeft = new WPI_TalonSRX(RobotMap.MOUTH_LEFT_CHANNEL);
+		mouthMotorRight = new WPI_TalonSRX(RobotMap.MOUTH_RIGHT_CHANNEL);
+		limitSwitchMouth = new DigitalInput(RobotMap.MOUTH_LIMITER_CHANNEL);
 	}
-	
-
 	
 
 	// Basic method for robot to spit out a PowerCube -Kwaku Boafo
@@ -54,10 +49,10 @@ public class Mouth {
 	
 	//check eat/spit/mouth method
 	public void checkEatSpit(){
-		if(maniStick.getRawButton(XboxButtons.A_BUTTON) == true  ){
+		if(maniStick.getRawButton(RobotMap.EAT_BUTTON) == true  ){
 			eat();
 		}
-		else if(maniStick.getRawButton(XboxButtons.B_BUTTON)== true){
+		else if(maniStick.getRawButton(RobotMap.SPIT_BUTTON)== true){
 			spit();
 		}else {
 			shutUp();

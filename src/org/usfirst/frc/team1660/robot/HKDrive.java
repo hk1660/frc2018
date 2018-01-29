@@ -12,12 +12,16 @@ package org.usfirst.frc.team1660.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 
-public class HKDrive {
+public class HKDrive implements PIDOutput {
 
 	/*----DECLARED GLOBAL VARIABLES-------*/
 
@@ -28,24 +32,26 @@ public class HKDrive {
 	private WPI_TalonSRX backRight;
 	private MecanumDrive mecDrive;
 	private AHRS navx;
+	PIDController turnController;
 
-	private static final int kFrontLeftChannel = 3;
-	private static final int kBackLeftChannel = 4;
-	private static final int kFrontRightChannel = 2;
-	private static final int kBackRightChannel = 1;
+	//PID coefficient constants
+	static final double kP = 0.03;
+	static final double kI = 0.00;
+	static final double kD = 0.00;
+	static final double kF = 0.00;
+	static final double kToleranceDegrees = 2.0f;
 
-	double fieldAngleDifference = 0.0;
+	//angle variables
+	double offsetAngle = 0.0;
 	double roboAngle = 0.0;
 	double lastUsedAngle;
 	boolean autoDriveFlag = false;	//automatic driving
 	boolean fieldDrivingFlag = false; //is using field-oriented driving
+	double rotateToAngleRate;
 
+	
 	//Joystick fields
 	private Joystick driverStick;
-	private int FORWARD_AXIS = XboxButtons.LEFT_Y_AXIS;
-	private int STRAFE_AXIS = XboxButtons.LEFT_X_AXIS;
-	private int TURN_AXIS = XboxButtons.RIGHT_X_AXIS;
-
 
 	public HKDrive(Joystick joy){
 		this.driverStick = joy;
@@ -56,10 +62,10 @@ public class HKDrive {
 	public void driveInit() {
 
 		//Drivetrain Initializations
-		frontLeft = new WPI_TalonSRX(kFrontLeftChannel);
-		backLeft = new WPI_TalonSRX(kBackLeftChannel);
-		frontRight = new WPI_TalonSRX(kFrontRightChannel);
-		backRight = new WPI_TalonSRX(kBackRightChannel);
+		frontLeft = new WPI_TalonSRX(RobotMap.DRIVE_FRONT_LEFT_CHANNEL);
+		backLeft = new WPI_TalonSRX(RobotMap.DRIVE_BACK_LEFT_CHANNEL);
+		frontRight = new WPI_TalonSRX(RobotMap.DRIVE_FRONT_RIGHT_CHANNEL);
+		backRight = new WPI_TalonSRX(RobotMap.DRIVE_BACK_RIGHT_CHANNEL);
 
 		//we think the constructor switched the 3rd & 4th parameters
 		mecDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
@@ -70,15 +76,28 @@ public class HKDrive {
 		} catch (RuntimeException ex ) {
 			DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
 		}
+
+		//PID control initialization
+		turnController = new PIDController(kP, kI, kD, kF, navx, this);
+		turnController.setInputRange(-180.0f,  180.0f);
+		turnController.setOutputRange(-1.0, 1.0);
+		turnController.setAbsoluteTolerance(kToleranceDegrees);
+		turnController.setContinuous(true);
+
+		/* Add the PID Controller to the Test-mode dashboard, allowing manual  */
+		/* tuning of the Turn Controller's P, I and D coefficients.            */
+		/* Typically, only the P value needs to be modified.                   */
+		LiveWindow.addActuator("DriveSystem", "RotateController", turnController);
+
 	}
 
 
 	//method to check joysticks for driving the robot -Nana B & Matthew W
 	public void checkDriving() {
 
-		double strafe = squareIt(driverStick.getRawAxis(STRAFE_AXIS)) ; // right and left on the left thumb stick?
-		double forward = squareIt(driverStick.getRawAxis(FORWARD_AXIS));// up and down on left thumb stick?
-		double turn = squareIt(driverStick.getRawAxis(TURN_AXIS));// right and left on right thumb stick
+		double strafe = squareIt(driverStick.getRawAxis(RobotMap.STRAFE_AXIS)) ; // right and left on the left thumb stick?
+		double forward = squareIt(driverStick.getRawAxis(RobotMap.FORWARD_AXIS));// up and down on left thumb stick?
+		double turn = squareIt(driverStick.getRawAxis(RobotMap.TURN_AXIS));// right and left on right thumb stick
 
 
 		//MECANUM -Malachi P
@@ -92,8 +111,6 @@ public class HKDrive {
 				mecDrive.driveCartesian(strafe, -forward, turn, 0);
 			}
 
-
-			//mecDrive.driveCartesian(-strafe, -turn, -forward, getCurrentAngle());
 
 			//Prints
 			SmartDashboard.putNumber("move",	forward);
@@ -114,71 +131,56 @@ public class HKDrive {
 	}
 
 	public void checkFieldFlag() {
-		if(driverStick.getRawButton(XboxButtons.RB_BUTTON )) {
+		if(driverStick.getRawButton(RobotMap.FIELD_DRIVING_FLAG_ON_BUTTON)) {
 			fieldDrivingFlag = true;
 		}
-		if(driverStick.getRawButton(XboxButtons.LB_BUTTON )) {
+		if(driverStick.getRawButton(RobotMap.FIELD_DRIVING_FLAG_OFF_BUTTON)) {
 			fieldDrivingFlag = false;	
 		}
 		SmartDashboard.putBoolean("FieldDriveFlag?", fieldDrivingFlag);
 	}
 
 	//joystick method to manually resets the robot to the field's orientation -Aldenis G
-	public void checkResetAngle(){
+	public void checkSetOffsetAngle(){
 
-		if (driverStick.getRawButton(XboxButtons.START_BUTTON)) {
-			resetAngle();
+		if (driverStick.getRawButton(RobotMap.RESET_OFFSET_ANGLE_BUTTON)) {
+			setOffsetAngle();
 		}
 	}
 
-	public void resetAngle() {
-		fieldAngleDifference = navx.getAngle();
+	public void setOffsetAngle() {
+		offsetAngle = navx.getAngle();
 	}
 
 	public void autoTurn(int futureAngle){
-
-		//find correct speed to turn
-		double desired_speed = autoTurnSpeed(futureAngle);
-
-		//Ability to Strafe while maintaining the desired angle
-		double strafeSpeedLeft= driverStick.getRawAxis(XboxButtons.LT_AXIS);
-		double strafeSpeedRight = driverStick.getRawAxis(XboxButtons.RT_AXIS);
-		double strafeSpeedActual;
-		double minMotorSpeed = 0.3;
-		if(strafeSpeedLeft>0) {
-			strafeSpeedActual=-(((Math.pow(strafeSpeedLeft,2))/0.3)+minMotorSpeed);
-		} else if (strafeSpeedRight>0){
-			strafeSpeedActual=(Math.pow(strafeSpeedRight,2)/0.3)+minMotorSpeed;
-		} else {
-			strafeSpeedActual = 0.0;
-		}
-
-		//keep turning until within the tolerance from desired angle
-		mecDrive.driveCartesian(strafeSpeedActual, desired_speed, 0.0, 0.0);
+		turnController.enable();
+		turnController.setSetpoint(futureAngle);
+		double desired_speed = rotateToAngleRate;		//autoTurnSpeed(futureAngle);
+		mecDrive.driveCartesian(0.0, desired_speed, 0.0, 0.0);
 	}
 
 	// method to turn robot to different angles automatically @aldenis @marlahna
 	public void checkAutoTurn(){
 
-		if(driverStick.getPOV()==XboxButtons.POV_LEFT){
+		if(driverStick.getPOV()==RobotMap.FACE_LEFT_POV){
 			autoDriveFlag = true;
 			autoTurn(270);		//aiming to the RIGHT
 			this.lastUsedAngle = 270;
 
 		}
-		else if(driverStick.getPOV()==XboxButtons.POV_DOWN){
+		else if(driverStick.getPOV()==RobotMap.FACE_BACKWARD_POV){
 			autoDriveFlag = true;
 			autoTurn(180);	//heading back towards driverStation
 			this.lastUsedAngle = 180;
 
 		}
-		else if(driverStick.getPOV()==XboxButtons.POV_RIGHT){
+		else if(driverStick.getPOV()==RobotMap.FACE_RIGHT_POV){
 			autoDriveFlag = true;
 			autoTurn(90);		//aiming to the RIGHT
 			this.lastUsedAngle = 90;
 
 		}
-		else if(driverStick.getPOV()==XboxButtons.POV_UP){
+		else if(driverStick.getPOV()==RobotMap.FACE_FORWARD_POV){
 			autoDriveFlag = true;
 			autoTurn(0);	//heading away from driverStation
 			this.lastUsedAngle = 0;
@@ -188,7 +190,7 @@ public class HKDrive {
 		}
 	}
 
-
+/*
 	public double autoTurnSpeed (double futureAngle){
 		//changeDrivingToPercent();  //do this manually with each "set" command
 		double actualangle = this.getCurrentAngle();
@@ -203,10 +205,11 @@ public class HKDrive {
 
 		double angle_tolerance = 5.0;
 		double min_speed = 0.4;
+		double max_speed = 1.0;
 		double desired_speed;
 
 		//adjust speeds to decrease as you approach the desired angle
-		desired_speed = (1.0-min_speed) * (Math.abs(diff)/180) + min_speed;
+		desired_speed = (max_speed-min_speed) * (Math.abs(diff)/180) + min_speed;
 
 		// assigning speed based on positive or negative - Kahlil & Malachi P
 		if(diff > angle_tolerance ){  //right hand turn - speed
@@ -222,13 +225,14 @@ public class HKDrive {
 
 		return desired_speed;	
 	}
+	*/
 
 	//method to update the angle the robot is facing on the field -Aldenis G
 	public int getCurrentAngle(){
 
 		int rawAngle = Math.floorMod((int)navx.getAngle(), 360);
-		fieldAngleDifference = Math.floorMod((int)fieldAngleDifference, 360);
-		int fieldAngle = Math.floorMod((rawAngle -(int) fieldAngleDifference), 360);
+		offsetAngle = Math.floorMod((int)offsetAngle, 360);
+		int fieldAngle = Math.floorMod((rawAngle -(int) offsetAngle), 360);
 
 		SmartDashboard.putNumber("rawAngle", rawAngle);
 		SmartDashboard.putNumber("fieldAngle", fieldAngle);
@@ -239,12 +243,23 @@ public class HKDrive {
 	}
 
 
+	public void navxReset() {
+		navx.reset();
+	}
+	
 	public void goForwardPercentOutput(double speed){
 		this.mecDrive.driveCartesian(0.0, speed, 0.0);
 	}
 
 	public void stop(){
 		this.mecDrive.driveCartesian(0.0, 0.0, 0.0);
+	}
+
+	@Override
+	/* This function is invoked periodically by the PID Controller, */
+	/* based upon navX-MXP yaw angle input and PID Coefficients.    */
+	public void pidWrite(double output) {
+		rotateToAngleRate = output;
 	}
 
 

@@ -22,8 +22,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Robot<m_robotDrive> extends IterativeRobot {
 
-	Joystick driverStick = new Joystick(0);
-	Joystick maniStick = new Joystick(1);
+	Joystick driverStick = new Joystick(RobotMap.DRIVER_JOYSTICK_PORT);
+	Joystick maniStick = new Joystick(RobotMap.MANIPULATOR_JOYSTICK_PORT);
 	HKDrive hkdrive = new HKDrive(driverStick);
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
@@ -73,8 +73,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		timerAuto.start();
 		int currentStrategy = (int) strategy.getSelected();
 		int currentPosition = (int) position.getSelected();
-		hkdrive.resetAngle();
+		hkdrive.setOffsetAngle();
 
+
+		//stores the plate colors
+		rowOne = gameData.charAt(0);
+		rowTwo = gameData.charAt(1);
+		rowThree = gameData.charAt(2);
+		
 		//AUTO_PERIODIC
 		while(isAutonomous() && isEnabled()){ 
 
@@ -82,10 +88,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			double autoTime = timerAuto.get();
 			SmartDashboard.putNumber("autoTime",autoTime);
 
-			//stores the plate colors
-			rowOne = gameData.charAt(0);
-			rowTwo = gameData.charAt(1);
-			rowThree = gameData.charAt(2);
 
 			//deciding on which strategy to run
 			if(currentStrategy == 1) {
@@ -113,7 +115,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.checkDriving();
 		hkdrive.checkAutoTurn();
 		hkdrive.getCurrentAngle();
-		hkdrive.checkResetAngle();
+		hkdrive.setOffsetAngle();
 
 		mouthMani.checkEatSpit();
 

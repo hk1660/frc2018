@@ -12,14 +12,8 @@ public class Lift {
 
 	private WPI_TalonSRX liftMotor;
 	private Joystick maniStick;
-	private int LIFT_AXIS = XboxButtons.LEFT_Y_AXIS;
-
-	private static final int kLiftMotorChannel = 7;
-
-	private final int kLiftLimitTop = 1;
-	private DigitalInput limitLiftTop = new DigitalInput(1);
-	private final int kLiftLimitBottom = 1;
-	private DigitalInput limitLiftBottom = new DigitalInput(2);
+	private DigitalInput limitLiftTop = new DigitalInput(RobotMap.LIFT_LIMIT_TOP_CHANNEL);
+	private DigitalInput limitLiftBottom = new DigitalInput(RobotMap.LIFT_LIMIT_BOTTOM_CHANNEL);
 
 	private static final int kSlotIdx = 0;
 	private static final int kPidIdx = 0;
@@ -37,8 +31,8 @@ public class Lift {
 	double topHeight = 30.0;
 	double switchHeight = 20.0;
 	double exchangeHeight = 2.0;
-	double tierHeight = 11.0;
-	int liftButtonHeight = -1;
+	double tier2Height = 11.0;
+	int liftTargetHeight = -1;
 
 	boolean manualFlag;
 
@@ -48,7 +42,7 @@ public class Lift {
 
 	public void liftInit() {
 
-		liftMotor = new WPI_TalonSRX(kLiftMotorChannel); //A.K.A Elevator/Climb maniulator
+		liftMotor = new WPI_TalonSRX(RobotMap.LIFT_MOTOR_CHANNEL); //A.K.A Elevator/Climb maniulator
 		liftMotor.setInverted(true);
 
 		liftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, kPidIdx, ktimeout);
@@ -85,7 +79,7 @@ public class Lift {
 
 	//joystick method to zero encoder -pinzon & lakiera
 	public void checkEncoderZero() {
-		if(maniStick.getRawButton(XboxButtons.BACK_BUTTON)==true) {
+		if(maniStick.getRawButton(RobotMap.ZERO_ENCODER_BUTTON)==true) {
 			this.setEncoderZero();
 		}
 
@@ -112,37 +106,37 @@ public class Lift {
 
 	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal
 	public void  checkLiftPoints() {
-		if (maniStick.getPOV()==XboxButtons.LB_BUTTON) {
+		if (maniStick.getPOV()==RobotMap.LB_BUTTON) {
 			manualFlag = false;
-			liftButtonHeight = this.convert(topHeight);
+			liftTargetHeight = this.convert(topHeight);
 		}
-		if (maniStick.getPOV()==XboxButtons.POV_DOWN) {
+		if (maniStick.getPOV()==RobotMap.LIFT_BOTTOM_HEIGHT_POV) {
 			manualFlag = false;
-			liftButtonHeight = this.convert(bottomHeight);
+			liftTargetHeight = this.convert(bottomHeight);
 		}
-		if (maniStick.getPOV()==XboxButtons.POV_UP) {
+		if (maniStick.getPOV()==RobotMap.LIFT_SWITCH_HEIGHT_POV) {
 			manualFlag = false;
-			liftButtonHeight = this.convert(switchHeight);
+			liftTargetHeight = this.convert(switchHeight);
 		}
-		if (maniStick.getPOV()==XboxButtons.POV_RIGHT) {
+		if (maniStick.getPOV()==RobotMap.LIFT_EXCHANGE_HEIGHT_POV) {
 			manualFlag = false;
-			liftButtonHeight = this.convert(exchangeHeight);
+			liftTargetHeight = this.convert(exchangeHeight);
 		}
-		if (maniStick.getPOV()==XboxButtons.POV_LEFT) {
+		if (maniStick.getPOV()==RobotMap.LIFT_TIER2_HEIGHT_POV) {
 			manualFlag = false;
-			liftButtonHeight = this.convert(tierHeight);
+			liftTargetHeight = this.convert(tier2Height);
 		}		
 		if(manualFlag == false) {
-			elevatorLift(liftButtonHeight);
+			elevatorLift(liftTargetHeight);
 		}
-		SmartDashboard.putNumber("LiftButtonHeight", liftButtonHeight);
+		SmartDashboard.putNumber("LiftTargetHeight", liftTargetHeight);
 	}
 
 	//Method to move the elevator up & down- mathew & marlahna
 	public void checkElevatorLift() {
 
 		double thresh = 0.1;
-		double liftJoyValue = maniStick.getRawAxis(LIFT_AXIS);
+		double liftJoyValue = maniStick.getRawAxis(RobotMap.LIFT_AXIS);
 		SmartDashboard.putNumber("Lift Axis", liftJoyValue);
 
 		/*  */
