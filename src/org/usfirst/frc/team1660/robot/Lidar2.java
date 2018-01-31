@@ -93,7 +93,9 @@ public class Lidar2 {
 			int status = readByte(LIDAR_STATUS_REGISTER);
 			boolean busy = (status & LIDAR_BUSY_MASK) == LIDAR_BUSY_MASK;
 			if (!busy) {
-				return readShort(LIDAR_DISTANCE_REGISTER);
+				int val = readShort(LIDAR_DISTANCE_REGISTER);
+				System.out.println("Lidar distance: "+val);
+				return val;
 			} else {
 				busyCount++;
 			}
