@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.hal.I2CJNI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Lidar3 implements PIDSource {
@@ -24,7 +25,7 @@ public class Lidar3 implements PIDSource {
 		private final ByteBuffer m_buffer = ByteBuffer.allocateDirect(2);
 
 		public Lidar3() {
-			Port port = I2C.Port.kOnboard;
+			Port port = I2C.Port.kMXP;
 			m_port = (byte) port.value;
 			I2CJNI.i2CInitialize(m_port);
 		}
@@ -40,6 +41,7 @@ public class Lidar3 implements PIDSource {
 		}
 
 		public int getDistance() {
+			SmartDashboard.putNumber("Lidar3",readShort(0x8f));
 			return readShort(0x8f);
 		}
 
