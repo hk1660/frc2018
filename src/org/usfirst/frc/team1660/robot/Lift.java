@@ -136,24 +136,32 @@ public class Lift {
 	public void checkElevatorLift() {
 
 		double thresh = 0.1;
-		double liftJoyValue = maniStick.getRawAxis(RobotMap.LIFT_AXIS);
+		double liftJoyValue = maniStick.getRawAxis(RobotMap.LIFT_AXIS); //joystic val negative when go up we switched 
 		SmartDashboard.putNumber("Lift Axis", liftJoyValue);
 
 		/*  */
 		Boolean botVal = limitLiftBottom.get();
 		Boolean topVal = limitLiftTop.get();
+		
+		SmartDashboard.putBoolean("limit top value", topVal);
+		SmartDashboard.putBoolean("limit bottom value", botVal);
+		
+		SmartDashboard.putNumber("lift joy value", liftJoyValue);
 
+		
 		if (Math.abs(liftJoyValue) > thresh) {
 			manualFlag = true;
-			if(botVal && liftJoyValue < 0) {
+			if(botVal && liftJoyValue > 0) {
 				SmartDashboard.putString("Limits", "STOP! Bottom limit has been hit");
 				liftMotor.set(ControlMode.PercentOutput, 0.0);
+				this.setEncoderZero();
 			}
-			else if(topVal && liftJoyValue > 0) {
+			else if(topVal && liftJoyValue < 0) {
 				SmartDashboard.putString("Limits", "STOP! Top limit has been hit");
 				liftMotor.set(ControlMode.PercentOutput, 0.0);
 			}
 			else if(manualFlag == true) {
+				SmartDashboard.putString("Limits", "In between Limits");
 				liftMotor.set(ControlMode.PercentOutput, liftJoyValue);
 			}
 		} else { 
@@ -166,7 +174,7 @@ public class Lift {
 		SmartDashboard.putBoolean("liftManualFlag", manualFlag);
 	}
 
-	
+
 	/*	WIP	*/
 	//method to lift up (to a SET Position) -mathew & marlahna
 	public void elevatorLift(double setHeight) {

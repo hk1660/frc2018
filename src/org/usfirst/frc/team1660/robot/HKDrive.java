@@ -55,7 +55,6 @@ public class HKDrive implements PIDOutput {
 
 	public HKDrive(Joystick joy){
 		this.driverStick = joy;
-
 	}
 
 	//HKDrive init method

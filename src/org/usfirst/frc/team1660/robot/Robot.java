@@ -47,7 +47,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//AUTONOMOUS MODE
 
 	/* Autonomous Stuff \o/ -Khalil */
-	public void autonomous() {
+	public void autonomousInit() {
 
 		//AUTO_INIT
 
@@ -63,6 +63,12 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		position.addObject("Right", new Integer(3));
 		SmartDashboard.putData("position selector", position); 
 
+		
+		
+	}
+	
+		//AUTO_PERIODIC
+	public void autonomousPeriodic() {
 		
 		//gets the direction of our alliance plates from FMS (OurSwitch > Scale > OtherSwitch)
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
@@ -81,7 +87,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		rowTwo = gameData.charAt(1);
 		rowThree = gameData.charAt(2);
 		
-		//AUTO_PERIODIC
 		while(isAutonomous() && isEnabled()){ 
 
 			//get current Auto time for SmartDash
