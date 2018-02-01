@@ -41,14 +41,14 @@ public class RobotMap {
 	public final static int MANIPULATOR_JOYSTICK_PORT = 1;
 
 	//Drive Joystick
-	public final static int FORWARD_AXIS = LEFT_Y_AXIS;
-	public final static int STRAFE_AXIS = LEFT_X_AXIS;
-	public final static int TURN_AXIS = RIGHT_X_AXIS;
+	public final static int FORWARD_AXIS = RIGHT_Y_AXIS;
+	public final static int STRAFE_AXIS = RIGHT_X_AXIS;
+	public final static int TURN_AXIS = LEFT_X_AXIS;
 
-	public final static int HEADING_Y_AXIS = LEFT_Y_AXIS;
-	public final static int HEADING_X_AXIS = LEFT_X_AXIS;
 	public final static int MOVING_Y_AXIS = RIGHT_Y_AXIS;
 	public final static int MOVING_X_AXIS = RIGHT_X_AXIS;
+	public final static int HEADING_Y_AXIS = LEFT_Y_AXIS;
+	public final static int HEADING_X_AXIS = LEFT_X_AXIS;
 
 	public final static int FIELD_DRIVING_FLAG_ON_BUTTON = RB_BUTTON;
 	public final static int FIELD_DRIVING_FLAG_OFF_BUTTON = LB_BUTTON;
@@ -89,6 +89,12 @@ public class RobotMap {
 	public final static int LIFT_MOTOR_CHANNEL = 7;
 	public final static int LIFT_LIMIT_TOP_CHANNEL = 1;
 	public final static int LIFT_LIMIT_BOTTOM_CHANNEL = 2;
+	
+	//NavX angles
+	public final static double LEFT_WALL_ANGLE = -90.0; //270.0?
+	public final static double RIGHT_WALL_ANGLE = 90.0;
+	public final static double BACK_WALL_ANGLE = 179.9;
+	public final static double FRONT_WALL_ANGLE = 0.0;
 	
 	
 	

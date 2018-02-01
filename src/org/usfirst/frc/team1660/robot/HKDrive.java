@@ -45,11 +45,17 @@ public class HKDrive implements PIDOutput {
 	double offsetAngle = 0.0;
 	double roboAngle = 0.0;
 	double lastUsedAngle;
-	boolean autoDriveFlag = false;	//automatic driving
+	boolean autoTurnFlag = false;	//automatic driving
 	boolean fieldDrivingFlag = false; //is using field-oriented driving
 	double rotateToAngleRate;
 
-	
+	//drive parameters
+	double strafeParameter = 0.0;
+	double forwardParameter = 0.0;
+	double turnParameter = 0.0;
+	double angleParameter = 0.0;
+
+
 	//Joystick fields
 	private Joystick driverStick;
 
@@ -91,35 +97,50 @@ public class HKDrive implements PIDOutput {
 	}
 
 
+	public void drive() {
+		mecDrive.driveCartesian(strafeParameter, forwardParameter, turnParameter, angleParameter);
+	}
+
 	//method to check joysticks for driving the robot -Nana B & Matthew W
 	public void checkDriving() {
 
-		double strafe = squareIt(driverStick.getRawAxis(RobotMap.STRAFE_AXIS)) ; // right and left on the left thumb stick?
-		double forward = squareIt(driverStick.getRawAxis(RobotMap.FORWARD_AXIS));// up and down on left thumb stick?
-		double turn = squareIt(driverStick.getRawAxis(RobotMap.TURN_AXIS));// right and left on right thumb stick
+		double strafeJoy = squareIt(driverStick.getRawAxis(RobotMap.STRAFE_AXIS)) ; // right and left on the left thumb stick?
+		double forwardJoy = -squareIt(driverStick.getRawAxis(RobotMap.FORWARD_AXIS));// up and down on left thumb stick?
+		double turnJoy = squareIt(driverStick.getRawAxis(RobotMap.TURN_AXIS));// right and left on right thumb stick
 
 
-		//MECANUM -Malachi P
-		if(autoDriveFlag == false ){
+		if(autoTurnFlag == false && fieldDrivingFlag){
 
-			//we think the parameters were wrong: S>T>F not F>S>T, actually... S>F>T
+			strafeParameter = strafeJoy;
+			forwardParameter = forwardJoy;
+			turnParameter = turnJoy;
+			angleParameter = navx.getAngle();
+		}	
+		else if (autoTurnFlag == false && fieldDrivingFlag == false){
+			strafeParameter = strafeJoy;
+			forwardParameter = forwardJoy;
+			turnParameter = turnJoy;
+			angleParameter = 0.0;
+		}
+		else if (autoTurnFlag == true) {
+			strafeParameter = strafeJoy;
+			forwardParameter = forwardJoy;
+			turnParameter = this.rotateToAngleRate;
+			angleParameter = navx.getAngle();
+		}
 
-			if(fieldDrivingFlag) {
-				mecDrive.driveCartesian(strafe, -forward, turn, navx.getAngle());
-			}	else {
-				mecDrive.driveCartesian(strafe, -forward, turn, 0);
-			}
+		drive();
 
+		//Prints
+		SmartDashboard.putNumber("forwardParam",	forwardParameter);
+		SmartDashboard.putNumber("strafeParam",	strafeParameter);
+		SmartDashboard.putNumber("turnParam",	turnParameter);
+		SmartDashboard.putNumber("angleParam",	angleParameter);
 
-			//Prints
-			SmartDashboard.putNumber("move",	forward);
-			SmartDashboard.putNumber("rotate",	turn);
-			SmartDashboard.putNumber("strafe",	strafe);
-		} 
-
-		SmartDashboard.putBoolean("AutoDriving?", autoDriveFlag);
+		SmartDashboard.putBoolean("AutoTurning?", autoTurnFlag);
 
 	}
+
 
 	//method to square the joystick values to provide less sensitivity for small movements -Matthew W
 	public double squareIt(double joy) {
@@ -139,6 +160,37 @@ public class HKDrive implements PIDOutput {
 		SmartDashboard.putBoolean("FieldDriveFlag?", fieldDrivingFlag);
 	}
 
+
+	// method to turn robot to different angles automatically @aldenis @marlahna
+	public void checkAutoTurn(){
+
+		if(driverStick.getPOV()==RobotMap.FACE_LEFT_POV){
+			autoTurn(RobotMap.LEFT_WALL_ANGLE);						//aiming to the LEFT
+		}
+		else if(driverStick.getPOV()==RobotMap.FACE_BACKWARD_POV){
+			autoTurn(RobotMap.BACK_WALL_ANGLE);						//heading back towards driverStation
+		}
+		else if(driverStick.getPOV()==RobotMap.FACE_RIGHT_POV){
+			autoTurn(RobotMap.RIGHT_WALL_ANGLE);					//aiming to the RIGHT
+		}
+		else if(driverStick.getPOV()==RobotMap.FACE_FORWARD_POV){
+			autoTurn(RobotMap.FRONT_WALL_ANGLE);					//heading away from driverStation
+		}
+		else{
+			autoTurnFlag=false;
+		}
+	}
+
+	public void autoTurn(double futureAngle){
+		autoTurnFlag = true;
+		turnController.enable();
+		turnController.setSetpoint(futureAngle);
+		turnParameter = rotateToAngleRate;
+		drive();
+
+		SmartDashboard.putNumber("LastAutoAngle", futureAngle);
+	}
+
 	//joystick method to manually resets the robot to the field's orientation -Aldenis G
 	public void checkSetOffsetAngle(){
 
@@ -148,48 +200,13 @@ public class HKDrive implements PIDOutput {
 	}
 
 	public void setOffsetAngle() {
+
 		offsetAngle = navx.getAngle();
 	}
 
-	public void autoTurn(int futureAngle){
-		turnController.enable();
-		turnController.setSetpoint(futureAngle);
-		double desired_speed = rotateToAngleRate;		//autoTurnSpeed(futureAngle);
-		mecDrive.driveCartesian(0.0, desired_speed, 0.0, 0.0);
-	}
 
-	// method to turn robot to different angles automatically @aldenis @marlahna
-	public void checkAutoTurn(){
 
-		if(driverStick.getPOV()==RobotMap.FACE_LEFT_POV){
-			autoDriveFlag = true;
-			autoTurn(270);		//aiming to the RIGHT
-			this.lastUsedAngle = 270;
-
-		}
-		else if(driverStick.getPOV()==RobotMap.FACE_BACKWARD_POV){
-			autoDriveFlag = true;
-			autoTurn(180);	//heading back towards driverStation
-			this.lastUsedAngle = 180;
-
-		}
-		else if(driverStick.getPOV()==RobotMap.FACE_RIGHT_POV){
-			autoDriveFlag = true;
-			autoTurn(90);		//aiming to the RIGHT
-			this.lastUsedAngle = 90;
-
-		}
-		else if(driverStick.getPOV()==RobotMap.FACE_FORWARD_POV){
-			autoDriveFlag = true;
-			autoTurn(0);	//heading away from driverStation
-			this.lastUsedAngle = 0;
-		}
-		else{
-			autoDriveFlag=false;
-		}
-	}
-
-/*
+	/*
 	public double autoTurnSpeed (double futureAngle){
 		//changeDrivingToPercent();  //do this manually with each "set" command
 		double actualangle = this.getCurrentAngle();
@@ -205,26 +222,26 @@ public class HKDrive implements PIDOutput {
 		double angle_tolerance = 5.0;
 		double min_speed = 0.4;
 		double max_speed = 1.0;
-		double desired_speed;
+		double desiredTurnSpeed;
 
 		//adjust speeds to decrease as you approach the desired angle
-		desired_speed = (max_speed-min_speed) * (Math.abs(diff)/180) + min_speed;
+		desiredTurnSpeed = (max_speed-min_speed) * (Math.abs(diff)/180) + min_speed;
 
 		// assigning speed based on positive or negative - Kahlil & Malachi P
 		if(diff > angle_tolerance ){  //right hand turn - speed
-			desired_speed = -desired_speed;
+			desiredTurnSpeed = -desiredTurnSpeed;
 		} else if(diff < -angle_tolerance){ // left hand turn +speed
-			desired_speed = desired_speed;		
+			desiredTurnSpeed = desiredTurnSpeed;		
 		} else{
-			desired_speed = 0.0;
+			desiredTurnSpeed = 0.0;
 		}
 
-		SmartDashboard.putNumber("AutoTurn Speed", desired_speed);
-		System.out.println("ANGLE: "+ actualangle + " DIFF IS: " + diff + " DESIRED SPEED IS " + desired_speed);
+		SmartDashboard.putNumber("AutoTurn Speed", desiredTurnSpeed);
+		System.out.println("ANGLE: "+ actualangle + " DIFF IS: " + diff + " DESIRED SPEED IS " + desiredTurnSpeed);
 
-		return desired_speed;	
+		return desiredTurnSpeed;	
 	}
-	*/
+	 */
 
 	//method to update the angle the robot is facing on the field -Aldenis G
 	public int getCurrentAngle(){
@@ -245,7 +262,7 @@ public class HKDrive implements PIDOutput {
 	public void navxReset() {
 		navx.reset();
 	}
-	
+
 	public void goForwardPercentOutput(double speed){
 		this.mecDrive.driveCartesian(0.0, speed, 0.0);
 	}
