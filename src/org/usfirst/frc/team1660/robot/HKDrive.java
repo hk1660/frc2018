@@ -105,7 +105,7 @@ public class HKDrive implements PIDOutput {
 	public void checkDriving() {
 
 		double strafeJoy = squareIt(driverStick.getRawAxis(RobotMap.STRAFE_AXIS)) ; // right and left on the left thumb stick?
-		double forwardJoy = -squareIt(driverStick.getRawAxis(RobotMap.FORWARD_AXIS));// up and down on left thumb stick?
+		double forwardJoy = squareIt(driverStick.getRawAxis(RobotMap.FORWARD_AXIS));// up and down on left thumb stick?
 		double turnJoy = squareIt(driverStick.getRawAxis(RobotMap.TURN_AXIS));// right and left on right thumb stick
 
 
@@ -251,6 +251,7 @@ public class HKDrive implements PIDOutput {
 		int fieldAngle = Math.floorMod((rawAngle -(int) offsetAngle), 360);
 
 		SmartDashboard.putNumber("rawAngle", rawAngle);
+		SmartDashboard.putNumber("offsetAngle", offsetAngle);
 		SmartDashboard.putNumber("fieldAngle", fieldAngle);
 		System.out.println("rawAngle:"+rawAngle);
 		System.out.println("fieldAngle:"+fieldAngle);
