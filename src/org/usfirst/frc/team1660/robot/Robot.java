@@ -122,7 +122,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.checkDriving();
 		hkdrive.checkAutoTurn();
 		hkdrive.getCurrentAngle();
-		hkdrive.setOffsetAngle();
+		hkdrive.checkSetOffsetAngle();
 
 		mouthMani.checkEatSpit();
 
@@ -138,8 +138,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 
 
-
-
+	/* public void something(){
+		
+	}
+*/
 	/*----- AUTONOMOUS STRATEGY METHODS -----*/
 	
 	//AUTO STRATEGY #1: Go forward for 2 seconds and cross the autoline -Marlahna
