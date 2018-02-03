@@ -44,8 +44,6 @@ public class Lidar2 {
 
 		i2c = new I2C(port, LIDAR_ADDR);
 
-		setup();
-
 		updater = new java.util.Timer();
 		updater.schedule(new TimerTask() {
 			@Override
@@ -69,40 +67,27 @@ public class Lidar2 {
 		return inches;
 	}
 
-	public void setup() {
-		i2c.write(LIDAR_SIG_COUNT, 0x80);
-		sleep(1);
-		i2c.write(LIDAR_ACQ_CONFIG, 0x08);
-		sleep(1);
-		i2c.write(LIDAR_THRESHOLD_BYPASS, 0x00);
-		sleep(1);
-
-	}
-
 	// Update distance variable
 	public int getUpdatedDistance() {
-		int command = (measurementCount % 100 == 0 ? LIDAR_COMMAND_ACQUIRE_WITH_CORRECTION : LIDAR_COMMAND_ACQUIRE_WITHOUT_CORRECTION);
-		i2c.write(LIDAR_CONFIG_REGISTER, command); // Initiate measurement
-		/*if (measurementCount++ % 50 == 0) {
-	System.out.println("count = " + measurementCount + ", distance = " + distanceValue);
-	}*/
-		measurementCount++;
-		int busyCount = 0;
+		i2c.write(LIDAR_CONFIG_REGISTER, LIDAR_ACQ_CONFIG); // Initiate measurement
+
+		int busy;
+		int loopnum = 0;
 		do {
-			sleep(1);
-			int status = readByte(LIDAR_STATUS_REGISTER);
-			boolean busy = (status & LIDAR_BUSY_MASK) == LIDAR_BUSY_MASK;
-			if (!busy) {
-				int val = readShort(LIDAR_DISTANCE_REGISTER);
-				System.out.println("Lidar distance: "+val);
-				return val;
-			} else {
-				busyCount++;
+			if (loopnum > 1000) {
+				i2c.write(0x00, 0x00);
+				sleep(1000);
+				i2c.write(LIDAR_CONFIG_REGISTER, LIDAR_ACQ_CONFIG);
+				sleep(1);
+				loopnum = 0;
 			}
-			/*SmartDashboard.putNumber("status", status);
-	SmartDashboard.putBoolean("busyFlag", busy);*/
-		} while (busyCount < RETRY_COUNT);
-		System.out.println("Distance read timed out");
+			sleep(20);
+			busy = readByte(LIDAR_STATUS_REGISTER);
+			loopnum ++;
+		} while ((busy & 0x01) != 0x00);
+		int val = readShort(LIDAR_DISTANCE_REGISTER);
+		sleep(10);
+		System.out.println("Lidar distance: "+val);
 		return distance;
 	}
 
@@ -123,5 +108,4 @@ public class Lidar2 {
 		i2c.readOnly(buffer, 2);
 		return buffer.getShort(0) & 0xFFFF;
 	}
-
 }

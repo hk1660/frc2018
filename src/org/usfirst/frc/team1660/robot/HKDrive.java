@@ -253,8 +253,8 @@ public class HKDrive implements PIDOutput {
 		SmartDashboard.putNumber("rawAngle", rawAngle);
 		SmartDashboard.putNumber("offsetAngle", offsetAngle);
 		SmartDashboard.putNumber("fieldAngle", fieldAngle);
-		System.out.println("rawAngle:"+rawAngle);
-		System.out.println("fieldAngle:"+fieldAngle);
+		//System.out.println("rawAngle:"+rawAngle);
+		//System.out.println("fieldAngle:"+fieldAngle);
 
 		return fieldAngle;
 	}

@@ -136,7 +136,7 @@ public class Lift {
 	public void checkElevatorLift() {
 
 		double thresh = 0.1;
-		double liftJoyValue = maniStick.getRawAxis(RobotMap.LIFT_AXIS); //joystic val negative when go up we switched 
+		double liftJoyValue = -maniStick.getRawAxis(RobotMap.LIFT_AXIS); //joystic val negative when go up we switched 
 		SmartDashboard.putNumber("Lift Axis", liftJoyValue);
 
 		/*  */

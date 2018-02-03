@@ -28,8 +28,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
 	//Lidar laser = new Lidar();
-	//Lidar2 laser2 = new Lidar2();
-	Lidar3 laser3 = new Lidar3();
+	Lidar2 laser2 = new Lidar2();
+	//Lidar3 laser3 = new Lidar3();
 	SendableChooser strategy = new SendableChooser();
 	SendableChooser position = new SendableChooser();
 	Timer timerAuto = new Timer();
@@ -41,7 +41,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.liftInit();
 		mouthMani.mouthInit();
 		//laser.initLidar();
-		laser3.startMeasuring();
+		//laser3.startMeasuring();
 
 	}
 
@@ -147,8 +147,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkElevatorLift();
 
 		//laser.getDistance();
-		//laser2.getDistance_inches();
-		laser3.getDistance();
+		//laser3.getDistance();
+		SmartDashboard.putNumber("lidar value", laser2.getDistance_inches());
 
 	}
 
