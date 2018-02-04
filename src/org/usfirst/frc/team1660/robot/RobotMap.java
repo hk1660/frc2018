@@ -90,6 +90,10 @@ public class RobotMap {
 	public final static int LIFT_LIMIT_TOP_CHANNEL = 1;
 	public final static int LIFT_LIMIT_BOTTOM_CHANNEL = 2;
 	
+	public final static int COMPRESSOR_CHANNEL = 10;
+	//public final static int LIFT_LIMIT_BOTTOM_CHANNEL = 2;
+	
+	
 	//NavX angles
 	public final static double LEFT_WALL_ANGLE = -90.0; //270.0?
 	public final static double RIGHT_WALL_ANGLE = 90.0;
