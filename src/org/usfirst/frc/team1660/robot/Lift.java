@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Lift {
@@ -26,6 +27,10 @@ public class Lift {
 	private static final double kP = 0.3;
 	private static final double kI = 0.0;
 	private static final double kD = 0.0;
+	private static final int RT_AXIS = 3;
+	private static final int LT_AXIS = 2;
+	Relay compressorRelay = new Relay(10);	//Temporary relay change later
+
 
 	int rawPerRev = -13300 - 2347 + 700;  //neg numbers go up in air
 	//int rawPerRev = -8200;  //neg numbers go up in air
@@ -199,11 +204,41 @@ public class Lift {
 		}
 	}
 
+	//method to turn compressor on and off -nana
+	public void checkCompressor(){ 
+
+		if(maniStick.getRawAxis(this.RT_AXIS) > 0.5){
+			this.compressorOn();
+			SmartDashboard.putString("Compressor: ", "ON-button");
+		}
+		else if(maniStick.getRawAxis(this.LT_AXIS) > 0.5){
+			this.compressorOff();
+			SmartDashboard.putString("Compressor: ", "OFF-button");
+		}
+	}
 	//Basic method to climb down -Aldenis
 	public void climbDown() {
 		liftMotor.set(-1.0);
 	}
 
 
+	public void compressorOn(){
+		this.compressorRelay.set(Relay.Value.kForward);
+		SmartDashboard.putString("compressorStatus", "is on");
+	}
+	public void compressorOff(){
+		this.compressorRelay.set(Relay.Value.kOff);
+		SmartDashboard.putString("compressorStatus", "is off");
+	}
+
+	/* basic compressor functionality methods	
+	public void compressorOn(){
+		this.comp.set(Relay.Value.kForward);
+		SmartDashboard.putString("compressorStatus", "is on");
+	}
+	public void compressorOff(){
+		this.comp.set(Relay.Value.kOff);
+		SmartDashboard.putString("compressorStatus", "is off");
+	}	*/
 
 }
