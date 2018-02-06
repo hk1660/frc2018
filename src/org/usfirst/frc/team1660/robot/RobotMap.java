@@ -72,6 +72,8 @@ public class RobotMap {
 	public final static int LIFT_TIER2_HEIGHT_POV = POV_RIGHT;
 	public final static int LIFT_SWITCH_HEIGHT_POV = POV_UP;
 	public final static int LIFT_TOP_HEIGHT_BUTTON = LB_BUTTON;
+	public final static int CLIMB_UP_BUTTON = X_BUTTON;
+	public final static int CLIMB_DOWN_BUTTON = Y_BUTTON;
 
 
 	// Drive train motor channels
