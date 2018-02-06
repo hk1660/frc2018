@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,7 +20,8 @@ public class Lift {
 
 	
 	Compressor comp = new Compressor(RobotMap.COMPRESSOR_CHANNEL);
-
+	DoubleSolenoid dSolenoid = new DoubleSolenoid(1, 2);
+	
 	private static final int kSlotIdx = 0;
 	private static final int kPidIdx = 0;
 	private static final int ktimeout = 10; //number of ms to update closed-loop control
@@ -115,10 +117,10 @@ public class Lift {
 
 	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal
 	public void  checkLiftPoints() {
-		/*if (maniStick.getPOV()==RobotMap.LB_BUTTON) {
+		if (maniStick.getPOV()==RobotMap.LB_BUTTON) {
 			manualFlag = false;
 			liftTargetHeight = this.convert(topHeight);
-		}*/
+		}
 		if (maniStick.getPOV()==RobotMap.LIFT_BOTTOM_HEIGHT_POV) {
 			manualFlag = false;
 			liftTargetHeight = this.convert(bottomHeight);
@@ -230,7 +232,15 @@ public class Lift {
 		this.compressorRelay.set(Relay.Value.kOff);
 		SmartDashboard.putString("compressorStatus", "is off");
 	}
+	public void flipComp() {
+		dSolenoid.set(DoubleSolenoid.Value.kForward);
 
+
+	}
+public void dipComp() {
+	dSolenoid.set(DoubleSolenoid.Value.kReverse);
+	
+}
 	/* basic compressor functionality methods	
 	public void compressorOn(){
 		this.comp.set(Relay.Value.kForward);
@@ -240,14 +250,5 @@ public class Lift {
 		this.comp.set(Relay.Value.kOff);
 		SmartDashboard.putString("compressorStatus", "is off");
 	}	*/
-	
-	public void checkClimb() { //to shoot up climber at push of a button -@mathew
-		SmartDashboard.putNumber("maniStick getPov", maniStick.getPOV());
-		if(maniStick.getRawButton(RobotMap.CLIMB_UP_BUTTON) == true )	{
-			liftMotor.set(ControlMode.MotionMagic, liftTargetHeight = this.convert(topHeight));
-		}
-		else if (maniStick.getRawButton(RobotMap.CLIMB_DOWN_BUTTON) == true ) {
-			liftMotor.set(ControlMode.MotionMagic, liftTargetHeight = this.convert(bottomHeight));
-		}
-	}
+
 }
