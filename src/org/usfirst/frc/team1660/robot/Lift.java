@@ -19,7 +19,9 @@ public class Lift {
 
 	
 	Compressor comp = new Compressor(RobotMap.COMPRESSOR_CHANNEL);
+	Relay compressorRelay = new Relay(10);	//Temporary relay change later
 
+	
 	private static final int kSlotIdx = 0;
 	private static final int kPidIdx = 0;
 	private static final int ktimeout = 10; //number of ms to update closed-loop control
@@ -29,8 +31,7 @@ public class Lift {
 	private static final double kD = 0.0;
 	private static final int RT_AXIS = 3;
 	private static final int LT_AXIS = 2;
-	Relay compressorRelay = new Relay(10);	//Temporary relay change later
-
+	
 
 	int rawPerRev = -13300 - 2347 + 700;  //neg numbers go up in air
 	//int rawPerRev = -8200;  //neg numbers go up in air
@@ -216,12 +217,9 @@ public class Lift {
 			SmartDashboard.putString("Compressor: ", "OFF-button");
 		}
 	}
-	//Basic method to climb down -Aldenis
-	public void climbDown() {
-		liftMotor.set(-1.0);
-	}
 
 
+	/* basic compressor functionality methods	*/
 	public void compressorOn(){
 		this.compressorRelay.set(Relay.Value.kForward);
 		SmartDashboard.putString("compressorStatus", "is on");
@@ -231,23 +229,16 @@ public class Lift {
 		SmartDashboard.putString("compressorStatus", "is off");
 	}
 
-	/* basic compressor functionality methods	
-	public void compressorOn(){
-		this.comp.set(Relay.Value.kForward);
-		SmartDashboard.putString("compressorStatus", "is on");
-	}
-	public void compressorOff(){
-		this.comp.set(Relay.Value.kOff);
-		SmartDashboard.putString("compressorStatus", "is off");
-	}	*/
 	
 	public void checkClimb() { //to shoot up climber at push of a button -@mathew
-		SmartDashboard.putNumber("maniStick getPov", maniStick.getPOV());
+		
 		if(maniStick.getRawButton(RobotMap.CLIMB_UP_BUTTON) == true )	{
 			liftMotor.set(ControlMode.MotionMagic, liftTargetHeight = this.convert(topHeight));
+			SmartDashboard.putString("Climb?", "Raising Up!");
 		}
 		else if (maniStick.getRawButton(RobotMap.CLIMB_DOWN_BUTTON) == true ) {
 			liftMotor.set(ControlMode.MotionMagic, liftTargetHeight = this.convert(bottomHeight));
+			SmartDashboard.putString("Climb?", "Robot in the Air!");
 		}
 	}
 }
