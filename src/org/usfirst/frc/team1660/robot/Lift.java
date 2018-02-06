@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,11 +18,11 @@ public class Lift {
 	private DigitalInput limitLiftTop = new DigitalInput(RobotMap.LIFT_LIMIT_TOP_CHANNEL);
 	private DigitalInput limitLiftBottom = new DigitalInput(RobotMap.LIFT_LIMIT_BOTTOM_CHANNEL);
 
-	
-	Compressor comp = new Compressor(RobotMap.COMPRESSOR_CHANNEL);
-	Relay compressorRelay = new Relay(10);	//Temporary relay change later
 
-	
+	Compressor comp = new Compressor(RobotMap.COMPRESSOR_CHANNEL);
+	DoubleSolenoid dSolenoid = new DoubleSolenoid(1, 2);
+	//Relay compressorRelay = new Relay(10);	//Temporary relay change later
+
 	private static final int kSlotIdx = 0;
 	private static final int kPidIdx = 0;
 	private static final int ktimeout = 10; //number of ms to update closed-loop control
@@ -29,10 +30,12 @@ public class Lift {
 	private static final double kP = 0.3;
 	private static final double kI = 0.0;
 	private static final double kD = 0.0;
-	private static final int RT_AXIS = 3;
-	private static final int LT_AXIS = 2;
-	
 
+	private static boolean isDip = false;
+	boolean enabled = comp.enabled();
+	boolean pressureSwitch = comp.getPressureSwitchValue();
+	double current = comp.getCompressorCurrent();
+	
 	int rawPerRev = -13300 - 2347 + 700;  //neg numbers go up in air
 	//int rawPerRev = -8200;  //neg numbers go up in air
 
@@ -116,10 +119,10 @@ public class Lift {
 
 	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal
 	public void  checkLiftPoints() {
-		/*if (maniStick.getPOV()==RobotMap.LB_BUTTON) {
+		if (maniStick.getPOV()==RobotMap.LB_BUTTON) {
 			manualFlag = false;
 			liftTargetHeight = this.convert(topHeight);
-		}*/
+		}
 		if (maniStick.getPOV()==RobotMap.LIFT_BOTTOM_HEIGHT_POV) {
 			manualFlag = false;
 			liftTargetHeight = this.convert(bottomHeight);
@@ -152,13 +155,13 @@ public class Lift {
 		/*  */
 		Boolean botVal = limitLiftBottom.get();
 		Boolean topVal = limitLiftTop.get();
-		
+
 		SmartDashboard.putBoolean("limit top value", topVal);
 		SmartDashboard.putBoolean("limit bottom value", botVal);
-		
+
 		SmartDashboard.putNumber("lift joy value", liftJoyValue);
 
-		
+
 		if (Math.abs(liftJoyValue) > thresh) {
 			manualFlag = true;
 			if(botVal && liftJoyValue > 0) {
@@ -208,30 +211,37 @@ public class Lift {
 	//method to turn compressor on and off -nana
 	public void checkCompressor(){ 
 
-		if(maniStick.getRawAxis(this.RT_AXIS) > 0.5){
+		if(maniStick.getRawAxis(RobotMap.COMPRESSOR_ON_AXIS) > 0.5){
 			this.compressorOn();
 			SmartDashboard.putString("Compressor: ", "ON-button");
 		}
-		else if(maniStick.getRawAxis(this.LT_AXIS) > 0.5){
+		else if(maniStick.getRawAxis(RobotMap.COMPRESSOR_OFF_AXIS) > 0.5){
 			this.compressorOff();
 			SmartDashboard.putString("Compressor: ", "OFF-button");
 		}
 	}
 
 
-	/* basic compressor functionality methods	*/
-	public void compressorOn(){
-		this.compressorRelay.set(Relay.Value.kForward);
-		SmartDashboard.putString("compressorStatus", "is on");
-	}
-	public void compressorOff(){
-		this.compressorRelay.set(Relay.Value.kOff);
-		SmartDashboard.putString("compressorStatus", "is off");
+	/* methods to flip (up) and dip (down) the mouth -Aldenis */
+	public void flipMouth() {
+		dSolenoid.set(DoubleSolenoid.Value.kForward);
+		isDip = false;
 	}
 
+	public void dipMouth() {
+		dSolenoid.set(DoubleSolenoid.Value.kReverse);	
+		isDip = true;
+	}
 	
-	public void checkClimb() { //to shoot up climber at push of a button -@mathew
-		
+	
+	/* Check if mouth is flipped already? */
+	public boolean isDipped() {
+		return isDip;
+	}
+
+	/* to shoot up climber at push of a button -@mathew */
+	public void checkClimb() { 
+
 		if(maniStick.getRawButton(RobotMap.CLIMB_UP_BUTTON) == true )	{
 			liftMotor.set(ControlMode.MotionMagic, liftTargetHeight = this.convert(topHeight));
 			SmartDashboard.putString("Climb?", "Raising Up!");
@@ -241,4 +251,28 @@ public class Lift {
 			SmartDashboard.putString("Climb?", "Robot in the Air!");
 		}
 	}
+
+
+	/* basic compressor functionality methods	-Aldenis */
+	public void compressorOn(){
+		this.comp.setClosedLoopControl(true);
+		SmartDashboard.putString("compressorStatus", "is on");
+	}
+	public void compressorOff(){
+		this.comp.setClosedLoopControl(false);
+		SmartDashboard.putString("compressorStatus", "is off");
+	}	
+
+	/* basic compressor functionality methods	
+	public void compressorOn(){
+		//this.compressorRelay.set(Relay.Value.kForward);
+		SmartDashboard.putString("compressorStatus", "is on");
+	}
+	public void compressorOff(){
+		//this.compressorRelay.set(Relay.Value.kOff);
+		SmartDashboard.putString("compressorStatus", "is off");
+	}
+
+	 */
+
 }
