@@ -9,8 +9,9 @@ import java.util.TimerTask;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.SensorBase;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SensorBase;
+
 
 public class Lidar extends SensorBase {
 

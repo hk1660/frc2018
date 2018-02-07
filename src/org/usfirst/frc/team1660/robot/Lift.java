@@ -238,6 +238,19 @@ public class Lift {
 	public boolean isDipped() {
 		return isDip;
 	}
+	
+	public void checkDip() {
+		if(maniStick.getRawButton(RobotMap.LT_AXIS) == true) {
+			dipMouth();
+		}
+		
+	}
+	public void checkFlip() {
+		if(maniStick.getRawButton(RobotMap.RT_AXIS) == true) {
+			flipMouth();
+	}
+		}
+
 
 	/* to shoot up climber at push of a button -@mathew */
 	public void checkClimb() { 

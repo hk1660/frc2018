@@ -147,7 +147,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkElevatorLift();
 		
 		liftMani.checkClimb();
-		
+		liftMani.checkDip();
+		liftMani.checkFlip();
 		
 
 		//laser.getDistance();
