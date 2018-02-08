@@ -35,9 +35,9 @@ public class Lift {
 	boolean enabled = comp.enabled();
 	boolean pressureSwitch = comp.getPressureSwitchValue();
 	double current = comp.getCompressorCurrent();
-	
-	int rawPerRev = -13300 - 2347 + 700;  //neg numbers go up in air
-	//int rawPerRev = -8200;  //neg numbers go up in air
+
+	int rawPerRev = 13300 + 2347 - 700;  //pos numbers go up in air
+	//int rawPerRev = 8200;  //pos numbers go up in air
 
 	//height setpoints in inches
 	double bottomHeight = 0.0;
@@ -164,18 +164,21 @@ public class Lift {
 
 		if (Math.abs(liftJoyValue) > thresh) {
 			manualFlag = true;
-			if(botVal && liftJoyValue > 0) {
+			if(botVal && liftJoyValue < 0) {
 				SmartDashboard.putString("Limits", "STOP! Bottom limit has been hit");
 				liftMotor.set(ControlMode.PercentOutput, 0.0);
 				this.setEncoderZero();
 			}
-			else if(topVal && liftJoyValue < 0) {
+			else if(topVal && liftJoyValue > 0) {
 				SmartDashboard.putString("Limits", "STOP! Top limit has been hit");
 				liftMotor.set(ControlMode.PercentOutput, 0.0);
 			}
 			else if(manualFlag == true) {
-				SmartDashboard.putString("Limits", "In between Limits");
 				liftMotor.set(ControlMode.PercentOutput, liftJoyValue);
+			}
+			else if (botVal) {
+				SmartDashboard.putString("Limits", "Bottom limit has been hit");
+				this.setEncoderZero();
 			}
 		} else { 
 			if(manualFlag == true) {
@@ -232,24 +235,24 @@ public class Lift {
 		dSolenoid.set(DoubleSolenoid.Value.kReverse);	
 		isDip = true;
 	}
-	
-	
+
+
 	/* Check if mouth is flipped already? */
 	public boolean isDipped() {
 		return isDip;
 	}
-	
+
 	public void checkDip() {
 		if(maniStick.getRawButton(RobotMap.LT_AXIS) == true) {
 			dipMouth();
 		}
-		
+
 	}
 	public void checkFlip() {
 		if(maniStick.getRawButton(RobotMap.RT_AXIS) == true) {
 			flipMouth();
-	}
 		}
+	}
 
 
 	/* to shoot up climber at push of a button -@mathew */
