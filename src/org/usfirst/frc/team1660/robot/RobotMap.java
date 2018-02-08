@@ -44,22 +44,17 @@ public class RobotMap {
 	public final static int FORWARD_AXIS = RIGHT_Y_AXIS;
 	public final static int STRAFE_AXIS = RIGHT_X_AXIS;
 	public final static int TURN_AXIS = LEFT_X_AXIS;
-
 	public final static int MOVING_Y_AXIS = RIGHT_Y_AXIS;
 	public final static int MOVING_X_AXIS = RIGHT_X_AXIS;
 	public final static int HEADING_Y_AXIS = LEFT_Y_AXIS;
 	public final static int HEADING_X_AXIS = LEFT_X_AXIS;
-
 	public final static int FIELD_DRIVING_FLAG_ON_BUTTON = RB_BUTTON;
 	public final static int FIELD_DRIVING_FLAG_OFF_BUTTON = LB_BUTTON;
 	public final static int RESET_OFFSET_ANGLE_BUTTON = START_BUTTON;
-	
 	public final static int FACE_BACKWARD_POV = POV_DOWN;
 	public final static int FACE_LEFT_POV = POV_LEFT;
 	public final static int FACE_RIGHT_POV = POV_RIGHT;
 	public final static int FACE_FORWARD_POV = POV_UP;
-	
-	
 	
 	
 	//Manip Joystick
@@ -74,8 +69,10 @@ public class RobotMap {
 	public final static int LIFT_TOP_HEIGHT_BUTTON = LB_BUTTON;
 	public final static int CLIMB_UP_BUTTON =  Y_BUTTON;
 	public final static int CLIMB_DOWN_BUTTON =  X_BUTTON;
-	public final static int COMPRESSOR_ON_AXIS = RT_AXIS;
-	public final static int COMPRESSOR_OFF_AXIS = LT_AXIS;
+	public final static int FLIP_AXIS = RT_AXIS;
+	public final static int DIP_AXIS = LT_AXIS;
+	public final static int COMPRESSOR_ON_BUTTON = RB_BUTTON;
+	public final static int COMPRESSOR_OFF_BUTTON = LB_BUTTON;
 	
 
 	// Drive train motor channels

@@ -211,18 +211,18 @@ public class Lift {
 		}
 	}
 
-	//method to turn compressor on and off -nana
+	/*method to turn compressor on and off -nana
 	public void checkCompressor(){ 
 
-		if(maniStick.getRawAxis(RobotMap.COMPRESSOR_ON_AXIS) > 0.5){
+		if(maniStick.getRawButton(RobotMap.COMPRESSOR_ON_BUTTON) == true){
 			this.compressorOn();
 			SmartDashboard.putString("Compressor: ", "ON-button");
 		}
-		else if(maniStick.getRawAxis(RobotMap.COMPRESSOR_OFF_AXIS) > 0.5){
+		else if(maniStick.getRawButton(RobotMap.COMPRESSOR_OFF_BUTTON) == true){
 			this.compressorOff();
 			SmartDashboard.putString("Compressor: ", "OFF-button");
 		}
-	}
+	} */
 
 
 	/* methods to flip (up) and dip (down) the mouth -Aldenis */
@@ -243,13 +243,13 @@ public class Lift {
 	}
 
 	public void checkDip() {
-		if(maniStick.getRawButton(RobotMap.LT_AXIS) == true) {
+		if(maniStick.getRawAxis(RobotMap.DIP_AXIS) > 0.5) {
 			dipMouth();
 		}
 
 	}
 	public void checkFlip() {
-		if(maniStick.getRawButton(RobotMap.RT_AXIS) == true) {
+		if(maniStick.getRawAxis(RobotMap.FLIP_AXIS) > 0.5) {
 			flipMouth();
 		}
 	}
