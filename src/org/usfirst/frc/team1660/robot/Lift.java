@@ -245,12 +245,14 @@ public class Lift {
 	public void checkDip() {
 		if(maniStick.getRawAxis(RobotMap.DIP_AXIS) > 0.5) {
 			dipMouth();
+			SmartDashboard.putString("checkDip", "true");
 		}
 
 	}
 	public void checkFlip() {
 		if(maniStick.getRawAxis(RobotMap.FLIP_AXIS) > 0.5) {
 			flipMouth();
+			SmartDashboard.putString("checkFlip", "true");
 		}
 	}
 
