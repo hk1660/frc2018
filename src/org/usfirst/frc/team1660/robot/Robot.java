@@ -54,8 +54,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		//AUTO_INIT
 
 		// Auto mode strategies setup
-		strategy.addDefault("runGoForwardOnly", new Integer(1));
-		strategy.addObject("runToSwitchSimpleDrop", new Integer(2));
+		strategy.addDefault("goToRowOne", new Integer(1));
+		strategy.addObject("JustCrossAutoline", new Integer(2));
 		strategy.addObject("runToSwitchDecideDirectionDrop", new Integer(3));
 		strategy.addObject("runToScaleDrop", new Integer(4));
 		SmartDashboard.putData("strategy selector", strategy); 
@@ -63,7 +63,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		position.addDefault("Left", new Integer(1));
 		position.addObject("Middle", new Integer(2));
 		position.addObject("Right", new Integer(3));
-		//SmartDashboard.putData("position selector", position); 
+		SmartDashboard.putData("position selector", position); 
 
 		
 		
@@ -111,11 +111,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 				 }else if(currentPosition == 2) {
 					 movingFromPositionTwo(autoTime, angle);}
 				 else {
-					 JustCrossAutoline(autoTime);
+					 JustCrossAutoline(autoTime); //position 1 and r or position 3 and L
 					 
 					  }
-			} else if (currentStrategy == 2){ //based off sensors
-				//runToSwitchSimpleDrop(laser3, currentPosition, rowOne);
+			} else if (currentStrategy == 2){ 
+				JustCrossAutoline(autoTime); 
 			} else if (currentStrategy == 3){
 				//runToSwitchDecideDirectionDrop(laser3, currentPosition, rowTwo);
 			} else if (currentStrategy == 4){
@@ -191,19 +191,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 	
 
-	//AUTO STRATEGY #3: Based on the correct location of our alliance's switch plate, travel in that direction and drop off a powercube
-	public void runToSwitchDecideDirectionDrop(double timeC, int position, char row) {
-		//rendezvousPointAutoline(timeC);
-		if(position ==1 ) {
-		//rendezvousPointTwo(timeC, 90, position, row);}
-		//else if(position ==3) {
-			//rendezvousPointTwo(timeC, -90, position, row);}
-		
-		//if(timeC < 2.0) {
-			//hkdrive.goForwardPercentOutput(.5);
-		}
-		}
-
 	
 
 	//AUTO STRATEGY #4: Go forward to the scale and drop off a cube if its the correct plate
@@ -214,7 +201,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	//QUICK AUTO Methods to get to certain points
 	public void JustCrossAutoline (double timeF) { //this is to get to the auto line assuming position 1 and 3
-		if(timeF < 5.0){
+		if(timeF < 2.75){
 			hkdrive.goForwardPercentOutput(0.5);
 	}
 		else {
@@ -242,16 +229,30 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 		
 	}
+
 	
 	public void goToRowOne (double timeH, int position, int angleDegree) {
-		if(timeH < 5.0) {
+		if(timeH < 2.5) {
 			hkdrive.goForwardPercentOutput(.5);
 		}
-		else if(timeH < 5.5) {
-			hkdrive.autoTurn(90);
-		}else if(timeH < 7.0) {
+		else if(timeH < 2.9) {
+			hkdrive.autoTurn(angleDegree);
+		}else if(timeH < 4.0) {
 			hkdrive.goForwardPercentOutput(.5);
-		}else {
+		}
+		else if(timeH < 4.3) {
+		hkdrive.autoTurn(-angleDegree);}
+		
+		else if(timeH < 5.5) {
+			hkdrive.goForwardPercentOutput(.5);
+		}
+		else if (timeH < 5.8) {
+			hkdrive.autoTurn(-angleDegree);
+		}
+		else if(timeH < 6.2) {
+			hkdrive.goForwardPercentOutput(.5);
+		}
+			else {
 			mouthMani.spit();
 	}
 	}
