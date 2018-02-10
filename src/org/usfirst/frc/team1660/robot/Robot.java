@@ -27,12 +27,15 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	HKDrive hkdrive = new HKDrive(driverStick);
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
-	//Lidar laser = new Lidar();
-	Lidar2 laser2 = new Lidar2();
-	//Lidar3 laser3 = new Lidar3();
+	Lidar laser = new Lidar();
+	//Lidar2 laser2 = new Lidar2();
+	Lidar3 laser3 = new Lidar3();
+	@SuppressWarnings("rawtypes")
 	SendableChooser strategy = new SendableChooser();
+	@SuppressWarnings("rawtypes")
 	SendableChooser position = new SendableChooser();
 	Timer timerAuto = new Timer();
+	private double distance;
 
 	/*----- REQUIRED FRC MAIN METHODS -----*/
 	public void robotInit() {
@@ -41,14 +44,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.liftInit();
 		mouthMani.mouthInit();
 		//laser.initLidar();
-		//laser3.startMeasuring();
-
+		laser3.startMeasuring();
 	}
 
-	
+
 	//AUTONOMOUS MODE
 
 	/* Autonomous Stuff \o/ -Khalil */
+	@SuppressWarnings("unchecked")
 	public void autonomousInit() {
 
 		//AUTO_INIT
@@ -65,13 +68,18 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		position.addObject("Right", new Integer(3));
 		SmartDashboard.putData("position selector", position); 
 
-		
-		
+
+
 	}
-	
-		//AUTO_PERIODIC
+
+	//AUTO_PERIODIC
 	public void autonomousPeriodic() {
-		
+
+		//distance = laser.getDistance();
+		distance = laser3.pidGet();
+		//laser2.getDistance_inches()
+		SmartDashboard.putNumber("lidar value", distance);
+
 		//gets the direction of our alliance plates from FMS (OurSwitch > Scale > OtherSwitch)
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		char rowOne;
@@ -79,7 +87,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		char rowThree;
 		int angle;
 
-	
+
 		timerAuto.start();
 		int currentStrategy = (int) strategy.getSelected();
 		int currentPosition = (int) position.getSelected();
@@ -93,7 +101,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if(rowOne == 'L') {
 			angle = -90;
 		}else angle = 90;
-	
+
 
 		while(isAutonomous() && isEnabled()){ 
 
@@ -105,15 +113,15 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			//deciding on which strategy to run
 			if(currentStrategy == 1) { //based off time movement 
 				if(currentPosition == 1 && rowOne== 'L') {
-				 goToRowOne(autoTime, currentPosition, angle);}
-				 else if(currentPosition ==3 && rowOne =='R') {
-					 goToRowOne(autoTime, currentPosition, angle);
-				 }else if(currentPosition == 2) {
-					 movingFromPositionTwo(autoTime, angle);}
-				 else {
-					 JustCrossAutoline(autoTime); //position 1 and r or position 3 and L
-					 
-					  }
+					goToChoosableSwitch(autoTime, currentPosition, angle);}
+				else if(currentPosition ==3 && rowOne =='R') {
+					goToChoosableSwitch(autoTime, currentPosition, angle);
+				}else if(currentPosition == 2) {
+					movingFromPositionTwo(autoTime, angle);}
+				else {
+					JustCrossAutoline(autoTime); //position 1 and r or position 3 and L
+
+				}
 			} else if (currentStrategy == 2){ 
 				JustCrossAutoline(autoTime); 
 			} else if (currentStrategy == 3){
@@ -145,25 +153,25 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkEncoderZero();
 		liftMani.checkLiftPoints();
 		liftMani.checkElevatorLift();
-		
+
 		liftMani.checkClimb();
 		liftMani.checkDip();
 		liftMani.checkFlip();
-		
 
-		//laser.getDistance();
-		//laser3.getDistance();
-		SmartDashboard.putNumber("lidar value", laser2.getDistance_inches());
+		//distance = laser.getDistance();
+		distance = laser3.pidGet();
+		//laser2.getDistance_inches()
+		SmartDashboard.putNumber("lidar value", distance);	
 
 	}
 
 
 	/* public void something(){
-		
+
 	}
-*/
+	 */
 	/*----- AUTONOMOUS STRATEGY METHODS -----*/
-	
+
 	//AUTO STRATEGY #1: Go forward for 2 seconds and cross the autoline -Marlahna
 	public void runGoForwardOnly(double timeA, int position ) {
 
@@ -171,7 +179,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if(timeA < 2.0){
 			hkdrive.goForwardPercentOutput(0.5);
 		}
-		
+
 		//stop
 		else {
 			hkdrive.stop();
@@ -185,13 +193,13 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.goForwardPercentOutput(0.5);
 			hkdrive.autoTurn(90.0);}
 		else { hkdrive.stop();
-			mouthMani.spit();
+		mouthMani.spit();
 		}
 
-		}
-	
+	}
 
-	
+
+
 
 	//AUTO STRATEGY #4: Go forward to the scale and drop off a cube if its the correct plate
 	public void runToScaleDrop(double timeD, int position, char row) {
@@ -203,7 +211,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	public void JustCrossAutoline (double timeF) { //this is to get to the auto line assuming position 1 and 3
 		if(timeF < 2.75){
 			hkdrive.goForwardPercentOutput(0.5);
-	}
+		}
 		else {
 			hkdrive.stop();
 		}
@@ -227,11 +235,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.stop();
 			mouthMani.spit();
 		}
-		
+
 	}
 
-	
-	public void goToRowOne (double timeH, int position, int angleDegree) {
+	/*  What ???? @marlahna */
+	public void goToChoosableSwitch (double timeH, int position, int angleDegree) {
 		if(timeH < 2.5) {
 			hkdrive.goForwardPercentOutput(.5);
 		}
@@ -241,8 +249,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.goForwardPercentOutput(.5);
 		}
 		else if(timeH < 4.3) {
-		hkdrive.autoTurn(-angleDegree);}
-		
+			hkdrive.autoTurn(-angleDegree);}
+
 		else if(timeH < 5.5) {
 			hkdrive.goForwardPercentOutput(.5);
 		}
@@ -252,13 +260,34 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		else if(timeH < 6.2) {
 			hkdrive.goForwardPercentOutput(.5);
 		}
-			else {
+		else {
 			mouthMani.spit();
+		}
 	}
-	}
-	
 
+/*  j
+public void goToChoosableSwitchLidar (double timeH, int position, int angleDegree) {
+	if(timeH < 2.5 && distance < 60.0) {
+		hkdrive.goForwardPercentOutput(.5);
+	}
+	else if(timeH < 2.9) {
+		hkdrive.autoTurn(angleDegree);
+	}else if(timeH < 4.0) {
+		hkdrive.goForwardPercentOutput(.5);
+	}
+	else if(timeH < 4.3) {
+		hkdrive.autoTurn(-angleDegree);}
+
+	else if(timeH < 5.5) {
+		hkdrive.goForwardPercentOutput(.5);
+	}
+	else if (timeH < 5.8) {
+		hkdrive.autoTurn(-angleDegree);
+	}
+	else if(timeH < 6.2) {
+		hkdrive.goForwardPercentOutput(.5);
+	}
+	else {
+		mouthMani.spit();
+	}	*/
 }
-	
-	
-	

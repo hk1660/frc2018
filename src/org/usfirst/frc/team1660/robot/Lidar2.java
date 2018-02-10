@@ -74,8 +74,8 @@ public class Lidar2 {
 	private static final int UPDATE_PERIOD = 20; // in milliseconds
 	private static final int RETRY_COUNT = 50;
 
-	Port port = I2C.Port.kMXP;
-	//Port port = I2C.Port.kOnboard;
+	//Port port = I2C.Port.kMXP;
+	Port port = I2C.Port.kOnboard;
 
 
 	public Lidar2() {
