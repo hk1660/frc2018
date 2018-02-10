@@ -95,6 +95,7 @@ public class Lift {
 		if(maniStick.getRawButton(RobotMap.ZERO_ENCODER_BUTTON)==true) {
 			this.setEncoderZero();
 		}
+	
 
 	}
 
@@ -129,6 +130,7 @@ public class Lift {
 		}
 		if (maniStick.getPOV()==RobotMap.LIFT_SWITCH_HEIGHT_POV) {
 			manualFlag = false;
+			//liftMotor.set(ControlMode.Pe, switchHeight);
 			liftTargetHeight = this.convert(switchHeight);
 		}
 		if (maniStick.getPOV()==RobotMap.LIFT_EXCHANGE_HEIGHT_POV) {
