@@ -36,8 +36,8 @@ public class Lift {
 	boolean pressureSwitch = comp.getPressureSwitchValue();
 	double current = comp.getCompressorCurrent();
 
-	int rawPerRev = 13300 + 2347 - 700;  //pos numbers go up in air
-	//int rawPerRev = 8200;  //pos numbers go up in air
+	//int rawPerRev = 13300 + 2347 - 700;  //pos numbers go up in air
+	int rawPerRev = 8200;  //pos numbers go up in air
 
 	//height setpoints in inches
 	double bottomHeight = 0.0;
@@ -95,7 +95,7 @@ public class Lift {
 		if(maniStick.getRawButton(RobotMap.ZERO_ENCODER_BUTTON)==true) {
 			this.setEncoderZero();
 		}
-	
+
 
 	}
 
@@ -120,30 +120,40 @@ public class Lift {
 
 	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal
 	public void  checkLiftPoints() {
+		
+		/*
 		if (maniStick.getPOV()==RobotMap.LB_BUTTON) {
 			manualFlag = false;
 			liftTargetHeight = this.convert(topHeight);
 		}
-		if (maniStick.getPOV()==RobotMap.LIFT_BOTTOM_HEIGHT_POV) {
+		*/
+		
+		int povVal = maniStick.getPOV();
+		
+		if (povVal == (int)(RobotMap.LIFT_BOTTOM_HEIGHT_POV)) {
 			manualFlag = false;
+			SmartDashboard.putString("POV", "touching");
 			liftTargetHeight = this.convert(bottomHeight);
 		}
-		if (maniStick.getPOV()==RobotMap.LIFT_SWITCH_HEIGHT_POV) {
+		if (povVal==(int)RobotMap.LIFT_SWITCH_HEIGHT_POV) {
 			manualFlag = false;
-			//liftMotor.set(ControlMode.Pe, switchHeight);
+			SmartDashboard.putString("POV", "touching");
 			liftTargetHeight = this.convert(switchHeight);
 		}
-		if (maniStick.getPOV()==RobotMap.LIFT_EXCHANGE_HEIGHT_POV) {
+		if (povVal==(int)RobotMap.LIFT_EXCHANGE_HEIGHT_POV) {
 			manualFlag = false;
+			SmartDashboard.putString("POV", "touching");
 			liftTargetHeight = this.convert(exchangeHeight);
 		}
-		if (maniStick.getPOV()==RobotMap.LIFT_TIER2_HEIGHT_POV) {
+		if (povVal==(int)RobotMap.LIFT_TIER2_HEIGHT_POV) {
 			manualFlag = false;
+			SmartDashboard.putString("POV", "touching");
 			liftTargetHeight = this.convert(tier2Height);
 		}		
 		if(manualFlag == false) {
 			elevatorLift(liftTargetHeight);
 		}
+		SmartDashboard.putNumber("Lift POV?", povVal);
 		SmartDashboard.putNumber("LiftTargetHeight", liftTargetHeight);
 	}
 
@@ -190,6 +200,7 @@ public class Lift {
 		}
 
 		SmartDashboard.putBoolean("liftManualFlag", manualFlag);
+		elevatorLift(liftJoyValue);
 	}
 
 
@@ -200,17 +211,28 @@ public class Lift {
 		SmartDashboard.putNumber("setHeight", setHeight);
 		Boolean botVal = limitLiftBottom.get();
 		Boolean topVal = limitLiftTop.get();
-		if(botVal) {
+		//double joy = maniStick.getRawAxis(RobotMap.LIFT_AXIS);
+
+		if(botVal ) {
 			SmartDashboard.putString("Limits", "STOP! Bottom limit has been hit");
-			liftMotor.set(ControlMode.PercentOutput, 0.0);
+			//liftMotor.set(ControlMode.PercentOutput, 0.0);
+			this.setEncoderZero();
 		}
 		else if(topVal) {
 			SmartDashboard.putString("Limits", "STOP! Top limit has been hit");
-			liftMotor.set(ControlMode.PercentOutput, 0.0);
+			//liftMotor.set(ControlMode.PercentOutput, 0.0);
 		}
-		else if(manualFlag == true) {
-			liftMotor.set(ControlMode.MotionMagic, setHeight);
+
+
+		if(manualFlag == true) {  //when touching the joystick
+			double joyVal = setHeight;
+			liftMotor.set(ControlMode.PercentOutput,joyVal);
 		}
+		else if (manualFlag == false) {//when touching the POV or AUTO
+			liftMotor.set(ControlMode.MotionMagic,setHeight);
+		}
+
+
 	}
 
 	/*method to turn compressor on and off -nana
