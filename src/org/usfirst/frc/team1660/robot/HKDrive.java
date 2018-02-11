@@ -136,7 +136,6 @@ public class HKDrive implements PIDOutput {
 		SmartDashboard.putNumber("strafeParam",	strafeParameter);
 		SmartDashboard.putNumber("turnParam",	turnParameter);
 		SmartDashboard.putNumber("angleParam",	angleParameter);
-
 		SmartDashboard.putBoolean("AutoTurning?", autoTurnFlag);
 
 	}
