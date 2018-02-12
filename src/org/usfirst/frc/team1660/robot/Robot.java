@@ -74,10 +74,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//AUTO_PERIODIC
 	public void autonomousPeriodic() {
 
-		//distance = laser.getDistance();
-		//distance = laser2.getDistance_inches();
-		distance = laser3.pidGet();
-		SmartDashboard.putNumber("lidar value", distance);
+		
 
 		timerAuto.start();
 		int currentStrategy = (int) strategy.getSelected();
@@ -106,6 +103,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			//get current Auto time for SmartDash
 			double autoTime = timerAuto.get();
 			SmartDashboard.putNumber("autoTime",autoTime);
+			
+			//distance = laser.getDistance();
+			//distance = laser2.getDistance_inches();
+			distance = laser3.pidGet();
+			SmartDashboard.putNumber("lidar value", distance);
 
 
 			//deciding on which strategy to run
@@ -176,18 +178,21 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 
 	//AUTO STRATEGY #3: Staring in position 2, move to the correct switch plate and drop off the powercube -Marlahna
+	//Rickeya,Jocelyn,Mohamed C 
 	public void smartSwitchStrategy(double timeC, double angleToPlate) {
 
 		double forwardSpeed = 0.5;
-		double startPause = 1.0;
-		double firstForward = 1.0 + startPause;
-		double firstTurn = 0.5 + firstForward;
-		double secondForward = 1.0 + firstTurn;
-		double secondTurn = 0.5 + secondForward;
-		double forwardToSwitch = 2.0 + secondTurn;
+
+		double startPause = 1.0;						//1.0	
+		double firstForward = 1.0 + startPause;			//2.0
+		double firstTurn = 0.5 + firstForward;			//2.5
+		double secondForward = 1.0 + firstTurn;			//3.5
+		double secondTurn = 0.5 + secondForward;		//4.0
+		double forwardToSwitch = 2.0 + secondTurn;		//6.0
 
 		if(timeC < startPause){
-		
+			//start with mouth "Flip"
+			liftMani.flipMouth();
 		}else if (timeC < firstForward) {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
 		}else if(timeC < firstTurn) {
@@ -200,6 +205,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
 		}else {
 			hkdrive.stop();
+			//bring the cube "up"
+			liftMani.elevatorLift(liftMani.switchHeight);
+			//bring the mouth "Dip"
+			liftMani.dipMouth();
+			
 			mouthMani.spit();
 		}
 
@@ -215,21 +225,28 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double secondForward = 1.0 + firstTurn;
 		double secondTurn = 0.5 + secondForward;
 		double forwardToSwitch = 2.0 + secondTurn;
+		
+		double    forward         = 30.0;
+		double    afterFirstTurn  = 48.0;	
+		double    afterSecondTurn = 73.0;
+
 
 		if (distance < 60.0 && timeD < firstForward) {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
 		}else if(timeD < firstTurn) {
 			hkdrive.autoTurn(angleToPlate);		
-		}else if(timeD < secondForward) {
+		}else if(timeD < secondForward &&  distance < afterFirstTurn) {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
 		}else if(timeD < secondTurn) {
 			hkdrive.autoTurn(-angleToPlate);
-		}else if(timeD < forwardToSwitch) {
+		}else if(timeD < forwardToSwitch && distance < afterSecondTurn) {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
+		}else if (timeD < 15.0){
+			mouthMani.spit();
 		}else {
 			hkdrive.stop();
-			mouthMani.spit();
 		}
+
 	}
 
 
