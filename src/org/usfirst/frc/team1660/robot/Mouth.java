@@ -14,7 +14,7 @@ public class Mouth {
 	private DigitalInput limitSwitchMouth;
 	private boolean isUpFlag;
 	
-	double speed = 0.8;
+	double mouthSpeed = 0.8;
 	
 	public Mouth(Joystick maniStick) {
 		this.maniStick = maniStick;
@@ -30,14 +30,14 @@ public class Mouth {
 
 	// Basic method for robot to spit out a PowerCube -Kwaku Boafo
 	public void spit(){
-		mouthMotorLeft.set(speed);
-		mouthMotorRight.set(-speed);
+		mouthMotorLeft.set(mouthSpeed);
+		mouthMotorRight.set(-mouthSpeed);
 	}
 	
 	//eat method by Kwaku, does takes in the power cube  
 	public void eat(){
-	  mouthMotorLeft.set(-speed);
-	  mouthMotorRight.set(speed);
+	  mouthMotorLeft.set(-mouthSpeed);
+	  mouthMotorRight.set(mouthSpeed);
 	}
 	
 	//not moving method by Mal, method to hold the box
