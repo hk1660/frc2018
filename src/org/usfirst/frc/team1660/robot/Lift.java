@@ -18,6 +18,12 @@ public class Lift {
 	private DigitalInput limitLiftTop = new DigitalInput(RobotMap.LIFT_LIMIT_TOP_CHANNEL);
 	private DigitalInput limitLiftBottom = new DigitalInput(RobotMap.LIFT_LIMIT_BOTTOM_CHANNEL);
 
+	/*
+	private static final int manualLiftMode = 1;
+	private static final int manualLiftMode = 2;
+	private static final int manualLiftMode = 3;
+	 */
+
 
 	Compressor comp = new Compressor(RobotMap.COMPRESSOR_CHANNEL);
 	DoubleSolenoid dSolenoid = new DoubleSolenoid(1, 2);
@@ -120,16 +126,16 @@ public class Lift {
 
 	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal
 	public void  checkLiftPoints() {
-		
+
 		/*
 		if (maniStick.getPOV()==RobotMap.LB_BUTTON) {
 			manualFlag = false;
 			liftTargetHeight = this.convert(topHeight);
 		}
-		*/
-		
+		 */
+
 		int povVal = maniStick.getPOV();
-		
+
 		if (povVal == (int)(RobotMap.LIFT_BOTTOM_HEIGHT_POV)) {
 			manualFlag = false;
 			SmartDashboard.putString("POV", "touching");
@@ -157,46 +163,58 @@ public class Lift {
 		SmartDashboard.putNumber("LiftTargetHeight", liftTargetHeight);
 	}
 
+	/* to shoot up climber at push of a button -@mathew */
+	public void checkClimb() { 
+
+		if(maniStick.getRawButton(RobotMap.CLIMB_UP_BUTTON) == true )	{
+			manualFlag = false;
+			SmartDashboard.putString("Climb?", "Raising Up!");
+			liftTargetHeight = this.convert(topHeight);			
+		}
+		else if (maniStick.getRawButton(RobotMap.CLIMB_DOWN_BUTTON) == true ) {
+			manualFlag = false;
+			SmartDashboard.putString("Climb?", "Robot in the Air!");
+			liftTargetHeight = this.convert(bottomHeight);
+		}
+			
+	}
+
+
+
+
 	//Method to move the elevator up & down- mathew & marlahna
-	public void checkElevatorLift() {
+	public void checkManualLift() {
 
 		double thresh = 0.1;
 		double liftJoyValue = -maniStick.getRawAxis(RobotMap.LIFT_AXIS); //joystic val negative when go up we switched 
+		boolean botVal = limitLiftBottom.get();
+		boolean topVal = limitLiftTop.get();
 		SmartDashboard.putNumber("Lift Axis", liftJoyValue);
-
-		/*  */
-		Boolean botVal = limitLiftBottom.get();
-		Boolean topVal = limitLiftTop.get();
-
 		SmartDashboard.putBoolean("limit top value", topVal);
 		SmartDashboard.putBoolean("limit bottom value", botVal);
 
-		SmartDashboard.putNumber("lift joy value", liftJoyValue);
+		//re-zero lift if you hit the bottom
+		if (botVal) {
+			SmartDashboard.putString("Limits", "Bottom limit has been hit");
+			this.setEncoderZero();
+		}
 
-
+		//check motion if the joystick axis is being pushed
 		if (Math.abs(liftJoyValue) > thresh) {
 			manualFlag = true;
-			if(botVal && liftJoyValue < 0) {
+			if(botVal && liftJoyValue < 0) {	//don't move down if at bottom
 				SmartDashboard.putString("Limits", "STOP! Bottom limit has been hit");
 				liftMotor.set(ControlMode.PercentOutput, 0.0);
-				this.setEncoderZero();
-			}
-			else if(topVal && liftJoyValue > 0) {
+			} else if(topVal && liftJoyValue > 0) {		//don't move up if at top
 				SmartDashboard.putString("Limits", "STOP! Top limit has been hit");
 				liftMotor.set(ControlMode.PercentOutput, 0.0);
-			}
-			else if(manualFlag == true) {
+			} else {							//move up & down with joystick axis
 				liftMotor.set(ControlMode.PercentOutput, liftJoyValue);
 			}
-			else if (botVal) {
-				SmartDashboard.putString("Limits", "Bottom limit has been hit");
-				this.setEncoderZero();
-			}
-		} else { 
-			if(manualFlag == true) {
-				liftMotor.set(ControlMode.PercentOutput, 0.0);
-			}
 
+		//shut off lift when you stop pushing the axis
+		} else if(manualFlag == true) { //turn off motor if stopped pushing
+			liftMotor.set(ControlMode.PercentOutput, 0.0);
 		}
 
 		SmartDashboard.putBoolean("liftManualFlag", manualFlag);
@@ -281,18 +299,7 @@ public class Lift {
 	}
 
 
-	/* to shoot up climber at push of a button -@mathew */
-	public void checkClimb() { 
 
-		if(maniStick.getRawButton(RobotMap.CLIMB_UP_BUTTON) == true )	{
-			liftMotor.set(ControlMode.MotionMagic, liftTargetHeight = this.convert(topHeight));
-			SmartDashboard.putString("Climb?", "Raising Up!");
-		}
-		else if (maniStick.getRawButton(RobotMap.CLIMB_DOWN_BUTTON) == true ) {
-			liftMotor.set(ControlMode.MotionMagic, liftTargetHeight = this.convert(bottomHeight));
-			SmartDashboard.putString("Climb?", "Robot in the Air!");
-		}
-	}
 
 
 	/* basic compressor functionality methods	-Aldenis */

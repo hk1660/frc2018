@@ -27,7 +27,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	HKDrive hkdrive = new HKDrive(driverStick);
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
-	Lidar laser = new Lidar();
+	//Lidar laser = new Lidar();
 	//Lidar2 laser2 = new Lidar2();
 	Lidar3 laser3 = new Lidar3();
 	@SuppressWarnings("rawtypes")
@@ -57,10 +57,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		//AUTO_INIT
 
 		// Auto mode strategies setup
-		strategy.addDefault("goToRowOne", new Integer(1));
-		strategy.addObject("JustCrossAutoline", new Integer(2));
-		strategy.addObject("runToSwitchDecideDirectionDrop", new Integer(3));
-		strategy.addObject("runToScaleDrop", new Integer(4));
+		strategy.addDefault("justCrossAutoLineStrategy", new Integer(1));
+		strategy.addObject("simpleSwitchStrategy", new Integer(2));
+		strategy.addObject("smartSwitchStrategy", new Integer(3));
+		strategy.addObject("smartSwitchLidarStrategy", new Integer(4));
+		strategy.addObject("simpleScaleStrategy", new Integer(5));
 		SmartDashboard.putData("strategy selector", strategy); 
 
 		position.addDefault("Left", new Integer(1));
@@ -68,39 +69,36 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		position.addObject("Right", new Integer(3));
 		SmartDashboard.putData("position selector", position); 
 
-
-
 	}
 
 	//AUTO_PERIODIC
 	public void autonomousPeriodic() {
 
 		//distance = laser.getDistance();
+		//distance = laser2.getDistance_inches();
 		distance = laser3.pidGet();
-		//laser2.getDistance_inches()
 		SmartDashboard.putNumber("lidar value", distance);
-
-		//gets the direction of our alliance plates from FMS (OurSwitch > Scale > OtherSwitch)
-		String gameData = DriverStation.getInstance().getGameSpecificMessage();
-		char rowOne;
-		char rowTwo;
-		char rowThree;
-		int angle;
-
 
 		timerAuto.start();
 		int currentStrategy = (int) strategy.getSelected();
 		int currentPosition = (int) position.getSelected();
 		hkdrive.setOffsetAngle();
 
+		//gets the direction of our alliance plates from FMS (OurSwitch > Scale > OtherSwitch)
+		char ourSwitchPlateSide;
+		char scalePlateSide;
+		char otherSwitchPlateSide;
+		int angleToOurSwitchPlate;
+		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 
-		//stores the plate colors
-		rowOne = gameData.charAt(0);
-		rowTwo = gameData.charAt(1);
-		rowThree = gameData.charAt(2);
-		if(rowOne == 'L') {
-			angle = -90;
-		}else angle = 90;
+		ourSwitchPlateSide = gameData.charAt(0);
+		scalePlateSide = gameData.charAt(1);
+		otherSwitchPlateSide = gameData.charAt(2);
+		if(ourSwitchPlateSide == 'L') {
+			angleToOurSwitchPlate = -90;
+		}else {
+			angleToOurSwitchPlate = 90;
+		}
 
 
 		while(isAutonomous() && isEnabled()){ 
@@ -111,24 +109,18 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 
 			//deciding on which strategy to run
-			if(currentStrategy == 1) { //based off time movement 
-				if(currentPosition == 1 && rowOne== 'L') {
-					goToChoosableSwitch(autoTime, currentPosition, angle);}
-				else if(currentPosition ==3 && rowOne =='R') {
-					goToChoosableSwitch(autoTime, currentPosition, angle);
-				}else if(currentPosition == 2) {
-					movingFromPositionTwo(autoTime, angle);}
-				else {
-					JustCrossAutoline(autoTime); //position 1 and r or position 3 and L
-
-				}
-			} else if (currentStrategy == 2){ 
-				JustCrossAutoline(autoTime); 
-			} else if (currentStrategy == 3){
-				//runToSwitchDecideDirectionDrop(laser3, currentPosition, rowTwo);
-			} else if (currentStrategy == 4){
-				//runToScaleDrop(laser3, currentPosition, rowTwo);
+			if(currentStrategy == 1) { 
+				this.justCrossAutolineStrategy(autoTime);
+			} else if (currentStrategy == 2) {
+				this.simpleSwitchStrategy(autoTime, angleToOurSwitchPlate, currentPosition);
+			} else if (currentStrategy == 3) {
+				this.smartSwitchStrategy(autoTime, angleToOurSwitchPlate);
+			} else if (currentStrategy == 4) {
+				this.smartSwitchLidarStrategy(autoTime, angleToOurSwitchPlate);
+			} else if (currentStrategy == 5) {
+				this.simpleScaleStrategy(autoTime, angleToOurSwitchPlate, currentPosition);
 			}
+
 
 		}
 
@@ -151,143 +143,104 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		liftMani.getEncoder();
 		liftMani.checkEncoderZero();
+		liftMani.checkManualLift();
 		liftMani.checkLiftPoints();
-		liftMani.checkElevatorLift();
-
 		liftMani.checkClimb();
 		liftMani.checkDip();
 		liftMani.checkFlip();
 
 		//distance = laser.getDistance();
+		//distance = laser2.getDistance_inches();
 		distance = laser3.pidGet();
-		//laser2.getDistance_inches()
 		SmartDashboard.putNumber("lidar value", distance);	
 
 	}
 
 
-	/* public void something(){
-
-	}
-	 */
 	/*----- AUTONOMOUS STRATEGY METHODS -----*/
 
-	//AUTO STRATEGY #1: Go forward for 2 seconds and cross the autoline -Marlahna
-	public void runGoForwardOnly(double timeA, int position ) {
-
-		//go forward for times 0.0 - 2.0
-		if(timeA < 2.0){
+	//QUICK AUTO STRATEGY #1: this is to get to the auto line assuming position 1 or 3 -Marlahna
+	public void justCrossAutolineStrategy (double timeA) { 
+		if(timeA < 2.75){
 			hkdrive.goForwardPercentOutput(0.5);
 		}
-
-		//stop
 		else {
 			hkdrive.stop();
 		}
 	}
+
 
 	//AUTO STRATEGY #2: Go forward to a particular plate of our switch, drop off the powercube if its the correct one -Marlahna
-	public void runToSwitchSimpleDrop(double timeB, int position, char row) {
-		//rendezvousPointAutoline(timeB);
-		if(timeB < 8.0){
-			hkdrive.goForwardPercentOutput(0.5);
-			hkdrive.autoTurn(90.0);}
-		else { hkdrive.stop();
-		mouthMani.spit();
-		}
+	public void simpleSwitchStrategy(double timeB, double angleToPlate, int position) {
 
 	}
 
+	//AUTO STRATEGY #3: Staring in position 2, move to the correct switch plate and drop off the powercube -Marlahna
+	public void smartSwitchStrategy(double timeC, double angleToPlate) {
 
+		double forwardSpeed = 0.5;
+		double startPause = 1.0;
+		double firstForward = 1.0 + startPause;
+		double firstTurn = 0.5 + firstForward;
+		double secondForward = 1.0 + firstTurn;
+		double secondTurn = 0.5 + secondForward;
+		double forwardToSwitch = 2.0 + secondTurn;
 
-
-	//AUTO STRATEGY #4: Go forward to the scale and drop off a cube if its the correct plate
-	public void runToScaleDrop(double timeD, int position, char row) {
-
-
-	}
-
-	//QUICK AUTO Methods to get to certain points
-	public void JustCrossAutoline (double timeF) { //this is to get to the auto line assuming position 1 and 3
-		if(timeF < 2.75){
-			hkdrive.goForwardPercentOutput(0.5);
-		}
-		else {
-			hkdrive.stop();
-		}
-	}
-	public void movingFromPositionTwo (double timeG, int angleDegree) { //assuming in position 2 
-		if (timeG < 1.0) {
-			hkdrive.goForwardPercentOutput(.5);
-		} else if(timeG <1.5) {
-			hkdrive.autoTurn(angleDegree);		
-		}else if(timeG < 2.5) {
-			hkdrive.goForwardPercentOutput(.5);
-		}else if(timeG < 3.0) {
-			hkdrive.autoTurn(-angleDegree);
-		}else if(timeG < 5.0) {
-			hkdrive.goForwardPercentOutput(.5);
-		}else if(timeG <5.5) {
-			hkdrive.autoTurn(angleDegree);
-		}else if (timeG < 7)
-			hkdrive.goForwardPercentOutput(.5);
-		else {
+		if(timeC < startPause){
+		
+		}else if (timeC < firstForward) {
+			hkdrive.goForwardPercentOutput(forwardSpeed);
+		}else if(timeC < firstTurn) {
+			hkdrive.autoTurn(angleToPlate);		
+		}else if(timeC < secondForward) {
+			hkdrive.goForwardPercentOutput(forwardSpeed);
+		}else if(timeC < secondTurn) {
+			hkdrive.autoTurn(-angleToPlate);
+		}else if(timeC < forwardToSwitch) {
+			hkdrive.goForwardPercentOutput(forwardSpeed);
+		}else {
 			hkdrive.stop();
 			mouthMani.spit();
 		}
 
 	}
 
-	/*  What ???? @marlahna */
-	public void goToChoosableSwitch (double timeH, int position, int angleDegree) {
-		if(timeH < 2.5) {
-			hkdrive.goForwardPercentOutput(.5);
-		}
-		else if(timeH < 2.9) {
-			hkdrive.autoTurn(angleDegree);
-		}else if(timeH < 4.0) {
-			hkdrive.goForwardPercentOutput(.5);
-		}
-		else if(timeH < 4.3) {
-			hkdrive.autoTurn(-angleDegree);}
+	//AUTO STRATEGY #4: Starting in position 2, move to the correct switch plate and drop off the powercube -Marlahna
+	public void smartSwitchLidarStrategy(double timeD, double angleToPlate) {
 
-		else if(timeH < 5.5) {
-			hkdrive.goForwardPercentOutput(.5);
-		}
-		else if (timeH < 5.8) {
-			hkdrive.autoTurn(-angleDegree);
-		}
-		else if(timeH < 6.2) {
-			hkdrive.goForwardPercentOutput(.5);
-		}
-		else {
+		double forwardSpeed = 0.5;
+		double startPause = 1.0;
+		double firstForward = 1.0 + startPause;
+		double firstTurn = 0.5 + firstForward;
+		double secondForward = 1.0 + firstTurn;
+		double secondTurn = 0.5 + secondForward;
+		double forwardToSwitch = 2.0 + secondTurn;
+
+		if (distance < 60.0 && timeD < firstForward) {
+			hkdrive.goForwardPercentOutput(forwardSpeed);
+		}else if(timeD < firstTurn) {
+			hkdrive.autoTurn(angleToPlate);		
+		}else if(timeD < secondForward) {
+			hkdrive.goForwardPercentOutput(forwardSpeed);
+		}else if(timeD < secondTurn) {
+			hkdrive.autoTurn(-angleToPlate);
+		}else if(timeD < forwardToSwitch) {
+			hkdrive.goForwardPercentOutput(forwardSpeed);
+		}else {
+			hkdrive.stop();
 			mouthMani.spit();
 		}
 	}
 
-/*  j
-public void goToChoosableSwitchLidar (double timeH, int position, int angleDegree) {
-	if(timeH < 2.5 && distance < 60.0) {
-		hkdrive.goForwardPercentOutput(.5);
-	}
-	else if(timeH < 2.9) {
-		hkdrive.autoTurn(angleDegree);
-	}else if(timeH < 4.0) {
-		hkdrive.goForwardPercentOutput(.5);
-	}
-	else if(timeH < 4.3) {
-		hkdrive.autoTurn(-angleDegree);}
 
-	else if(timeH < 5.5) {
-		hkdrive.goForwardPercentOutput(.5);
+	//AUTO STRATEGY #5: Go forward to the scale and drop off a cube if its the correct plate
+	public void simpleScaleStrategy(double timeE, double angleToPlate, int position) {
+
+
 	}
-	else if (timeH < 5.8) {
-		hkdrive.autoTurn(-angleDegree);
-	}
-	else if(timeH < 6.2) {
-		hkdrive.goForwardPercentOutput(.5);
-	}
-	else {
-		mouthMani.spit();
-	}	*/
+
+
+
+
 }
+
