@@ -122,7 +122,6 @@ public class HKDrive implements PIDOutput {
 		double forwardJoy = -squareIt(driverStick.getRawAxis(RobotMap.FORWARD_AXIS));// up and down on left thumb stick?
 		double turnJoy = squareIt(driverStick.getRawAxis(RobotMap.TURN_AXIS));// right and left on right thumb stick
 
-
 		if(autoTurnFlag == false && fieldDrivingFlag){
 
 			strafeParameter = strafeJoy;

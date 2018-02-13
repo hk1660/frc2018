@@ -35,9 +35,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	@SuppressWarnings("rawtypes")
 	SendableChooser position = new SendableChooser();
 	Timer timerAuto = new Timer();
-	private int rawDistance;
-	private int distanceMoved = 0;
-	private int prevDistance = 0;
+	private double inchDistance;
+	private double distanceMoved = 0;
+	private double prevDistance = 0;
 
 	double angleToOurSwitchPlate;
 	int currentStrategy;
@@ -252,25 +252,28 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	public void updateLidarDistance(){
 		//distance = laser.getDistance();
 		//distance = laser2.getDistance_inches();
-		rawDistance = (int)laser3.pidGet();
-		SmartDashboard.putNumber("lidar value", rawDistance);
+		inchDistance = laser3.pidGet();
+		SmartDashboard.putNumber("lidar value", inchDistance);
 	}
 
 	public void resetDistanceMoved(){
 		//rawDistance = laser3.pidGet();
 		//prevDistance = rawDistance;
-		distanceMoved = 0;
+		distanceMoved = 0.0;
 	}
 
 	public void updateDistanceMoved(){
-
-		if(distanceMoved == 0){
-			prevDistance = rawDistance;
+		
+		if(distanceMoved == 0.0){
+			prevDistance = inchDistance;
 		}
-		else{
-			distanceMoved += (prevDistance - rawDistance);
-			prevDistance = rawDistance;
-		}
+		
+		double smallMove = prevDistance - inchDistance;
+		distanceMoved += smallMove;
+		prevDistance = inchDistance;
+		updateLidarDistance();
+		SmartDashboard.putNumber("distanceMoved", distanceMoved);
+				
 	}
 
 

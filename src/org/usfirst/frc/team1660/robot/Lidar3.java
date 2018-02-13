@@ -42,6 +42,9 @@ public class Lidar3 implements PIDSource {
 		public int getDistance() {
 			return readShort(0x8f);
 		}
+		public double getDistanceInches() {
+			return getDistance()*0.391 -6.46;  //formula from Lidar testing on our robot
+		}
 
 		private int writeRegister(int address, int value) {
 			m_buffer.put(0, (byte) address);
@@ -71,6 +74,6 @@ public class Lidar3 implements PIDSource {
 
 		@Override
 		public double pidGet() {
-			return getDistance();
+			return getDistanceInches();
 		}
 	};
