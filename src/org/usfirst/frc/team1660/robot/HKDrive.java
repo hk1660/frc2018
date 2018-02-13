@@ -66,6 +66,10 @@ public class HKDrive implements PIDOutput {
 	//HKDrive init method
 	public void driveInit() {
 
+		SmartDashboard.putNumber("displacementX",	navx.getDisplacementX());
+		SmartDashboard.putNumber("displacementY",	navx.getDisplacementY());
+		SmartDashboard.putNumber("displacementZ",	navx.getDisplacementZ());
+		
 		//Drivetrain Initializations
 		frontLeft = new WPI_TalonSRX(RobotMap.DRIVE_FRONT_LEFT_CHANNEL);
 		backLeft = new WPI_TalonSRX(RobotMap.DRIVE_BACK_LEFT_CHANNEL);
@@ -99,6 +103,16 @@ public class HKDrive implements PIDOutput {
 
 	public void drive() {
 		mecDrive.driveCartesian(strafeParameter, forwardParameter, turnParameter, angleParameter);
+	}
+	
+	//method to drive straight in AUTO
+	public void autoDriveStraight(double fwdSpeed){
+		strafeParameter = 0.0;
+		forwardParameter = fwdSpeed;
+		turnParameter = 0.0;
+		angleParameter = navx.getAngle();
+		
+		drive();
 	}
 
 	//method to check joysticks for driving the robot -Nana B & Matthew W

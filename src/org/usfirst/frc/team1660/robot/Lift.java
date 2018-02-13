@@ -284,23 +284,18 @@ public class Lift {
 		return isDip;
 	}
 
-	public void checkDip() {
+	/* method to check if flip or dip buttons are pressed -mohamed */
+	public void checkFlipDip() {
 		if(maniStick.getRawAxis(RobotMap.DIP_AXIS) > 0.5) {
 			dipMouth();
-			SmartDashboard.putString("checkDip", "true");
+			SmartDashboard.putString("FlipDip", "DIP");
 		}
-
-	}
-	public void checkFlip() {
 		if(maniStick.getRawAxis(RobotMap.FLIP_AXIS) > 0.5) {
 			flipMouth();
-			SmartDashboard.putString("checkFlip", "true");
+			SmartDashboard.putString("FlipDip", "FLIP");
 		}
 	}
-
-
-
-
+	
 
 	/* basic compressor functionality methods	-Aldenis */
 	public void compressorOn(){
