@@ -26,7 +26,8 @@ public class Lift {
 
 
 	Compressor comp = new Compressor(RobotMap.COMPRESSOR_CHANNEL);
-	DoubleSolenoid dSolenoid = new DoubleSolenoid(1, 2);
+	DoubleSolenoid dSolenoid1 = new DoubleSolenoid(4, 3);
+	DoubleSolenoid dSolenoid2 = new DoubleSolenoid(2, 5);
 	//Relay compressorRelay = new Relay(10);	//Temporary relay change later
 
 	private static final int kSlotIdx = 0;
@@ -269,12 +270,12 @@ public class Lift {
 
 	/* methods to flip (up) and dip (down) the mouth -Aldenis */
 	public void flipMouth() {
-		dSolenoid.set(DoubleSolenoid.Value.kForward);
+		dSolenoid1.set(DoubleSolenoid.Value.kForward);
 		isDip = false;
 	}
 
 	public void dipMouth() {
-		dSolenoid.set(DoubleSolenoid.Value.kReverse);	
+		dSolenoid1.set(DoubleSolenoid.Value.kReverse);	
 		isDip = true;
 	}
 
