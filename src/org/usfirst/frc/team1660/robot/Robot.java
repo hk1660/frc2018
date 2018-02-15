@@ -112,7 +112,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	//TELEOP MODE
 	public void teleopInit() { 
-
+		this.updateLidarDistance();
 	}
 
 	public void teleopPeriodic() {
@@ -200,7 +200,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		double forwardSpeed = 0.5;
 
-		double startPauseTime = 1.0;						//1.0	
+		double startPauseTime = 1.0;							//1.0	
 		double firstForwardTime = 1.0 + startPauseTime;			//2.0
 		double firstTurnTime = 0.5 + firstForwardTime;			//2.5
 		double secondForwardTime = 1.0 + firstTurnTime;			//3.5

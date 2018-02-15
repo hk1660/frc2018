@@ -25,9 +25,11 @@ public class Lift {
 	 */
 
 
-	Compressor comp = new Compressor(RobotMap.COMPRESSOR_CHANNEL);
-	DoubleSolenoid dSolenoid1 = new DoubleSolenoid(4, 3);
-	DoubleSolenoid dSolenoid2 = new DoubleSolenoid(2, 5);
+	Compressor comp = new Compressor(RobotMap.COMPRESSOR_PORT);
+	DoubleSolenoid flipDipPistons = new DoubleSolenoid(RobotMap.FLIP_PORT, RobotMap.DIP_PORT);
+	DoubleSolenoid liftLockPistons = new DoubleSolenoid(RobotMap.LOCK_PORT, RobotMap.UNLOCK_PORT);
+	
+
 	//Relay compressorRelay = new Relay(10);	//Temporary relay change later
 
 	private static final int kSlotIdx = 0;
@@ -40,7 +42,7 @@ public class Lift {
 
 	private static boolean isDip = false;
 	boolean enabled = comp.enabled();
-	boolean pressureSwitch = comp.getPressureSwitchValue();
+//	boolean pressureSwitch = comp.getPressureSwitchValue();
 	double current = comp.getCompressorCurrent();
 
 	//int rawPerRev = 13300 + 2347 - 700;  //pos numbers go up in air
@@ -270,12 +272,12 @@ public class Lift {
 
 	/* methods to flip (up) and dip (down) the mouth -Aldenis */
 	public void flipMouth() {
-		dSolenoid1.set(DoubleSolenoid.Value.kForward);
+		flipDipPistons.set(DoubleSolenoid.Value.kForward);
 		isDip = false;
 	}
 
 	public void dipMouth() {
-		dSolenoid1.set(DoubleSolenoid.Value.kReverse);	
+		flipDipPistons.set(DoubleSolenoid.Value.kReverse);	
 		isDip = true;
 	}
 

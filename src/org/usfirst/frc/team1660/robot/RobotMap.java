@@ -74,6 +74,7 @@ public class RobotMap {
 	public final static int COMPRESSOR_ON_BUTTON = RB_BUTTON;
 	public final static int COMPRESSOR_OFF_BUTTON = LB_BUTTON;
 	
+	
 
 	// Drive train motor channels
 	public final static int DRIVE_FRONT_LEFT_CHANNEL = 3;
@@ -91,7 +92,13 @@ public class RobotMap {
 	public final static int LIFT_LIMIT_TOP_CHANNEL = 1;
 	public final static int LIFT_LIMIT_BOTTOM_CHANNEL = 2;
 	
-	public final static int COMPRESSOR_CHANNEL = 0;
+	//PCM ports
+	public final static int COMPRESSOR_PORT = 0;
+	public final static int FLIP_PORT = 4;
+	public final static int DIP_PORT = 3;
+	public final static int LOCK_PORT = 2;
+	public final static int UNLOCK_PORT = 5;
+	
 	
 	
 	//NavX angles

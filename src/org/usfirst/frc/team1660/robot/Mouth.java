@@ -24,7 +24,7 @@ public class Mouth {
 	public void mouthInit() {
 		mouthMotorLeft = new WPI_TalonSRX(RobotMap.MOUTH_LEFT_CHANNEL);
 		mouthMotorRight = new WPI_TalonSRX(RobotMap.MOUTH_RIGHT_CHANNEL);
-		limitSwitchMouth = new DigitalInput(RobotMap.MOUTH_LIMITER_CHANNEL);
+	//	limitSwitchMouth = new DigitalInput(RobotMap.MOUTH_LIMITER_CHANNEL);
 	}
 	
 
