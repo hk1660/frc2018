@@ -66,16 +66,15 @@ public class RobotMap {
 	public final static int LIFT_EXCHANGE_HEIGHT_POV = POV_LEFT;
 	public final static int LIFT_TIER2_HEIGHT_POV = POV_RIGHT;
 	public final static int LIFT_SWITCH_HEIGHT_POV = POV_UP;
-	public final static int LIFT_TOP_HEIGHT_BUTTON = LB_BUTTON;
-	public final static int CLIMB_UP_BUTTON =  Y_BUTTON;
-	public final static int CLIMB_DOWN_BUTTON =  X_BUTTON;
+	//public final static int LIFT_TOP_HEIGHT_BUTTON = LB_BUTTON;
+	public final static int REACH_BUTTON =  Y_BUTTON;
+	public final static int PULL_UP_BUTTON =  X_BUTTON;
 	public final static int FLIP_AXIS = RT_AXIS;
 	public final static int DIP_AXIS = LT_AXIS;
-	public final static int COMPRESSOR_ON_BUTTON = RB_BUTTON;
-	public final static int COMPRESSOR_OFF_BUTTON = LB_BUTTON;
-	
-	
+	public final static int LOCK_BUTTON = RB_BUTTON;
+	public final static int UNLOCK_BUTTON = LB_BUTTON;
 
+	
 	// Drive train motor channels
 	public final static int DRIVE_FRONT_LEFT_CHANNEL = 3;
 	public final static int DRIVE_BACK_LEFT_CHANNEL = 4;

@@ -31,20 +31,22 @@ public class Lift {
 	private static final double kD = 0.0;
 
 	private static boolean isDip = false;
+	private static boolean isLock = false;
 	//boolean enabled = comp.enabled();
 	//boolean pressureSwitch = comp.getPressureSwitchValue();
 	//double current = comp.getCompressorCurrent();
 
 	//int rawPerRev = 13300 + 2347 - 700;  //pos numbers go up in air
-	int rawPerRev = 8200;  //pos numbers go up in air
+	//int rawPerRev = 8200;  //pos numbers go up in air
 
 	//height setpoints in inches
 	double bottomHeight = 0.0;
-	double topHeight = 30.0;
-	double switchHeight = 20.0;
-	double exchangeHeight = 2.0;
-	double tier2Height = 11.0;
-	int liftTargetHeight = -1;
+	double topHeight = 73000.0;
+	double switchHeight = 44840.0;
+	double exchangeHeight = 4748.0;
+	double tier2Height = 24280.0;
+	double liftTargetHeight = -1.0;
+	double pullUpHeight = 28000.0;
 
 	int climbHeight = 64500; 			//raw units
 
@@ -107,7 +109,7 @@ public class Lift {
 	}
 
 	//method to convert height in inches off the ground to raw units -pinzon & lakiera
-	public int convert(double height) {
+	/*public int convert(double height) {
 		double diameter = 1.66; //inches
 		double circumference = diameter * Math.PI;	//inches/rev
 		double revs = height / circumference;
@@ -115,7 +117,7 @@ public class Lift {
 
 		return (int)raw;
 	}
-
+*/
 
 
 	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal
@@ -133,22 +135,22 @@ public class Lift {
 		if (povVal == (int)(RobotMap.LIFT_BOTTOM_HEIGHT_POV)) {
 			manualFlag = false;
 			SmartDashboard.putString("POV", "down");
-			liftTargetHeight = this.convert(bottomHeight);
+			liftTargetHeight = this.bottomHeight;
 		}
 		if (povVal==(int)RobotMap.LIFT_SWITCH_HEIGHT_POV) {
 			manualFlag = false;
 			SmartDashboard.putString("POV", "switch");
-			liftTargetHeight = this.convert(switchHeight);
+			liftTargetHeight = this.switchHeight;
 		}
 		if (povVal==(int)RobotMap.LIFT_EXCHANGE_HEIGHT_POV) {
 			manualFlag = false;
 			SmartDashboard.putString("POV", "exchange");
-			liftTargetHeight = this.convert(exchangeHeight);
+			liftTargetHeight = this.exchangeHeight;
 		}
 		if (povVal==(int)RobotMap.LIFT_TIER2_HEIGHT_POV) {
 			manualFlag = false;
 			SmartDashboard.putString("POV", "tier2");
-			liftTargetHeight = this.convert(tier2Height);
+			liftTargetHeight = this.tier2Height;
 		}		
 		if(manualFlag == false) {
 			elevatorLift(liftTargetHeight);
@@ -160,15 +162,15 @@ public class Lift {
 	/* to shoot up climber at push of a button -@mathew */
 	public void checkClimb() { 
 
-		if(maniStick.getRawButton(RobotMap.CLIMB_UP_BUTTON) == true )	{
+		if(maniStick.getRawButton(RobotMap.REACH_BUTTON) == true )	{
 			manualFlag = false;
 			SmartDashboard.putString("Climb?", "Raising Up!");
 			liftTargetHeight = this.climbHeight;			
 		}
-		else if (maniStick.getRawButton(RobotMap.CLIMB_DOWN_BUTTON) == true ) {
+		else if (maniStick.getRawButton(RobotMap.PULL_UP_BUTTON) == true ) {
 			manualFlag = false;
 			SmartDashboard.putString("Climb?", "Robot in the Air!");
-			liftTargetHeight = this.convert(bottomHeight);
+			liftTargetHeight = this.pullUpHeight;
 		}
 
 	}
@@ -238,9 +240,11 @@ public class Lift {
 
 		if(manualFlag == true) {  //when touching the joystick
 			double joyVal = setHeight;
+			SmartDashboard.putNumber("manual", setHeight);
 			liftMotor.set(ControlMode.PercentOutput,joyVal);
 		}
-		else if (manualFlag == false) {//when touching the POV or AUTO
+		else if (manualFlag == false) {//when touching the POV or AUTO\\
+			SmartDashboard.putNumber("magic motion", setHeight);
 			liftMotor.set(ControlMode.MotionMagic,setHeight);
 		}
 
@@ -290,7 +294,30 @@ public class Lift {
 			SmartDashboard.putString("FlipDip", "NONE");
 		}
 	}
-
+ //mothod for the lock and unlock mechansm to work
+	public void lock() { 
+		liftLockPistons.set(DoubleSolenoid.Value.kForward);	
+		isLock = true;
+	}
+	
+	public void unlock() {
+		liftLockPistons.set(DoubleSolenoid.Value.kReverse);	
+		isLock = false;
+	}
+	//method to check if lock & unlock button is pressed
+	public void checkLockUnlock() {
+		if(maniStick.getRawButton(RobotMap.LOCK_BUTTON) == true) {
+			lock();
+			SmartDashboard.putString("lock/unlock", "locked");
+		}
+		else if(maniStick.getRawButton(RobotMap.UNLOCK_BUTTON) == true) {
+			unlock();
+			SmartDashboard.putString("lock/unlock", "unlocked");
+		} else {
+			SmartDashboard.putString("lock/unlock", "NONE");
+		}
+	}
+	
 
 	/* basic compressor functionality methods	-Aldenis 
 	public void compressorOn(){
