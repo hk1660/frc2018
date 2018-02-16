@@ -18,19 +18,9 @@ public class Lift {
 	private DigitalInput limitLiftTop = new DigitalInput(RobotMap.LIFT_LIMIT_TOP_CHANNEL);
 	private DigitalInput limitLiftBottom = new DigitalInput(RobotMap.LIFT_LIMIT_BOTTOM_CHANNEL);
 
-	/*
-	private static final int manualLiftMode = 1;
-	private static final int manualLiftMode = 2;
-	private static final int manualLiftMode = 3;
-	 */
-
-
-	Compressor comp = new Compressor(RobotMap.COMPRESSOR_PORT);
+	//Compressor comp = new Compressor(RobotMap.COMPRESSOR_PORT);
 	DoubleSolenoid flipDipPistons = new DoubleSolenoid(RobotMap.FLIP_PORT, RobotMap.DIP_PORT);
 	DoubleSolenoid liftLockPistons = new DoubleSolenoid(RobotMap.LOCK_PORT, RobotMap.UNLOCK_PORT);
-	
-
-	//Relay compressorRelay = new Relay(10);	//Temporary relay change later
 
 	private static final int kSlotIdx = 0;
 	private static final int kPidIdx = 0;
@@ -41,9 +31,9 @@ public class Lift {
 	private static final double kD = 0.0;
 
 	private static boolean isDip = false;
-	boolean enabled = comp.enabled();
-//	boolean pressureSwitch = comp.getPressureSwitchValue();
-	double current = comp.getCompressorCurrent();
+	//boolean enabled = comp.enabled();
+	//boolean pressureSwitch = comp.getPressureSwitchValue();
+	//double current = comp.getCompressorCurrent();
 
 	//int rawPerRev = 13300 + 2347 - 700;  //pos numbers go up in air
 	int rawPerRev = 8200;  //pos numbers go up in air
@@ -55,6 +45,9 @@ public class Lift {
 	double exchangeHeight = 2.0;
 	double tier2Height = 11.0;
 	int liftTargetHeight = -1;
+
+	int climbHeight = 64500; 			//raw units
+
 
 	boolean manualFlag;
 
@@ -120,8 +113,6 @@ public class Lift {
 		double revs = height / circumference;
 		double raw =  revs * this.rawPerRev;
 
-		//SmartDashboard.putNumber(", value)
-
 		return (int)raw;
 	}
 
@@ -141,22 +132,22 @@ public class Lift {
 
 		if (povVal == (int)(RobotMap.LIFT_BOTTOM_HEIGHT_POV)) {
 			manualFlag = false;
-			SmartDashboard.putString("POV", "touching");
+			SmartDashboard.putString("POV", "down");
 			liftTargetHeight = this.convert(bottomHeight);
 		}
 		if (povVal==(int)RobotMap.LIFT_SWITCH_HEIGHT_POV) {
 			manualFlag = false;
-			SmartDashboard.putString("POV", "touching");
+			SmartDashboard.putString("POV", "switch");
 			liftTargetHeight = this.convert(switchHeight);
 		}
 		if (povVal==(int)RobotMap.LIFT_EXCHANGE_HEIGHT_POV) {
 			manualFlag = false;
-			SmartDashboard.putString("POV", "touching");
+			SmartDashboard.putString("POV", "exchange");
 			liftTargetHeight = this.convert(exchangeHeight);
 		}
 		if (povVal==(int)RobotMap.LIFT_TIER2_HEIGHT_POV) {
 			manualFlag = false;
-			SmartDashboard.putString("POV", "touching");
+			SmartDashboard.putString("POV", "tier2");
 			liftTargetHeight = this.convert(tier2Height);
 		}		
 		if(manualFlag == false) {
@@ -172,14 +163,14 @@ public class Lift {
 		if(maniStick.getRawButton(RobotMap.CLIMB_UP_BUTTON) == true )	{
 			manualFlag = false;
 			SmartDashboard.putString("Climb?", "Raising Up!");
-			liftTargetHeight = this.convert(topHeight);			
+			liftTargetHeight = this.climbHeight;			
 		}
 		else if (maniStick.getRawButton(RobotMap.CLIMB_DOWN_BUTTON) == true ) {
 			manualFlag = false;
 			SmartDashboard.putString("Climb?", "Robot in the Air!");
 			liftTargetHeight = this.convert(bottomHeight);
 		}
-			
+
 	}
 
 
@@ -215,7 +206,7 @@ public class Lift {
 				liftMotor.set(ControlMode.PercentOutput, liftJoyValue);
 			}
 
-		//shut off lift when you stop pushing the axis
+			//shut off lift when you stop pushing the axis
 		} else if(manualFlag == true) { //turn off motor if stopped pushing
 			liftMotor.set(ControlMode.PercentOutput, 0.0);
 		}
@@ -281,7 +272,6 @@ public class Lift {
 		isDip = true;
 	}
 
-
 	/* Check if mouth is flipped already? */
 	public boolean isDipped() {
 		return isDip;
@@ -293,14 +283,16 @@ public class Lift {
 			dipMouth();
 			SmartDashboard.putString("FlipDip", "DIP");
 		}
-		if(maniStick.getRawAxis(RobotMap.FLIP_AXIS) > 0.5) {
+		else if(maniStick.getRawAxis(RobotMap.FLIP_AXIS) > 0.5) {
 			flipMouth();
 			SmartDashboard.putString("FlipDip", "FLIP");
+		} else {
+			SmartDashboard.putString("FlipDip", "NONE");
 		}
 	}
-	
 
-	/* basic compressor functionality methods	-Aldenis */
+
+	/* basic compressor functionality methods	-Aldenis 
 	public void compressorOn(){
 		this.comp.setClosedLoopControl(true);
 		SmartDashboard.putString("compressorStatus", "is on");
@@ -309,6 +301,8 @@ public class Lift {
 		this.comp.setClosedLoopControl(false);
 		SmartDashboard.putString("compressorStatus", "is off");
 	}	
+
+	 */
 
 	/* basic compressor functionality methods	
 	public void compressorOn(){
