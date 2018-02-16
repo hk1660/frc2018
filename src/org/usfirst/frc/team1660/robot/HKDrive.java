@@ -39,7 +39,7 @@ public class HKDrive implements PIDOutput {
 	static final double kI = 0.00;
 	static final double kD = 0.00;
 	static final double kF = 0.00;
-	static final double kToleranceDegrees = 2.0f;
+	static final double kToleranceDegrees = 2.0;
 
 	//angle variables
 	double offsetAngle = 0.0;
@@ -275,7 +275,7 @@ public class HKDrive implements PIDOutput {
 	}
 
 	public void goForwardPercentOutput(double speed){
-		this.mecDrive.driveCartesian(0.0, speed, 0.0);
+		this.mecDrive.driveCartesian(0.0, speed, 0.0, navx.getAngle()); 
 	}
 
 	public void stop(){

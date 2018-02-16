@@ -51,6 +51,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		mouthMani.mouthInit();
 		//laser.initLidar();
 		laser3.startMeasuring();
+		updateLidarDistance();
 	}
 
 
@@ -80,7 +81,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		angleToOurSwitchPlate = getAngleToSwitchPlate();
 		
-		liftMani.flipMouth();											//start match with mouth up
+		liftMani.flipMouth();
+		
+		updateLidarDistance();
+		
+	   //  hkdrive.setSafetyEnabled(false);
 
 	}
 
@@ -95,6 +100,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		updateLidarDistance();
 
+		currentStrategy = 4;
+		
 		//deciding on which strategy to run
 		if(currentStrategy == 1) { 
 			this.justCrossAutolineStrategy(autoTime);
@@ -198,10 +205,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//Khalil & Mohamed updated with Shubham
 	public void smartSwitchLidarStrategy(double timeD) {
 
-		double forwardSpeed = 0.5;
+		double forwardSpeed = 0.4;
 
-		double startPauseTime = 1.0;							//1.0	
-		double firstForwardTime = 1.0 + startPauseTime;			//2.0
+		double startPauseTime = 0.0;							//1.0	
+		double firstForwardTime = 5.0 + startPauseTime;			//2.0
 		double firstTurnTime = 0.5 + firstForwardTime;			//2.5
 		double secondForwardTime = 1.0 + firstTurnTime;			//3.5
 		double secondTurnTime = 0.5 + secondForwardTime;		//4.0
@@ -209,16 +216,22 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double dipTime = 1.0 + forwardToSwitchTime;				//7.0
 		double endAutoTime = 10.0;
 
-		double dist1inches = 30.0;		//inches to go fwd off wall
+		double dist1inches = 5.00;		//inches to go fwd off wall  30
 		double dist2inches = 48.0;		//inches to go left or right
 		double dist3inches = 73.0;		//inches to go to wall
 
 		SmartDashboard.putNumber("distance moved", distanceMoved);
+		this.updateLidarDistance();
 
-		if (distanceMoved < dist1inches && timeD < firstForwardTime) {
+		if ( inchDistance > 20.0 && timeD < firstForwardTime) {
+
+		//if (distanceMoved < dist1inches && timeD < firstForwardTime) {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
 			updateDistanceMoved();
-		}else if(timeD < firstTurnTime) {
+		}
+		
+		/*
+		else if(timeD < firstTurnTime) {
 			hkdrive.autoTurn(angleToOurSwitchPlate);	
 			resetDistanceMoved();
 		}else if(distanceMoved < dist2inches && timeD < secondForwardTime) {
@@ -236,7 +249,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			liftMani.dipMouth();								//let the mouth "Dip"
 		}else if(timeD < endAutoTime){
 			mouthMani.spit();									//spit out powercube
-		}else{
+		}
+		*/
+		else{
 			hkdrive.stop();										//stop driving
 		}
 
