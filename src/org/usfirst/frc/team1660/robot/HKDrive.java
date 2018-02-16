@@ -66,9 +66,7 @@ public class HKDrive implements PIDOutput {
 	//HKDrive init method
 	public void driveInit() {
 
-		SmartDashboard.putNumber("displacementX",	navx.getDisplacementX());
-		SmartDashboard.putNumber("displacementY",	navx.getDisplacementY());
-		SmartDashboard.putNumber("displacementZ",	navx.getDisplacementZ());
+		
 		
 		//Drivetrain Initializations
 		frontLeft = new WPI_TalonSRX(RobotMap.DRIVE_FRONT_LEFT_CHANNEL);
