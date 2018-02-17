@@ -8,6 +8,7 @@ package org.usfirst.frc.team1660.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.CameraServer;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -52,6 +53,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		//laser.initLidar();
 		laser3.startMeasuring();
 		updateLidarDistance();
+		CameraServer.getInstance().startAutomaticCapture();
 	}
 
 
