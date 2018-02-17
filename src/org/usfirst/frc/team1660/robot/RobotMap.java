@@ -62,6 +62,7 @@ public class RobotMap {
 	public final static int EAT_BUTTON = A_BUTTON;
 	public final static int SPIT_BUTTON = B_BUTTON;
 	public final static int ZERO_ENCODER_BUTTON = BACK_BUTTON;
+	public final static int RELAX_MOTOR_BUTTON = START_BUTTON;
 	public final static int LIFT_BOTTOM_HEIGHT_POV = POV_DOWN;
 	public final static int LIFT_EXCHANGE_HEIGHT_POV = POV_LEFT;
 	public final static int LIFT_TIER2_HEIGHT_POV = POV_RIGHT;

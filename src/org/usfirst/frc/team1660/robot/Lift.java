@@ -48,10 +48,11 @@ public class Lift {
 	double liftTargetHeight = -1.0;
 	double pullUpHeight = 28000.0;
 
-	int climbHeight = 64500; 			//raw units
+	int reachHeight = 68000; 			//raw units
 
 
 	boolean manualFlag;
+	private boolean disengageMotorFlag = false;
 
 	public Lift(Joystick maniStick) {
 		this.maniStick = maniStick;
@@ -60,6 +61,8 @@ public class Lift {
 	public void liftInit() {
 
 		liftMotor = new WPI_TalonSRX(RobotMap.LIFT_MOTOR_CHANNEL); //A.K.A Elevator/Climb maniulator
+
+		disengageMotorFlag = false;
 		liftMotor.setInverted(true);
 
 		liftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, kPidIdx, ktimeout);
@@ -117,7 +120,7 @@ public class Lift {
 
 		return (int)raw;
 	}
-*/
+	 */
 
 
 	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal
@@ -165,7 +168,7 @@ public class Lift {
 		if(maniStick.getRawButton(RobotMap.REACH_BUTTON) == true )	{
 			manualFlag = false;
 			SmartDashboard.putString("Climb?", "Raising Up!");
-			liftTargetHeight = this.climbHeight;			
+			liftTargetHeight = this.reachHeight;			
 		}
 		else if (maniStick.getRawButton(RobotMap.PULL_UP_BUTTON) == true ) {
 			manualFlag = false;
@@ -196,7 +199,7 @@ public class Lift {
 		}
 
 		//check motion if the joystick axis is being pushed
-		if (Math.abs(liftJoyValue) > thresh) {
+		if (Math.abs(liftJoyValue) > thresh && !disengageMotorFlag) {
 			manualFlag = true;
 			if(botVal && liftJoyValue < 0) {	//don't move down if at bottom
 				SmartDashboard.putString("Limits", "STOP! Bottom limit has been hit");
@@ -209,7 +212,7 @@ public class Lift {
 			}
 
 			//shut off lift when you stop pushing the axis
-		} else if(manualFlag == true) { //turn off motor if stopped pushing
+		} else if(manualFlag && !disengageMotorFlag) { //turn off motor if stopped pushing
 			liftMotor.set(ControlMode.PercentOutput, 0.0);
 		}
 
@@ -238,12 +241,12 @@ public class Lift {
 		}
 
 
-		if(manualFlag == true) {  //when touching the joystick
+		if(manualFlag == true && !disengageMotorFlag) {  //when touching the joystick
 			double joyVal = setHeight;
 			SmartDashboard.putNumber("manual", setHeight);
 			liftMotor.set(ControlMode.PercentOutput,joyVal);
 		}
-		else if (manualFlag == false) {//when touching the POV or AUTO\\
+		else if (manualFlag == false && !disengageMotorFlag) {//when touching the POV or AUTO\\
 			SmartDashboard.putNumber("magic motion", setHeight);
 			liftMotor.set(ControlMode.MotionMagic,setHeight);
 		}
@@ -294,12 +297,12 @@ public class Lift {
 			SmartDashboard.putString("FlipDip", "NONE");
 		}
 	}
- //mothod for the lock and unlock mechansm to work
+	//mothod for the lock and unlock mechansm to work
 	public void lock() { 
 		liftLockPistons.set(DoubleSolenoid.Value.kForward);	
 		isLock = true;
 	}
-	
+
 	public void unlock() {
 		liftLockPistons.set(DoubleSolenoid.Value.kReverse);	
 		isLock = false;
@@ -317,7 +320,23 @@ public class Lift {
 			SmartDashboard.putString("lock/unlock", "NONE");
 		}
 	}
-	
+
+	public void checkDisengageMotor() {
+		if(maniStick.getRawButton(RobotMap.RELAX_MOTOR_BUTTON)==true) {
+			disengageMotorFlag= true;
+
+		}
+	}
+
+	public void disengageMotor() {
+		if(disengageMotorFlag == true) {
+			//liftMotor.set(ControlMode.PercentOutput,0.0);
+			//liftMotor.disable();
+			liftMotor.set(ControlMode.Disabled,0);
+
+			SmartDashboard.putString("motor enabled?", "NO");
+		}
+	}
 
 	/* basic compressor functionality methods	-Aldenis 
 	public void compressorOn(){
