@@ -107,7 +107,10 @@ public class RobotMap {
 	public final static double BACK_WALL_ANGLE = 179.9;
 	public final static double FRONT_WALL_ANGLE = 0.0;
 	
-	
+	//LED Screen Ports
+	public final static int PIN_A_PORT = 5;
+	public final static int PIN_B_PORT = 6;
+	public final static int PIN_COLOR_PORT = 7;
 	
 	
 }

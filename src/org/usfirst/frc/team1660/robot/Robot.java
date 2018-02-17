@@ -82,12 +82,12 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.setOffsetAngle();
 
 		angleToOurSwitchPlate = getAngleToSwitchPlate();
-		
+
 		liftMani.flipMouth();
-		
+
 		updateLidarDistance();
-		
-	   //  hkdrive.setSafetyEnabled(false);
+
+		//  hkdrive.setSafetyEnabled(false);
 
 	}
 
@@ -103,7 +103,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		updateLidarDistance();
 
 		currentStrategy = 4;
-		
+
 		//deciding on which strategy to run
 		if(currentStrategy == 1) { 
 			this.justCrossAutolineStrategy(autoTime);
@@ -125,6 +125,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 
 	public void teleopPeriodic() {
+		
+		this.checkLed();
 
 		hkdrive.checkDriving();
 		hkdrive.checkAutoTurn();
@@ -229,11 +231,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		if ( inchDistance > 20.0 && timeD < firstForwardTime) {
 
-		//if (distanceMoved < dist1inches && timeD < firstForwardTime) {
+			//if (distanceMoved < dist1inches && timeD < firstForwardTime) {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
 			updateDistanceMoved();
 		}
-		
+
 		/*
 		else if(timeD < firstTurnTime) {
 			hkdrive.autoTurn(angleToOurSwitchPlate);	
@@ -254,7 +256,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else if(timeD < endAutoTime){
 			mouthMani.spit();									//spit out powercube
 		}
-		*/
+		 */
 		else{
 			hkdrive.stop();										//stop driving
 		}
@@ -282,17 +284,17 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 
 	public void updateDistanceMoved(){
-		
+
 		if(distanceMoved == 0.0){
 			prevDistance = inchDistance;
 		}
-		
+
 		double smallMove = prevDistance - inchDistance;
 		distanceMoved += smallMove;
 		prevDistance = inchDistance;
 		updateLidarDistance();
 		SmartDashboard.putNumber("distanceMoved", distanceMoved);
-				
+
 	}
 
 
@@ -312,6 +314,28 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 	}
 
+	public void checkLed(){
 
+		//double matchTime = DriverStation.getInstance().getMatchTime();
+		int thresh = 1000;
+		LedStrip.ledAllianceColor();
+
+		/*
+		if(matchTime < 30.0 && matchTime > 25.0){
+			LedStrip.partyTime();			
+		} else if (matchTime < 25.0 
+				&& liftMani.getEncoder() < (liftMani.pullUpHeight + thresh) 
+				&& liftMani.getEncoder() > (liftMani.pullUpHeight - thresh)){
+
+			LedStrip.ledLockTheClimbNow();
+		} else if (matchTime < 5.0 && matchTime > 0.0){
+			LedStrip.partyTime();
+		} else {
+			LedStrip.ledAllianceColor();			
+		}
+
+		 */
+
+	}
 }
 
