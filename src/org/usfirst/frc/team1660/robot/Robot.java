@@ -36,13 +36,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	@SuppressWarnings("rawtypes")
 	SendableChooser position = new SendableChooser();
 	Timer timerAuto = new Timer();
-	private double inchDistance;
-	private double distanceMoved = 0;
-	private double prevDistance = 0;
-
+	
 	double angleToOurSwitchPlate;
 	int currentStrategy;
 	int currentPosition;
+	
+	private double lidarDistance;
+	private double startValueDistance = 0.0;
+	private double travelDistance = 0.0;
 
 	/*----- REQUIRED FRC MAIN METHODS -----*/
 	public void robotInit() {
@@ -54,6 +55,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		laser3.startMeasuring();
 		updateLidarDistance();
 		CameraServer.getInstance().startAutomaticCapture();
+		LedStrip.ledInit();
 	}
 
 
@@ -213,8 +215,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		double forwardSpeed = 0.4;
 
-		double startPauseTime = 0.0;							//1.0	
-		double firstForwardTime = 5.0 + startPauseTime;			//2.0
+		double startPauseTime = 1.0;							//1.0	
+		double firstForwardTime = 2.0 + startPauseTime;			//2.0
 		double firstTurnTime = 0.5 + firstForwardTime;			//2.5
 		double secondForwardTime = 1.0 + firstTurnTime;			//3.5
 		double secondTurnTime = 0.5 + secondForwardTime;		//4.0
@@ -222,33 +224,29 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double dipTime = 1.0 + forwardToSwitchTime;				//7.0
 		double endAutoTime = 10.0;
 
-		double dist1inches = 5.00;		//inches to go fwd off wall  30
+		double dist1inches = 30.00;		//inches to go fwd off wall  30
 		double dist2inches = 48.0;		//inches to go left or right
 		double dist3inches = 73.0;		//inches to go to wall
 
-		SmartDashboard.putNumber("distance moved", distanceMoved);
-		this.updateLidarDistance();
+		updateLidarDistance();
 
-		if ( inchDistance > 20.0 && timeD < firstForwardTime) {
-
-			//if (distanceMoved < dist1inches && timeD < firstForwardTime) {
+		if(timeD < startPauseTime){
+		} else if(timeD < firstForwardTime && hasNotTraveled(dist1inches)){
 			hkdrive.goForwardPercentOutput(forwardSpeed);
-			updateDistanceMoved();
+		} else if(timeD < firstTurnTime) {
+			hkdrive.autoTurn(angleToOurSwitchPlate);	
+			resetTargetDistance();
 		}
 
 		/*
-		else if(timeD < firstTurnTime) {
-			hkdrive.autoTurn(angleToOurSwitchPlate);	
-			resetDistanceMoved();
-		}else if(distanceMoved < dist2inches && timeD < secondForwardTime) {
+
+		else if(timeD < secondForwardTime && hasNotTraveled(dist2inches)) {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
-			updateDistanceMoved();
 		}else if(timeD < secondTurnTime) {
 			hkdrive.autoTurn(-angleToOurSwitchPlate);
-			resetDistanceMoved();
-		}else if(distanceMoved < dist3inches && timeD < forwardToSwitchTime) {
+			resetTargetDistance();
+		}else if(timeD < forwardToSwitchTime && hasNotReachedTarget(0.0)) {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
-			updateDistanceMoved();
 			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
 		}else if (timeD < dipTime){
 			hkdrive.stop();										//stop driving
@@ -273,28 +271,34 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	public void updateLidarDistance(){
 		//distance = laser.getDistance();
 		//distance = laser2.getDistance_inches();
-		inchDistance = laser3.pidGet();
-		SmartDashboard.putNumber("lidar value", inchDistance);
+		lidarDistance = laser3.pidGet();
+		SmartDashboard.putNumber("lidarDistance", lidarDistance);
 	}
 
-	public void resetDistanceMoved(){
-		//rawDistance = laser3.pidGet();
-		//prevDistance = rawDistance;
-		distanceMoved = 0.0;
-	}
 
-	public void updateDistanceMoved(){
+	public boolean hasNotTraveled(double targetDistance){
 
-		if(distanceMoved == 0.0){
-			prevDistance = inchDistance;
+		if(travelDistance == 0.0){
+			startValueDistance = lidarDistance;
 		}
 
-		double smallMove = prevDistance - inchDistance;
-		distanceMoved += smallMove;
-		prevDistance = inchDistance;
 		updateLidarDistance();
-		SmartDashboard.putNumber("distanceMoved", distanceMoved);
 
+		travelDistance = startValueDistance - lidarDistance;
+		SmartDashboard.putNumber("travelDistance", travelDistance);	
+
+		return (travelDistance < targetDistance);
+	}
+
+	public void resetTargetDistance(){
+		travelDistance = 0.0;
+	}
+
+	public boolean hasNotReachedTarget(double targetDistance){
+
+		double distanceToTarget = lidarDistance - targetDistance;
+		SmartDashboard.putNumber("distanceToTarget", distanceToTarget);	
+		return distanceToTarget > 0;
 	}
 
 

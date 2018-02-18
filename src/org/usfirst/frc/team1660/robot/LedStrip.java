@@ -12,7 +12,7 @@ public class LedStrip {
 	private static String allianceColor;
 	private static DriverStation ds;
 	
-	public LedStrip(){
+	public static void ledInit(){
 		
 		ds = DriverStation.getInstance();
 		
