@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
@@ -33,6 +34,7 @@ public class HKDrive implements PIDOutput {
 	private MecanumDrive mecDrive;
 	private AHRS navx;
 	PIDController turnController;
+	PowerDistributionPanel pdp;
 
 	//PID coefficient constants
 	static final double kP = 0.03;
@@ -95,6 +97,9 @@ public class HKDrive implements PIDOutput {
 		/* tuning of the Turn Controller's P, I and D coefficients.            */
 		/* Typically, only the P value needs to be modified.                   */
 		LiveWindow.addActuator("DriveSystem", "RotateController", turnController);
+		
+		//PDP init
+		pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
 
 	}
 
@@ -278,6 +283,42 @@ public class HKDrive implements PIDOutput {
 		this.mecDrive.driveCartesian(0.0, speed, 0.0, navx.getAngle()); 
 	}
 
+	
+	//auto method to drive at a constant voltage
+	public void goForwardVoltage(double desiredVoltage){
+		
+		double mVoltage = pdp.getVoltage();
+		double desiredPercentForwardSpeed = desiredVoltage / mVoltage;
+		
+		mecDrive.driveCartesian(0.0, desiredPercentForwardSpeed, 0.0, navx.getAngle()); 
+		
+		
+		SmartDashboard.putNumber("frontLeftCurrent", this.frontLeft.getOutputCurrent());
+		SmartDashboard.putNumber("backLeftCurrent", this.backLeft.getOutputCurrent());
+		SmartDashboard.putNumber("frontRightCurrent", this.frontRight.getOutputCurrent());
+		SmartDashboard.putNumber("backRightCurrent", this.backRight.getOutputCurrent());
+		
+		
+	}
+
+	//auto method to turn at a constant voltage
+	public void turnVoltage(double desiredVoltage){
+		
+		double mVoltage = pdp.getVoltage();
+		double desiredPercentTurnSpeed = desiredVoltage / mVoltage;
+		
+		mecDrive.driveCartesian(0.0, 0.0, desiredPercentTurnSpeed, navx.getAngle()); 
+		
+		SmartDashboard.putNumber("frontLeftCurrent", this.frontLeft.getOutputCurrent());
+		SmartDashboard.putNumber("backLeftCurrent", this.backLeft.getOutputCurrent());
+		SmartDashboard.putNumber("frontRightCurrent", this.frontRight.getOutputCurrent());
+		SmartDashboard.putNumber("backRightCurrent", this.backRight.getOutputCurrent());
+		
+		
+	}
+
+	
+	
 	public void stop(){
 		this.mecDrive.driveCartesian(0.0, 0.0, 0.0);
 	}

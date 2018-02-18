@@ -112,6 +112,8 @@ public class RobotMap {
 	public final static int PIN_B_PORT = 6;
 	public final static int PIN_COLOR_PORT = 7;
 	
+	public final static int PDP_ID = 0;
+	
 	
 }
 

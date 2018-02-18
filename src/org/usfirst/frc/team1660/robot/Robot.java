@@ -177,7 +177,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//Rickeya,Jocelyn,Mohamed C 
 	public void smartSwitchStrategy(double timeC) {
 
-		double forwardSpeed = 0.5;
+		//double forwardSpeed = 0.5;
+		double forwardVoltage = 6.0;
+		double turnVoltage = 6.0;
 
 		double startPauseTime = 1.0;						//1.0	
 		double firstForwardTime = 1.0 + startPauseTime;			//2.0
@@ -189,18 +191,22 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double endAutoTime = 10.0;
 
 		if(timeC < startPauseTime){
-			//start with mouth "Flip"
-			liftMani.flipMouth();
+			liftMani.flipMouth();								//start with mouth "Flip"
 		}else if (timeC < firstForwardTime) {
-			hkdrive.goForwardPercentOutput(forwardSpeed);
+			hkdrive.goForwardVoltage(forwardVoltage);
+			//hkdrive.goForwardPercentOutput(forwardSpeed);
 		}else if(timeC < firstTurnTime) {
-			hkdrive.autoTurn(angleToOurSwitchPlate);		
+			hkdrive.turnVoltage(turnVoltage);
+			//hkdrive.autoTurn(angleToOurSwitchPlate);		
 		}else if(timeC < secondForwardTime) {
-			hkdrive.goForwardPercentOutput(forwardSpeed);
+			hkdrive.goForwardVoltage(forwardVoltage);
+			//hkdrive.goForwardPercentOutput(forwardSpeed);
 		}else if(timeC < secondTurnTime) {
-			hkdrive.autoTurn(-angleToOurSwitchPlate);
+			hkdrive.turnVoltage(-turnVoltage);
+			//hkdrive.autoTurn(-angleToOurSwitchPlate);
 		}else if(timeC < forwardToSwitchTime) {
-			hkdrive.goForwardPercentOutput(forwardSpeed);
+			hkdrive.goForwardVoltage(forwardVoltage);
+			//hkdrive.goForwardPercentOutput(forwardSpeed);
 			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
 		}else if (timeC < dipTime){
 			hkdrive.stop();										//stop driving
@@ -236,7 +242,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		updateLidarDistance();
 
 		if(timeD < startPauseTime){
-		} else if(timeD < firstForwardTime && hasNotTraveled(dist1inches)){
+		} else if(timeD < firstForwardTime && hasNotTraveledLidar(dist1inches)){
 			hkdrive.goForwardPercentOutput(forwardSpeed);
 		} 
 		/*
@@ -244,9 +250,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.autoTurn(angleToOurSwitchPlate);	
 			resetTargetDistance();
 		}
-
-*/
-		/*
 
 		else if(timeD < secondForwardTime && hasNotTraveled(dist2inches)) {
 			hkdrive.goForwardPercentOutput(forwardSpeed);
@@ -282,7 +285,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 
 
-	public boolean hasNotTraveled(double targetDistance){
+	public boolean hasNotTraveledLidar(double targetDistance){
 
 		if(newTravelFlag == true){
 			startValueDistance = lidarDistance;
@@ -304,7 +307,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		newTravelFlag = true;
 	}
 
-	public boolean hasNotReachedTarget(double targetDistance){
+	public boolean hasNotReachedTargetLidar(double targetDistance){
 
 		double distanceToTarget = lidarDistance - targetDistance;
 		SmartDashboard.putNumber("distanceToTarget", distanceToTarget);	
