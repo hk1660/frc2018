@@ -44,6 +44,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	private double lidarDistance;
 	private double startValueDistance = 0.0;
 	private double travelDistance = 0.0;
+	private boolean newTravelFlag;
 
 	/*----- REQUIRED FRC MAIN METHODS -----*/
 	public void robotInit() {
@@ -51,7 +52,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.driveInit();		//Initialize the HKDrive speed controllers
 		liftMani.liftInit();
 		mouthMani.mouthInit();
-		//laser.initLidar();
 		laser3.startMeasuring();
 
 		CameraServer.getInstance().startAutomaticCapture();
@@ -90,6 +90,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.flipMouth();
 
 		updateLidarDistance();
+		
+		newTravelFlag = true;
 
 		//  hkdrive.setSafetyEnabled(false);
 
@@ -215,10 +217,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//Khalil & Mohamed updated with Shubham
 	public void smartSwitchLidarStrategy(double timeD) {
 
+		SmartDashboard.putNumber("autoTime", timeD);
 		double forwardSpeed = 0.4;
 
 		double startPauseTime = 1.0;							//1.0	
-		double firstForwardTime = 2.0 + startPauseTime;			//2.0
+		double firstForwardTime = 5.0 + startPauseTime;			//2.0
 		double firstTurnTime = 0.5 + firstForwardTime;			//2.5
 		double secondForwardTime = 1.0 + firstTurnTime;			//3.5
 		double secondTurnTime = 0.5 + secondForwardTime;		//4.0
@@ -235,11 +238,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if(timeD < startPauseTime){
 		} else if(timeD < firstForwardTime && hasNotTraveled(dist1inches)){
 			hkdrive.goForwardPercentOutput(forwardSpeed);
-		} else if(timeD < firstTurnTime) {
+		} 
+		/*
+		else if(timeD < firstTurnTime) {
 			hkdrive.autoTurn(angleToOurSwitchPlate);	
 			resetTargetDistance();
 		}
 
+*/
 		/*
 
 		else if(timeD < secondForwardTime && hasNotTraveled(dist2inches)) {
@@ -271,8 +277,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 
 	public void updateLidarDistance(){
-		//distance = laser.getDistance();
-		//distance = laser2.getDistance_inches();
 		lidarDistance = laser3.pidGet();
 		SmartDashboard.putNumber("lidarDistance", lidarDistance);
 	}
@@ -280,13 +284,16 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	public boolean hasNotTraveled(double targetDistance){
 
-		if(travelDistance == 0.0){
+		if(newTravelFlag == true){
 			startValueDistance = lidarDistance;
+			newTravelFlag = false;
 		}
 
 		updateLidarDistance();
 
 		travelDistance = startValueDistance - lidarDistance;
+		
+		SmartDashboard.putNumber("startDistance", startValueDistance);	
 		SmartDashboard.putNumber("travelDistance", travelDistance);	
 
 		return (travelDistance < targetDistance);
@@ -294,6 +301,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	public void resetTargetDistance(){
 		travelDistance = 0.0;
+		newTravelFlag = true;
 	}
 
 	public boolean hasNotReachedTarget(double targetDistance){
