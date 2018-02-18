@@ -42,9 +42,9 @@ public class Lift {
 	//height setpoints in inches
 	double bottomHeight = 0.0;
 	double topHeight = 73000.0;
-	double switchHeight = 44840.0;
+	double switchHeight = 66000.0;
 	double exchangeHeight = 4748.0;
-	double tier2Height = 24280.0;
+	double tier2Height = 26280.0;
 	double liftTargetHeight = -1.0;
 	double pullUpHeight = 28000.0;
 
@@ -101,6 +101,7 @@ public class Lift {
 	public void checkEncoderZero() {
 		if(maniStick.getRawButton(RobotMap.ZERO_ENCODER_BUTTON)==true) {
 			this.setEncoderZero();
+			SmartDashboard.putString("EncZeroWHO?", "Button");
 		}
 
 
@@ -196,6 +197,7 @@ public class Lift {
 		if (botVal) {
 			SmartDashboard.putString("Limits", "Bottom limit has been hit");
 			this.setEncoderZero();
+			SmartDashboard.putString("EncZeroWHO?", "LS bottom");
 		}
 
 		//check motion if the joystick axis is being pushed
@@ -234,6 +236,7 @@ public class Lift {
 			SmartDashboard.putString("Limits", "STOP! Bottom limit has been hit");
 			//liftMotor.set(ControlMode.PercentOutput, 0.0);
 			this.setEncoderZero();
+			SmartDashboard.putString("EncZeroWHO?", "Button in EL");
 		}
 		else if(topVal) {
 			SmartDashboard.putString("Limits", "STOP! Top limit has been hit");

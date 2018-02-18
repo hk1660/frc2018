@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team1660.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -30,14 +31,14 @@ public class Mouth {
 
 	// Basic method for robot to spit out a PowerCube -Kwaku Boafo
 	public void spit(){
-		mouthMotorLeft.set(mouthSpeed);
-		mouthMotorRight.set(-mouthSpeed);
+		mouthMotorLeft.set(-mouthSpeed);
+		mouthMotorRight.set(mouthSpeed);
 	}
 	
 	//eat method by Kwaku, does takes in the power cube  
 	public void eat(){
-	  mouthMotorLeft.set(-mouthSpeed);
-	  mouthMotorRight.set(mouthSpeed);
+	  mouthMotorLeft.set(mouthSpeed);
+	  mouthMotorRight.set(-mouthSpeed);
 	}
 	
 	//not moving method by Mal, method to hold the box
