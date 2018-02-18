@@ -53,9 +53,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		mouthMani.mouthInit();
 		//laser.initLidar();
 		laser3.startMeasuring();
-		updateLidarDistance();
+
 		CameraServer.getInstance().startAutomaticCapture();
 		LedStrip.ledInit();
+		updateLidarDistance();
+		
 	}
 
 

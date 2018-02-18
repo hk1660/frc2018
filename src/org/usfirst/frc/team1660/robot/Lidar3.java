@@ -43,7 +43,7 @@ public class Lidar3 implements PIDSource {
 			return readShort(0x8f);
 		}
 		public double getDistanceInches() {
-			return getDistance()*0.391 -6.46  -6.00;  //formula from Lidar testing on our robot
+			return getDistance()*0.391 -6.46  -6.00 - 10.0;  //formula from Lidar testing on our robot
 		}
 
 		private int writeRegister(int address, int value) {
