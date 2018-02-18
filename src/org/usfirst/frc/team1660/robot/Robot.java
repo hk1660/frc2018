@@ -89,6 +89,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		liftMani.flipMouth();
 
+		laser3.startMeasuring();
 		updateLidarDistance();
 		
 		newTravelFlag = true;
@@ -128,6 +129,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//TELEOP MODE
 	public void teleopInit() { 
 		this.updateLidarDistance();
+		laser3.stopMeasuring();
 	}
 
 	public void teleopPeriodic() {

@@ -30,17 +30,17 @@ public class Lidar3 implements PIDSource {
 		}
 
 		public void startMeasuring() {
-			writeRegister(0x04, 0x08 | 32); // default plus bit 5
-			writeRegister(0x11, 0xff);
-			writeRegister(0x00, 0x04);
+			writeRegister(0x04, 0x08 | 32); //bit3default(disable quick term) + 5added (use delay for burst mode)
+			writeRegister(0x11, 0xff);		//Burst Measurement count control maxed out
+			writeRegister(0x00, 0x04);		//acquire w/o correction
 		}
 
 		public void stopMeasuring() {
-			writeRegister(0x11, 0x00);
+			writeRegister(0x11, 0x00);		//burst meas. minimized
 		}
 
 		public int getDistance() {
-			return readShort(0x8f);
+			return readShort(0x8f);			//read distance register
 		}
 		public double getDistanceInches() {
 			return getDistance()*0.391 -22.5;  //formula from Lidar testing on our robot
