@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -16,7 +17,7 @@ public class Lift {
 	private WPI_TalonSRX liftMotor;
 	private Joystick maniStick;
 	private DigitalInput limitLiftTop = new DigitalInput(RobotMap.LIFT_LIMIT_TOP_CHANNEL);
-	private DigitalInput limitLiftBottom = new DigitalInput(RobotMap.LIFT_LIMIT_BOTTOM_CHANNEL);
+	private AnalogInput limitLiftBottom = new AnalogInput(RobotMap.LIFT_LIMIT_BOTTOM_CHANNEL);
 
 	//Compressor comp = new Compressor(RobotMap.COMPRESSOR_PORT);
 	DoubleSolenoid flipDipPistons = new DoubleSolenoid(RobotMap.FLIP_PORT, RobotMap.DIP_PORT);
@@ -29,6 +30,8 @@ public class Lift {
 	private static final double kP = 0.3;
 	private static final double kI = 0.0;
 	private static final double kD = 0.0;
+	
+	private static final double ANALOG_VOLTAGE_THRESHOLD = 4.0;
 
 	private static boolean isDip = false;
 	private static boolean isLock = false;
@@ -187,7 +190,7 @@ public class Lift {
 
 		double thresh = 0.1;
 		double liftJoyValue = -maniStick.getRawAxis(RobotMap.LIFT_AXIS); //joystic val negative when go up we switched 
-		boolean botVal = limitLiftBottom.get();
+		boolean botVal = limitLiftBottom.getVoltage() > ANALOG_VOLTAGE_THRESHOLD;
 		boolean topVal = limitLiftTop.get();
 		SmartDashboard.putNumber("Lift Axis", liftJoyValue);
 		SmartDashboard.putBoolean("limit top value", topVal);
@@ -228,7 +231,7 @@ public class Lift {
 	public void elevatorLift(double setHeight) {
 
 		SmartDashboard.putNumber("setHeight", setHeight);
-		Boolean botVal = limitLiftBottom.get();
+		Boolean botVal = limitLiftBottom.getVoltage() > ANALOG_VOLTAGE_THRESHOLD;
 		Boolean topVal = limitLiftTop.get();
 		//double joy = maniStick.getRawAxis(RobotMap.LIFT_AXIS);
 

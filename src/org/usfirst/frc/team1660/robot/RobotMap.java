@@ -90,7 +90,6 @@ public class RobotMap {
 	// Lift motor channel
 	public final static int LIFT_MOTOR_CHANNEL = 7;
 	public final static int LIFT_LIMIT_TOP_CHANNEL = 1;
-	public final static int LIFT_LIMIT_BOTTOM_CHANNEL = 2;
 	
 	//PCM ports
 	public final static int COMPRESSOR_PORT = 0;
@@ -116,7 +115,7 @@ public class RobotMap {
 	
 	//Analog input ports;
 	public final static int PRESSURE_SENSOR_PORT = 0;
-	
+	public final static int LIFT_LIMIT_BOTTOM_CHANNEL = 1;
 	
 }
 
