@@ -30,6 +30,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	@SuppressWarnings("rawtypes")
 	SendableChooser position = new SendableChooser();
 	Timer timerAuto = new Timer();
+	AirPressureSensor pressureSensor = 
+			new AirPressureSensor(RobotMap.PRESSURE_SENSOR_PORT);
 
 	double angleToOurSwitchPlate;
 	int currentStrategy;
@@ -142,6 +144,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkFlipDip();
 		liftMani.checkLockUnlock();
 		liftMani.checkDisengageMotor();
+		pressureSensor.updateAirPressureDisplay();
 
 		updateLidarDistance();	
 

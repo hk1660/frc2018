@@ -114,6 +114,9 @@ public class RobotMap {
 	
 	public final static int PDP_ID = 0;
 	
+	//Analog input ports;
+	public final static int PRESSURE_SENSOR_PORT = 0;
+	
 	
 }
 
