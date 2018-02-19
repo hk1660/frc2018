@@ -320,8 +320,40 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	//AUTO STRATEGY #5: Go forward to the scale and drop off a cube if its the correct plate
 	public void simpleScaleStrategy(double timeE) {
+		double forwardVoltage = 6.0;
+		double turnVoltage = 8.0;
 
+		//position 3 needs a neg turn, position 1 needs a positive turn
+		if(currentPosition == 3) {
+			turnVoltage *= -1;
+		}
 
+		double startPauseTime = .5;								//1.0	
+		double firstForwardTime = 4.75 + startPauseTime;		//2.0
+		double firstTurnTime = .625 +firstForwardTime;			//2.5
+		double secondForwardTime = .5 + firstTurnTime;			//3.5
+		double dipTime = 0.6 + secondForwardTime;				//7.0
+		double lastTime = 6.0;
+
+		if(timeE < startPauseTime){
+		}else if (timeE < firstForwardTime) {
+			hkdrive.goForwardVoltage(forwardVoltage);
+			liftMani.elevatorLift(liftMani.switchHeight);	
+		}else if(timeE < firstTurnTime) {
+			hkdrive.turnVoltage(turnVoltage);
+		}else if(timeE < secondForwardTime) {
+			hkdrive.goForwardVoltage(forwardVoltage);
+		}else if (timeE < dipTime){
+			hkdrive.stop();										//stop driving
+			//liftMani.dipMouth();								//let the mouth "Dip"
+		}else if(timeE < lastTime){
+			mouthMani.spit();									//spit out powercube
+		} 
+		else{
+		//hkdrive.stop();	
+		this.mouthMani.shutUp();
+		//stop driving
+		}
 	}
 
 

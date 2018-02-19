@@ -19,9 +19,8 @@ public class Lift {
 	private DigitalInput limitLiftBottom = new DigitalInput(RobotMap.LIFT_LIMIT_BOTTOM_CHANNEL);
 
 	//Compressor comp = new Compressor(RobotMap.COMPRESSOR_PORT);
-	DoubleSolenoid flipDipPistons = new DoubleSolenoid(RobotMap.FLIP_PORT, RobotMap.DIP_PORT);
-	DoubleSolenoid liftLockPistons = new DoubleSolenoid(RobotMap.LOCK_PORT, RobotMap.UNLOCK_PORT);
-
+	DoubleSolenoid flipDipPistons;
+	DoubleSolenoid liftLockPistons;
 	private static final int kSlotIdx = 0;
 	private static final int kPidIdx = 0;
 	private static final int ktimeout = 10; //number of ms to update closed-loop control
@@ -60,6 +59,9 @@ public class Lift {
 	}
 
 	public void liftInit() {
+
+		flipDipPistons = new DoubleSolenoid(RobotMap.FLIP_PORT, RobotMap.DIP_PORT);
+		liftLockPistons = new DoubleSolenoid(RobotMap.LOCK_PORT, RobotMap.UNLOCK_PORT);
 
 		liftMotor = new WPI_TalonSRX(RobotMap.LIFT_MOTOR_CHANNEL); //A.K.A Elevator/Climb maniulator
 
