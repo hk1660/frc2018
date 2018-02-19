@@ -55,6 +55,7 @@ public class Lift {
 
 
 	boolean manualFlag;
+	boolean climbFlag;
 	private boolean disengageMotorFlag = false;
 
 	public Lift(Joystick maniStick) {
@@ -85,6 +86,7 @@ public class Lift {
 		liftMotor.setSelectedSensorPosition(0, kPidIdx, ktimeout);
 
 		manualFlag = false;
+		climbFlag = false;
 
 		this.setEncoderZero();
 		this.elevatorLift(0);
@@ -172,12 +174,14 @@ public class Lift {
 		if(maniStick.getRawButton(RobotMap.REACH_BUTTON) == true )	{
 			manualFlag = false;
 			SmartDashboard.putString("Climb?", "Raising Up!");
-			liftTargetHeight = this.reachHeight;			
+			liftTargetHeight = this.reachHeight;
+			
 		}
 		else if (maniStick.getRawButton(RobotMap.PULL_UP_BUTTON) == true ) {
 			manualFlag = false;
 			SmartDashboard.putString("Climb?", "Robot in the Air!");
 			liftTargetHeight = this.pullUpHeight;
+			climbFlag = true;
 		}
 
 	}
@@ -303,7 +307,7 @@ public class Lift {
 			SmartDashboard.putString("FlipDip", "NONE");
 		}
 	}
-	//mothod for the lock and unlock mechansm to work
+	//method for the lock and unlock mechansm to work
 	public void lock() { 
 		liftLockPistons.set(DoubleSolenoid.Value.kForward);	
 		isLock = true;
@@ -315,7 +319,7 @@ public class Lift {
 	}
 	//method to check if lock & unlock button is pressed
 	public void checkLockUnlock() {
-		if(maniStick.getRawButton(RobotMap.LOCK_BUTTON) == true) {
+		if(maniStick.getRawButton(RobotMap.LOCK_BUTTON) == true && climbFlag == true) {
 			lock();
 			SmartDashboard.putString("lock/unlock", "locked");
 		}
@@ -368,4 +372,7 @@ public class Lift {
 
 	 */
 
+
+	
+	
 }
