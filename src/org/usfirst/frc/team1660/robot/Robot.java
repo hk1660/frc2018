@@ -103,7 +103,13 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		//updateLidarDistance();
 
-		currentStrategy = 3;
+		//currentStrategy = 3;
+		if((currentStrategy== 3) || (currentStrategy ==5)) { //making sure we dont go crossfield
+			if ((( currentPosition == 3) &&  (getAngleToSwitchPlate()==90)) || 
+			(( currentPosition == 1) &&  (getAngleToSwitchPlate()==-90))){
+				currentStrategy = 1;
+		}
+		}
 
 		//deciding on which strategy to run
 		if(currentStrategy == 1) { 
@@ -181,16 +187,18 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	public void simpleSwitchStrategy(double timeB) {
 
 		double forwardVoltage = 6.0;
-		double turnVoltage = 8.0;
+		//double turnVoltage = 8.0;
+		double turnAngle = 90.0;
 
 		//position 3 needs a neg turn, position 1 needs a positive turn
 		if(currentPosition == 3) {
-			turnVoltage *= -1;
+			//turnVoltage *= -1;
+			turnAngle *= -1;
 		}
 
 		double startPauseTime = .5;								//1.0	
-		double firstForwardTime = 2.75 + startPauseTime;		//2.0
-		double firstTurnTime = .625 +firstForwardTime;			//2.5
+		double firstForwardTime = 2.25 + startPauseTime;		//2.0
+		double firstTurnTime = 3.0 +firstForwardTime;			//2.5
 		double secondForwardTime = .5 + firstTurnTime;			//3.5
 		double dipTime = 0.6 + secondForwardTime;				//7.0
 		double lastTime = 6.0;
@@ -200,7 +208,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.goForwardVoltage(forwardVoltage);
 			liftMani.elevatorLift(liftMani.switchHeight);	
 		}else if(timeB < firstTurnTime) {
-			hkdrive.turnVoltage(turnVoltage);
+			//hkdrive.turnVoltage(turnVoltage);
+			hkdrive.autoTurn(turnAngle);
 		}else if(timeB < secondForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}
@@ -239,10 +248,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		double startPauseTime = 0.5;							//0.5	
 		double firstForwardTime = 0.5 + startPauseTime;			//1.0
-		double firstTurnTime = 0.625 +firstForwardTime;			//1.625
+		double firstTurnTime = 3.0 +firstForwardTime;			//1.625
 		double secondForwardTime = 1.1250 + firstTurnTime;		//2.75
-		double secondTurnTime = 0.625 + secondForwardTime;		//3.375
-		double forwardToSwitchTime = 2.0 + secondTurnTime;		//5.575
+		double secondTurnTime = 3.0 + secondForwardTime;		//3.375
+		double forwardToSwitchTime = 1.0 + secondTurnTime;		//5.575
 		double dipTime = 0.3 + forwardToSwitchTime;				//5.875
 		double lastTime = 8.0;
 
@@ -255,17 +264,17 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.autoTurn(angleToOurSwitchPlate);
 				SmartDashboard.putString("auto move", "turning");
 			//hkdrive.turnVoltage(turnVoltage);
-		}/*else if(timeC < secondForwardTime) {
-			hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
+		}else if(timeC < secondForwardTime) {
+			//hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
 				SmartDashboard.putString("auto move", "Going forward");
-			//hkdrive.goForwardVoltage(forwardVoltage);
+			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < secondTurnTime) {
-			hkdrive.autoTurn(-angleToOurSwitchPlate);
+			hkdrive.autoTurn(0.0);
 				SmartDashboard.putString("auto move", "turning");
 			//hkdrive.turnVoltage(-turnVoltage);
 		}else if(timeC < forwardToSwitchTime) {
-			hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
-			//hkdrive.goForwardVoltage(forwardVoltage);
+			//hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
+			hkdrive.goForwardVoltage(forwardVoltage);
 			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
 		}else if (timeC < dipTime){
 			hkdrive.stop();										//stop driving
@@ -275,7 +284,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else{
 			hkdrive.stop();										//stop driving
 		}
-*/
+
 	}
 
 	//AUTO STRATEGY #4: Starting in position 2, move to the correct switch plate and drop off the powercube WITH STRAFING
@@ -343,15 +352,17 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		
 		double forwardVoltage = 6.0;
 		double turnVoltage = 8.0;
+		double turnAngle = 90.0;
 
 		//position 3 needs a neg turn, position 1 needs a positive turn
 		if(currentPosition == 3) {
-			turnVoltage *= -1;
+			//turnVoltage *= -1;
+			turnAngle *= -1;
 		}
 
 		double startPauseTime = .5;								//0.5
 		double firstForwardTime = 4.75 + startPauseTime;		//5.25
-		double firstTurnTime = .625 +firstForwardTime;			//6.125
+		double firstTurnTime = 2.0 +firstForwardTime;			//6.125
 		double secondForwardTime = .5 + firstTurnTime;			//6.625
 		double dipTime = 0.6 + secondForwardTime;				//7.225
 		double lastTime = 8.0;
@@ -359,14 +370,17 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if(timeE < startPauseTime){
 		}else if (timeE < firstForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
-			liftMani.elevatorLift(liftMani.switchHeight);	
+			
 		}else if(timeE < firstTurnTime) {
-			hkdrive.turnVoltage(turnVoltage);
+			//hkdrive.turnVoltage(turnVoltage);
+			hkdrive.autoTurn(turnAngle);
 		}else if(timeE < secondForwardTime) {
-			hkdrive.goForwardVoltage(forwardVoltage);
+			hkdrive.goForwardVoltage(forwardVoltage); 
+			
 		}else if (timeE < dipTime){
-			hkdrive.stop();										//stop driving
-			//liftMani.dipMouth();								//let the mouth "Dip"
+			hkdrive.stop();//stop driving
+			liftMani.elevatorLift(liftMani.topHeight);	
+			
 		}else if(timeE < lastTime){
 			mouthMani.spit();									//spit out powercube
 		} 

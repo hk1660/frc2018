@@ -100,22 +100,23 @@ public class HKDrive implements PIDOutput {
 		
 		//PDP init
 		pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
-		
-		this.setOffsetAngle();
-		navx.zeroYaw();
 
 	}
+
 
 	public void drive() {
 		mecDrive.driveCartesian(strafeParameter, forwardParameter, turnParameter, angleParameter);
-		
-		SmartDashboard.putNumber("frontLeftCurrent", this.frontLeft.getOutputCurrent());
-		SmartDashboard.putNumber("backLeftCurrent", this.backLeft.getOutputCurrent());
-		SmartDashboard.putNumber("frontRightCurrent", this.frontRight.getOutputCurrent());
-		SmartDashboard.putNumber("backRightCurrent", this.backRight.getOutputCurrent());
-	
 	}
-
+	
+	//method to drive straight in AUTO
+	public void autoDriveStraight(double fwdSpeed){
+		strafeParameter = 0.0;
+		forwardParameter = fwdSpeed;
+		turnParameter = 0.0;
+		angleParameter = navx.getAngle();
+		
+		drive();
+	}
 
 	//method to check joysticks for driving the robot -Nana B & Matthew W
 	public void checkDriving() {
@@ -129,7 +130,7 @@ public class HKDrive implements PIDOutput {
 			strafeParameter = strafeJoy;
 			forwardParameter = forwardJoy;
 			turnParameter = turnJoy;
-			angleParameter = getCurrentAngle();
+			angleParameter = navx.getAngle();
 		}	
 		else if (autoTurnFlag == false && fieldDrivingFlag == false){
 			strafeParameter = strafeJoy;
@@ -137,14 +138,12 @@ public class HKDrive implements PIDOutput {
 			turnParameter = turnJoy;
 			angleParameter = 0.0;
 		}
-		
-		
 		else if (autoTurnFlag == true) {
 			strafeParameter = strafeJoy;
 			forwardParameter = forwardJoy;
 			turnParameter = this.rotateToAngleRate;
-			angleParameter = getCurrentAngle();
-		} 
+			angleParameter = navx.getAngle();
+		}
 
 		drive();
 
@@ -197,21 +196,11 @@ public class HKDrive implements PIDOutput {
 		}
 	}
 
-	public void yawZeroing() {
-		navx.zeroYaw();
-	}
-	
 	public void autoTurn(double futureAngle){
 		autoTurnFlag = true;
 		turnController.enable();
 		turnController.setSetpoint(futureAngle);
-		
-		
-		strafeParameter = 0.0;
-		forwardParameter = 0.0;
-		angleParameter = getCurrentAngle();
 		turnParameter = rotateToAngleRate;
-		
 		drive();
 
 		SmartDashboard.putNumber("LastAutoAngle", futureAngle);
@@ -222,15 +211,52 @@ public class HKDrive implements PIDOutput {
 
 		if (driverStick.getRawButton(RobotMap.RESET_OFFSET_ANGLE_BUTTON)) {
 			setOffsetAngle();
-			
-			navx.zeroYaw();
 		}
 	}
 
 	public void setOffsetAngle() {
+
 		offsetAngle = navx.getAngle();
 	}
 
+
+
+	/*
+	public double autoTurnSpeed (double futureAngle){
+		//changeDrivingToPercent();  //do this manually with each "set" command
+		double actualangle = this.getCurrentAngle();
+		double diff = futureAngle - actualangle;	//positive deg for right turns
+		// make the diff-values range from  -179 to 179
+		if (diff > 180){ 			//to handle extra large right turns
+			diff = diff - 360;
+		} else if (diff < -180){	//to handle extra large left turns
+			diff = diff + 360;
+		}
+		SmartDashboard.putNumber("AutoTurn Diff", diff);
+
+		double angle_tolerance = 5.0;
+		double min_speed = 0.4;
+		double max_speed = 1.0;
+		double desiredTurnSpeed;
+
+		//adjust speeds to decrease as you approach the desired angle
+		desiredTurnSpeed = (max_speed-min_speed) * (Math.abs(diff)/180) + min_speed;
+
+		// assigning speed based on positive or negative - Kahlil & Malachi P
+		if(diff > angle_tolerance ){  //right hand turn - speed
+			desiredTurnSpeed = -desiredTurnSpeed;
+		} else if(diff < -angle_tolerance){ // left hand turn +speed
+			desiredTurnSpeed = desiredTurnSpeed;		
+		} else{
+			desiredTurnSpeed = 0.0;
+		}
+
+		SmartDashboard.putNumber("AutoTurn Speed", desiredTurnSpeed);
+		System.out.println("ANGLE: "+ actualangle + " DIFF IS: " + diff + " DESIRED SPEED IS " + desiredTurnSpeed);
+
+		return desiredTurnSpeed;	
+	}
+	 */
 
 	//method to update the angle the robot is facing on the field -Aldenis G
 	public int getCurrentAngle(){
@@ -253,63 +279,28 @@ public class HKDrive implements PIDOutput {
 		navx.reset();
 	}
 
-		
+	public void goForwardPercentOutput(double speed){
+		this.mecDrive.driveCartesian(0.0, speed, 0.0, navx.getAngle()); 
+	} 
+
+	
 	//auto method to drive at a constant voltage
 	public void goForwardVoltage(double desiredVoltage){
 		
 		double mVoltage = pdp.getVoltage();
 		double desiredPercentForwardSpeed = desiredVoltage / mVoltage;
 		
-		//mecDrive.driveCartesian(0.0, desiredPercentForwardSpeed, 0.0, 0.0); 
-				
-		strafeParameter = 0.0;
-		forwardParameter = desiredPercentForwardSpeed;
-		turnParameter = 0.0;
-		angleParameter = 0.0;
+		//mecDrive.driveCartesian(0.0, desiredPercentForwardSpeed, 0.0, navx.getAngle()); 
+		mecDrive.driveCartesian(0.0, desiredPercentForwardSpeed, 0.0, 0.0); 
 		
-		drive();
 		
-	}
-	
-	//auto method to drive at a constant voltage facing a constant direction
-	public void goForwardFacing(double desiredVoltage, double faceAngle){
+		SmartDashboard.putNumber("frontLeftCurrent", this.frontLeft.getOutputCurrent());
+		SmartDashboard.putNumber("backLeftCurrent", this.backLeft.getOutputCurrent());
+		SmartDashboard.putNumber("frontRightCurrent", this.frontRight.getOutputCurrent());
+		SmartDashboard.putNumber("backRightCurrent", this.backRight.getOutputCurrent());
 		
-		double mVoltage = pdp.getVoltage();
-		double desiredPercentForwardSpeed = desiredVoltage / mVoltage;
-						
-		
-		turnController.enable();
-		turnController.setSetpoint(faceAngle);
-		turnParameter = rotateToAngleRate;
-		
-		strafeParameter = 0.0;
-		forwardParameter = desiredPercentForwardSpeed;
-		angleParameter = navx.getAngle();
-		
-		drive();
 		
 	}
-	
-	//auto method to drive to a diagonal point
-	public void goDiagonalDirection(double desiredVoltage, double motionAngle, double faceAngle){
-		
-		double mVoltage = pdp.getVoltage();
-		double desiredSpeed = desiredVoltage / mVoltage;
-		double desiredForwardSpeed = desiredSpeed * Math.sin(motionAngle);
-		double desiredStrafeSpeed = desiredSpeed * Math.cos(motionAngle);
-		
-		turnController.enable();
-		turnController.setSetpoint(faceAngle);
-		turnParameter = rotateToAngleRate;
-		
-		strafeParameter = desiredStrafeSpeed;
-		forwardParameter = desiredForwardSpeed;
-		angleParameter = navx.getAngle();
-		
-		drive();	
-		
-	}
-	
 
 	//auto method to turn at a constant voltage
 	public void turnVoltage(double desiredVoltage){
@@ -317,13 +308,7 @@ public class HKDrive implements PIDOutput {
 		double mVoltage = pdp.getVoltage();
 		double desiredPercentTurnSpeed = desiredVoltage / mVoltage;
 		
-		//mecDrive.driveCartesian(0.0, 0.0, desiredPercentTurnSpeed, 0.0); 
-		
-		strafeParameter = 0.0;
-		forwardParameter = 0.0;
-		turnParameter = desiredPercentTurnSpeed;
-		angleParameter = 0.0;
-		drive();
+		mecDrive.driveCartesian(0.0, 0.0, desiredPercentTurnSpeed, 0.0); 
 		
 		SmartDashboard.putNumber("frontLeftCurrent", this.frontLeft.getOutputCurrent());
 		SmartDashboard.putNumber("backLeftCurrent", this.backLeft.getOutputCurrent());
@@ -336,11 +321,7 @@ public class HKDrive implements PIDOutput {
 	
 	
 	public void stop(){
-		strafeParameter = 0.0;
-		forwardParameter = 0.0;
-		turnParameter = 0.0;
-		angleParameter = 0.0;
-		drive();
+		this.mecDrive.driveCartesian(0.0, 0.0, 0.0);
 	}
 
 	@Override
@@ -348,6 +329,11 @@ public class HKDrive implements PIDOutput {
 	/* based upon navX-MXP yaw angle input and PID Coefficients.    */
 	public void pidWrite(double output) {
 		rotateToAngleRate = output;
+	}
+
+	public void yawZeroing() {
+		navx.zeroYaw();
+		
 	}
 
 
