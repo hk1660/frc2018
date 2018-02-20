@@ -49,6 +49,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.liftInit();
 		mouthMani.mouthInit();
 		laser3.startMeasuring();
+		hkdrive.setOffsetAngle();
 
 		CameraServer.getInstance().startAutomaticCapture();
 		LedStrip.ledInit();
