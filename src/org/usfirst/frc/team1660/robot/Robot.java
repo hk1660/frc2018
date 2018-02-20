@@ -351,20 +351,18 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	public void simpleScaleStrategy(double timeE) {
 		
 		double forwardVoltage = 6.0;
-		double turnVoltage = 8.0;
 		double turnAngle = 90.0;
 
 		//position 3 needs a neg turn, position 1 needs a positive turn
 		if(currentPosition == 3) {
-			//turnVoltage *= -1;
 			turnAngle *= -1;
 		}
 
 		double startPauseTime = .5;								//0.5
-		double firstForwardTime = 4.75 + startPauseTime;		//5.25
-		double firstTurnTime = 2.0 +firstForwardTime;			//6.125
-		double secondForwardTime = .5 + firstTurnTime;			//6.625
-		double dipTime = 0.6 + secondForwardTime;				//7.225
+		double firstForwardTime = 10.0 + startPauseTime;		//5.25
+		double firstTurnTime = 2.0 +firstForwardTime;			//6.75
+		double secondForwardTime = .5 + firstTurnTime;			//7.25
+		double topTime = 0.6 + secondForwardTime;				//7.225
 		double lastTime = 8.0;
 
 		if(timeE < startPauseTime){
@@ -372,12 +370,12 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.goForwardVoltage(forwardVoltage);
 			
 		}else if(timeE < firstTurnTime) {
-			//hkdrive.turnVoltage(turnVoltage);
-			hkdrive.autoTurn(turnAngle);
+
+			hkdrive.turnVoltage(turnAngle);
 		}else if(timeE < secondForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage); 
 			
-		}else if (timeE < dipTime){
+		}else if (timeE < topTime){
 			hkdrive.stop();//stop driving
 			liftMani.elevatorLift(liftMani.topHeight);	
 			
@@ -385,9 +383,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			mouthMani.spit();									//spit out powercube
 		} 
 		else{
-		//hkdrive.stop();	
+		hkdrive.stop();	
 		this.mouthMani.shutUp();
-		//stop driving
+
 		}
 	}
 
