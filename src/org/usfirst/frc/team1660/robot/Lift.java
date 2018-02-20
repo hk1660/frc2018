@@ -44,8 +44,8 @@ public class Lift {
 	//height setpoints in inches
 	double bottomHeight = 0.0;
 	double topHeight = 73000.0;
-	double switchHeight = 66000.0;
-	double exchangeHeight = 4748.0;
+	double switchHeight = 52000.0;
+	double exchangeHeight = 10048.0;
 	double tier2Height = 26280.0;
 	double liftTargetHeight = -1.0;
 	double pullUpHeight = 28000.0;

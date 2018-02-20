@@ -290,7 +290,8 @@ public class HKDrive implements PIDOutput {
 		double mVoltage = pdp.getVoltage();
 		double desiredPercentForwardSpeed = desiredVoltage / mVoltage;
 		
-		mecDrive.driveCartesian(0.0, desiredPercentForwardSpeed, 0.0, navx.getAngle()); 
+		//mecDrive.driveCartesian(0.0, desiredPercentForwardSpeed, 0.0, navx.getAngle()); 
+		mecDrive.driveCartesian(0.0, desiredPercentForwardSpeed, 0.0, 0.0); 
 		
 		
 		SmartDashboard.putNumber("frontLeftCurrent", this.frontLeft.getOutputCurrent());

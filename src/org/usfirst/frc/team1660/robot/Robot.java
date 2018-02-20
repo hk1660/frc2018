@@ -102,7 +102,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		updateLidarDistance();
 
-		//currentStrategy = 3;
+		currentStrategy = 3;
 
 		//deciding on which strategy to run
 		if(currentStrategy == 1) { 
@@ -244,13 +244,13 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else if (timeC < firstForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < firstTurnTime) {
-			hkdrive.turnVoltage(turnVoltage);
-			//hkdrive.autoTurn(angleToOurSwitchPlate);		
+			//hkdrive.turnVoltage(turnVoltage);
+			hkdrive.autoTurn(angleToOurSwitchPlate);		
 		}else if(timeC < secondForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < secondTurnTime) {
-			hkdrive.turnVoltage(-turnVoltage);
-			//hkdrive.autoTurn(-angleToOurSwitchPlate);
+			//hkdrive.turnVoltage(-turnVoltage);
+			hkdrive.autoTurn(-angleToOurSwitchPlate);
 		}else if(timeC < forwardToSwitchTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
 			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
