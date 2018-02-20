@@ -102,6 +102,7 @@ public class HKDrive implements PIDOutput {
 		pdp = new PowerDistributionPanel(RobotMap.PDP_ID);
 		
 		this.setOffsetAngle();
+		navx.zeroYaw();
 
 	}
 
@@ -128,7 +129,7 @@ public class HKDrive implements PIDOutput {
 			strafeParameter = strafeJoy;
 			forwardParameter = forwardJoy;
 			turnParameter = turnJoy;
-			angleParameter = navx.getAngle();
+			angleParameter = getCurrentAngle();
 		}	
 		else if (autoTurnFlag == false && fieldDrivingFlag == false){
 			strafeParameter = strafeJoy;
@@ -137,13 +138,13 @@ public class HKDrive implements PIDOutput {
 			angleParameter = 0.0;
 		}
 		
-		/*
+		
 		else if (autoTurnFlag == true) {
 			strafeParameter = strafeJoy;
 			forwardParameter = forwardJoy;
 			turnParameter = this.rotateToAngleRate;
-			angleParameter = navx.getAngle();
-		} */
+			angleParameter = getCurrentAngle();
+		} 
 
 		drive();
 
@@ -196,11 +197,21 @@ public class HKDrive implements PIDOutput {
 		}
 	}
 
+	public void yawZeroing() {
+		navx.zeroYaw();
+	}
+	
 	public void autoTurn(double futureAngle){
 		autoTurnFlag = true;
 		turnController.enable();
 		turnController.setSetpoint(futureAngle);
+		
+		
+		strafeParameter = 0.0;
+		forwardParameter = 0.0;
+		angleParameter = getCurrentAngle();
 		turnParameter = rotateToAngleRate;
+		
 		drive();
 
 		SmartDashboard.putNumber("LastAutoAngle", futureAngle);
@@ -211,6 +222,8 @@ public class HKDrive implements PIDOutput {
 
 		if (driverStick.getRawButton(RobotMap.RESET_OFFSET_ANGLE_BUTTON)) {
 			setOffsetAngle();
+			
+			navx.zeroYaw();
 		}
 	}
 

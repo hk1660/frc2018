@@ -89,6 +89,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		newTravelFlag = true;
 		this.mouthMani.shutUp();
+		
+		hkdrive.yawZeroing();
 
 	}
 
@@ -246,16 +248,20 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		if(timeC < startPauseTime){
 		}else if (timeC < firstForwardTime) {
-			hkdrive.goForwardFacing(forwardVoltage, 0.0);
-			//hkdrive.goForwardVoltage(forwardVoltage);
+			//hkdrive.goForwardFacing(forwardVoltage, 0.0);
+				SmartDashboard.putString("auto move", "Going forward");
+			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < firstTurnTime) {
-			hkdrive.autoTurn(angleToOurSwitchPlate);		
+			hkdrive.autoTurn(angleToOurSwitchPlate);
+				SmartDashboard.putString("auto move", "turning");
 			//hkdrive.turnVoltage(turnVoltage);
-		}else if(timeC < secondForwardTime) {
+		}/*else if(timeC < secondForwardTime) {
 			hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
+				SmartDashboard.putString("auto move", "Going forward");
 			//hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < secondTurnTime) {
 			hkdrive.autoTurn(-angleToOurSwitchPlate);
+				SmartDashboard.putString("auto move", "turning");
 			//hkdrive.turnVoltage(-turnVoltage);
 		}else if(timeC < forwardToSwitchTime) {
 			hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
@@ -269,7 +275,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else{
 			hkdrive.stop();										//stop driving
 		}
-
+*/
 	}
 
 	//AUTO STRATEGY #4: Starting in position 2, move to the correct switch plate and drop off the powercube WITH STRAFING
