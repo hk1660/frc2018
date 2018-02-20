@@ -110,9 +110,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			this.simpleSwitchStrategy(autoTime);
 		} else if (currentStrategy == 3) {
 			this.smartSwitchStrategy(autoTime);
-		} else if (currentStrategy == 4) {
+		} 
+		
+		/*else if (currentStrategy == 4) {
 			this.smartSwitchLidarStrategy(autoTime);
-		} else if (currentStrategy == 5) {
+		} 
+		*/
+		
+		else if (currentStrategy == 5) {
 			this.simpleScaleStrategy(autoTime);
 		}
 
@@ -271,7 +276,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	
 	
 	
-	
+/*	
 	//AUTO STRATEGY #4: Starting in position 2, move to the correct switch plate and drop off the powercube -Marlahna
 	//Khalil & Mohamed updated with Shubham
 	public void smartSwitchLidarStrategy(double timeD) {
@@ -298,7 +303,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		} else if(timeD < firstForwardTime && hasNotTraveledLidar(dist1inches)){
 			hkdrive.goForwardVoltage(forwardVoltage);
 		} 
-		/*
+		
 		else if(timeD < firstTurnTime) {
 			hkdrive.autoTurn(angleToOurSwitchPlate);	
 			resetTargetDistance();
@@ -318,15 +323,18 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else if(timeD < endAutoTime){
 			mouthMani.spit();									//spit out powercube
 		}
-		 */
+		 
 		else{
 			hkdrive.stop();										//stop driving
 		}
 
 	}
 
+*/
+	
 	//AUTO STRATEGY #5: Go forward to the scale and drop off a cube if its the correct plate
 	public void simpleScaleStrategy(double timeE) {
+		
 		double forwardVoltage = 6.0;
 		double turnVoltage = 8.0;
 
@@ -335,12 +343,12 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			turnVoltage *= -1;
 		}
 
-		double startPauseTime = .5;								//1.0	
-		double firstForwardTime = 4.75 + startPauseTime;		//2.0
-		double firstTurnTime = .625 +firstForwardTime;			//2.5
-		double secondForwardTime = .5 + firstTurnTime;			//3.5
-		double dipTime = 0.6 + secondForwardTime;				//7.0
-		double lastTime = 6.0;
+		double startPauseTime = .5;								//0.5
+		double firstForwardTime = 4.75 + startPauseTime;		//5.25
+		double firstTurnTime = .625 +firstForwardTime;			//6.125
+		double secondForwardTime = .5 + firstTurnTime;			//6.625
+		double dipTime = 0.6 + secondForwardTime;				//7.225
+		double lastTime = 8.0;
 
 		if(timeE < startPauseTime){
 		}else if (timeE < firstForwardTime) {

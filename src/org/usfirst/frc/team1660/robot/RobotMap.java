@@ -74,6 +74,7 @@ public class RobotMap {
 	public final static int DIP_AXIS = LT_AXIS;
 	public final static int LOCK_BUTTON = RB_BUTTON;
 	public final static int UNLOCK_BUTTON = LB_BUTTON;
+	public final static int SCALE_HEIGHT_AXIS = RIGHT_Y_AXIS;
 
 	
 	// Drive train motor channels
