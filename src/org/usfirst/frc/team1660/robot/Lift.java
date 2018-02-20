@@ -30,7 +30,7 @@ public class Lift {
 	private static final double kI = 0.0;
 	private static final double kD = 0.0;
 	
-	private static final double ANALOG_VOLTAGE_THRESHOLD = 4.0;
+	private static final double ANALOG_VOLTAGE_THRESHOLD = 2.5;
 
 	private static boolean isDip = false;
 	private static boolean isLock = false;
@@ -38,23 +38,23 @@ public class Lift {
 	//boolean pressureSwitch = comp.getPressureSwitchValue();
 	//double current = comp.getCompressorCurrent();
 
-	//int rawPerRev = 13300 + 2347 - 700;  //pos numbers go up in air
 	//int rawPerRev = 8200;  //pos numbers go up in air
 
-	//height setpoints in inches
+	//height setpoints in encoder raw values	
 	double bottomHeight = 0.0;
-	double topHeight = 73000.0;
-	double switchHeight = 52000.0;
 	double exchangeHeight = 10048.0;
 	double tier2Height = 26280.0;
-	double liftTargetHeight = -1.0;
+	double switchHeight = 52000.0;
+	double topHeight = 73000.0;
+	
 	double pullUpHeight = 28000.0;
+	double reachHeight = 68000.0;
 
-	int reachHeight = 68000; 			//raw units
+	double liftTargetHeight = -1.0;
+	
 
-
-	boolean manualFlag;
-	boolean climbFlag;
+	private boolean manualLiftFlag;
+	private boolean haveClimbedFlag;
 	private boolean disengageMotorFlag = false;
 
 	public Lift(Joystick maniStick) {
@@ -87,8 +87,8 @@ public class Lift {
 		// zero the sensor
 		liftMotor.setSelectedSensorPosition(0, kPidIdx, ktimeout);
 
-		manualFlag = false;
-		climbFlag = false;
+		manualLiftFlag = false;
+		haveClimbedFlag = false;
 
 		this.setEncoderZero();
 		this.elevatorLift(0);
@@ -144,26 +144,26 @@ public class Lift {
 		int povVal = maniStick.getPOV();
 
 		if (povVal == (int)(RobotMap.LIFT_BOTTOM_HEIGHT_POV)) {
-			manualFlag = false;
+			manualLiftFlag = false;
 			SmartDashboard.putString("POV", "down");
 			liftTargetHeight = this.bottomHeight;
 		}
 		if (povVal==(int)RobotMap.LIFT_SWITCH_HEIGHT_POV) {
-			manualFlag = false;
+			manualLiftFlag = false;
 			SmartDashboard.putString("POV", "switch");
 			liftTargetHeight = this.switchHeight;
 		}
 		if (povVal==(int)RobotMap.LIFT_EXCHANGE_HEIGHT_POV) {
-			manualFlag = false;
+			manualLiftFlag = false;
 			SmartDashboard.putString("POV", "exchange");
 			liftTargetHeight = this.exchangeHeight;
 		}
 		if (povVal==(int)RobotMap.LIFT_TIER2_HEIGHT_POV) {
-			manualFlag = false;
+			manualLiftFlag = false;
 			SmartDashboard.putString("POV", "tier2");
 			liftTargetHeight = this.tier2Height;
 		}		
-		if(manualFlag == false) {
+		if(manualLiftFlag == false) {
 			elevatorLift(liftTargetHeight);
 		}
 		SmartDashboard.putNumber("Lift POV?", povVal);
@@ -174,16 +174,16 @@ public class Lift {
 	public void checkClimb() { 
 
 		if(maniStick.getRawButton(RobotMap.REACH_BUTTON) == true )	{
-			manualFlag = false;
+			manualLiftFlag = false;
 			SmartDashboard.putString("Climb?", "Raising Up!");
 			liftTargetHeight = this.reachHeight;
 			
 		}
 		else if (maniStick.getRawButton(RobotMap.PULL_UP_BUTTON) == true ) {
-			manualFlag = false;
+			manualLiftFlag = false;
 			SmartDashboard.putString("Climb?", "Robot in the Air!");
 			liftTargetHeight = this.pullUpHeight;
-			climbFlag = true;
+			haveClimbedFlag = true;
 		}
 
 	}
@@ -211,7 +211,7 @@ public class Lift {
 
 		//check motion if the joystick axis is being pushed
 		if (Math.abs(liftJoyValue) > thresh && !disengageMotorFlag) {
-			manualFlag = true;
+			manualLiftFlag = true;
 			if(botVal && liftJoyValue < 0) {	//don't move down if at bottom
 				SmartDashboard.putString("Limits", "STOP! Bottom limit has been hit");
 				liftMotor.set(ControlMode.PercentOutput, 0.0);
@@ -223,11 +223,11 @@ public class Lift {
 			}
 
 			//shut off lift when you stop pushing the axis
-		} else if(manualFlag && !disengageMotorFlag) { //turn off motor if stopped pushing
+		} else if(manualLiftFlag && !disengageMotorFlag) { //turn off motor if stopped pushing
 			liftMotor.set(ControlMode.PercentOutput, 0.0);
 		}
 
-		SmartDashboard.putBoolean("liftManualFlag", manualFlag);
+		SmartDashboard.putBoolean("liftManualFlag", manualLiftFlag);
 		elevatorLift(liftJoyValue);
 	}
 
@@ -253,12 +253,12 @@ public class Lift {
 		}
 
 
-		if(manualFlag == true && !disengageMotorFlag) {  //when touching the joystick
+		if(manualLiftFlag == true && !disengageMotorFlag) {  //when touching the joystick
 			double joyVal = setHeight;
 			SmartDashboard.putNumber("manual", setHeight);
 			liftMotor.set(ControlMode.PercentOutput,joyVal);
 		}
-		else if (manualFlag == false && !disengageMotorFlag) {//when touching the POV or AUTO\\
+		else if (manualLiftFlag == false && !disengageMotorFlag) {//when touching the POV or AUTO\\
 			SmartDashboard.putNumber("magic motion", setHeight);
 			liftMotor.set(ControlMode.MotionMagic,setHeight);
 		}
@@ -321,7 +321,7 @@ public class Lift {
 	}
 	//method to check if lock & unlock button is pressed
 	public void checkLockUnlock() {
-		if(maniStick.getRawButton(RobotMap.LOCK_BUTTON) == true && climbFlag == true) {
+		if(maniStick.getRawButton(RobotMap.LOCK_BUTTON) == true && haveClimbedFlag == true) {
 			lock();
 			SmartDashboard.putString("lock/unlock", "locked");
 		}

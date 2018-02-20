@@ -57,7 +57,7 @@ public class RobotMap {
 	public final static int FACE_FORWARD_POV = POV_UP;
 	
 	
-	//Manip Joystick
+	//Mani Joystick
 	public final static int LIFT_AXIS = LEFT_Y_AXIS;	
 	public final static int EAT_BUTTON = A_BUTTON;
 	public final static int SPIT_BUTTON = B_BUTTON;
@@ -113,7 +113,7 @@ public class RobotMap {
 	
 	public final static int PDP_ID = 0;
 	
-	//Analog input ports;
+	//Analog input ports
 	public final static int PRESSURE_SENSOR_PORT = 0;
 	public final static int LIFT_LIMIT_BOTTOM_CHANNEL = 1;
 	

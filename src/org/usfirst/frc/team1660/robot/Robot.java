@@ -24,14 +24,13 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	HKDrive hkdrive = new HKDrive(driverStick);
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
-	Lidar3 laser3 = new Lidar3();
+	//Lidar3 laser3 = new Lidar3();
 	@SuppressWarnings("rawtypes")
 	SendableChooser strategy = new SendableChooser();
 	@SuppressWarnings("rawtypes")
 	SendableChooser position = new SendableChooser();
 	Timer timerAuto = new Timer();
-	AirPressureSensor pressureSensor = 
-			new AirPressureSensor(RobotMap.PRESSURE_SENSOR_PORT);
+	AirPressureSensor pressureSensor = new AirPressureSensor(RobotMap.PRESSURE_SENSOR_PORT);
 
 	double angleToOurSwitchPlate;
 	int currentStrategy;
@@ -48,12 +47,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.driveInit();		//Initialize the HKDrive speed controllers
 		liftMani.liftInit();
 		mouthMani.mouthInit();
-		laser3.startMeasuring();
-		hkdrive.setOffsetAngle();
-
+		//laser3.startMeasuring();
+		
 		CameraServer.getInstance().startAutomaticCapture();
 		LedStrip.ledInit();
-		updateLidarDistance();
+		//updateLidarDistance();
 
 	}
 
@@ -86,8 +84,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		liftMani.flipMouth();
 
-		laser3.startMeasuring();
-		updateLidarDistance();
+		//laser3.startMeasuring();
+		//updateLidarDistance();
 
 		newTravelFlag = true;
 		this.mouthMani.shutUp();
@@ -101,7 +99,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double autoTime = timerAuto.get();
 		SmartDashboard.putNumber("autoTime",autoTime);
 
-		updateLidarDistance();
+		//updateLidarDistance();
 
 		currentStrategy = 3;
 
@@ -122,8 +120,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	//TELEOP MODE
 	public void teleopInit() { 
-		this.updateLidarDistance();
-		laser3.stopMeasuring();
+		//this.updateLidarDistance();
+		//laser3.stopMeasuring();
 	}
 
 	public void teleopPeriodic() {
@@ -145,9 +143,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkFlipDip();
 		liftMani.checkLockUnlock();
 		liftMani.checkDisengageMotor();
+		
 		pressureSensor.updateAirPressureDisplay();
-
-		updateLidarDistance();	
+		//updateLidarDistance();	
 
 	}
 
@@ -243,17 +241,20 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		if(timeC < startPauseTime){
 		}else if (timeC < firstForwardTime) {
-			hkdrive.goForwardVoltage(forwardVoltage);
+			hkdrive.goForwardFacing(forwardVoltage, 0.0);
+			//hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < firstTurnTime) {
-			//hkdrive.turnVoltage(turnVoltage);
 			hkdrive.autoTurn(angleToOurSwitchPlate);		
+			//hkdrive.turnVoltage(turnVoltage);
 		}else if(timeC < secondForwardTime) {
-			hkdrive.goForwardVoltage(forwardVoltage);
+			hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
+			//hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < secondTurnTime) {
-			//hkdrive.turnVoltage(-turnVoltage);
 			hkdrive.autoTurn(-angleToOurSwitchPlate);
+			//hkdrive.turnVoltage(-turnVoltage);
 		}else if(timeC < forwardToSwitchTime) {
-			hkdrive.goForwardVoltage(forwardVoltage);
+			hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
+			//hkdrive.goForwardVoltage(forwardVoltage);
 			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
 		}else if (timeC < dipTime){
 			hkdrive.stop();										//stop driving
@@ -266,12 +267,17 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	}
 
+	//AUTO STRATEGY #4: Starting in position 2, move to the correct switch plate and drop off the powercube WITH STRAFING
+	
+	
+	
+	
 	//AUTO STRATEGY #4: Starting in position 2, move to the correct switch plate and drop off the powercube -Marlahna
 	//Khalil & Mohamed updated with Shubham
 	public void smartSwitchLidarStrategy(double timeD) {
 
 		SmartDashboard.putNumber("autoTime", timeD);
-		double forwardSpeed = 0.4;
+		double forwardVoltage = 6.0;
 
 		double startPauseTime = 1.0;							//1.0	
 		double firstForwardTime = 5.0 + startPauseTime;			//2.0
@@ -290,7 +296,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		if(timeD < startPauseTime){
 		} else if(timeD < firstForwardTime && hasNotTraveledLidar(dist1inches)){
-			hkdrive.goForwardPercentOutput(forwardSpeed);
+			hkdrive.goForwardVoltage(forwardVoltage);
 		} 
 		/*
 		else if(timeD < firstTurnTime) {
@@ -359,7 +365,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 
 	public void updateLidarDistance(){
-		lidarDistance = laser3.pidGet();
+		//lidarDistance = laser3.pidGet();
 		SmartDashboard.putNumber("lidarDistance", lidarDistance);
 	}
 
