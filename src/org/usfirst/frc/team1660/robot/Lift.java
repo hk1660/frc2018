@@ -45,10 +45,10 @@ public class Lift {
 	double exchangeHeight = 10048.0;
 	double tier2Height = 26280.0;
 	double switchHeight = 52000.0;
-	double topHeight = 73000.0;
+	double topHeight = 83500.0;
 	
 	double pullUpHeight = 28000.0;
-	double reachHeight = 68000.0;
+	double reachHeight = 65300.0;
 
 	double liftTargetHeight = -1.0;
 	

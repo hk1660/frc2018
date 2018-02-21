@@ -52,16 +52,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		CameraServer.getInstance().startAutomaticCapture();
 		LedStrip.ledInit();
 		//updateLidarDistance();
-
-	}
-
-
-	//AUTONOMOUS MODE
-
-	/* Autonomous INIT Stuff \o/ -Khalil */
-	@SuppressWarnings("unchecked")
-	public void autonomousInit() {
-
+		
 		// Auto mode strategies setup
 		strategy.addDefault("justCrossAutoLineStrategy(1)", new Integer(1));
 		strategy.addObject("simpleSwitchStrategy(2)", new Integer(2));
@@ -74,10 +65,20 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		position.addObject("Middle(2)", new Integer(2));
 		position.addObject("Right(3)", new Integer(3));
 		SmartDashboard.putData("position selector", position); 
+	}
 
-		timerAuto.start();
+
+	//AUTONOMOUS MODE
+
+	/* Autonomous INIT Stuff \o/ -Khalil */
+	@SuppressWarnings("unchecked")
+	public void autonomousInit() {
+
+		
 		currentStrategy = (int) strategy.getSelected();
 		currentPosition = (int) position.getSelected();
+		timerAuto.start();
+		
 		hkdrive.setOffsetAngle();
 
 		angleToOurSwitchPlate = getAngleToSwitchPlate();
@@ -107,9 +108,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if((currentStrategy== 3) || (currentStrategy ==5)) { //making sure we dont go crossfield
 			if ((( currentPosition == 3) &&  (getAngleToSwitchPlate()==90)) || 
 			(( currentPosition == 1) &&  (getAngleToSwitchPlate()==-90))){
-				currentStrategy = 1;
+				//currentStrategy = 1;
+			}
 		}
-		}
+		
+		SmartDashboard.putNumber("actual strategy", currentStrategy);
 
 		//deciding on which strategy to run
 		if(currentStrategy == 1) { 
@@ -350,7 +353,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//AUTO STRATEGY #5: Go forward to the scale and drop off a cube if its the correct plate
 	public void simpleScaleStrategy(double timeE) {
 		
-		double forwardVoltage = 6.0;
+		double forwardVoltage = 5.5;
 		double turnAngle = 90.0;
 
 		//position 3 needs a neg turn, position 1 needs a positive turn
@@ -358,28 +361,29 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			turnAngle *= -1;
 		}
 
-		double startPauseTime = .5;								//0.5
-		double firstForwardTime = 10.0 + startPauseTime;		//5.25
-		double firstTurnTime = 2.0 +firstForwardTime;			//6.75
-		double secondForwardTime = .5 + firstTurnTime;			//7.25
-		double topTime = 0.6 + secondForwardTime;				//7.225
-		double lastTime = 8.0;
+		double startPauseTime = 0;								
+		double firstForwardTime = 6.5 + startPauseTime;		//6
+		double firstTurnTime = 2.0 +firstForwardTime;			//8
+		double secondForwardTime = 0.7 + firstTurnTime;			//8.5
+		double spitTime = 14.5;
+		double lastTime = 15;
 
 		if(timeE < startPauseTime){
+			
 		}else if (timeE < firstForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
-			
+			liftMani.elevatorLift(liftMani.topHeight);	
 		}else if(timeE < firstTurnTime) {
-
-			hkdrive.turnVoltage(turnAngle);
+			hkdrive.autoTurn(turnAngle);
 		}else if(timeE < secondForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage); 
 			
-		}else if (timeE < topTime){
-			hkdrive.stop();//stop driving
-			liftMani.elevatorLift(liftMani.topHeight);	
-			
-		}else if(timeE < lastTime){
+		} else if (timeE < spitTime) {
+			hkdrive.stop();
+			mouthMani.spit();									//spit out powercube
+		}
+		else if(timeE < lastTime){
+			//hkdrive.goForwardVoltage(forwardVoltage); 
 			mouthMani.spit();									//spit out powercube
 		} 
 		else{
