@@ -290,8 +290,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	}
 
-	//AUTO STRATEGY #4: Starting in position 2, move to the correct switch plate and drop off the powercube WITH STRAFING
-	
 	
 	
 /*	
@@ -391,6 +389,54 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		this.mouthMani.shutUp();
 
 		}
+	}
+	//AUTO STRATEGY #6 POSITION 2 SCALE
+	public void smartScaleStrategy (double timeR) {
+		double forwardVoltage = 5.5;
+		double turnAngle = 90.0;
+		//check which direction to go based on plate color
+		//check which direction to go based on plate color
+				if(this.getAngleToSwitchPlate() == -90) {
+					turnAngle *= -1;
+		
+				
+
+				double startPauseTime = 0.5;							//0.5	
+				double firstForwardTime = 0.5 + startPauseTime;			//1.0
+				double firstTurnTime = 3.0 +firstForwardTime;			//1.625
+				double secondForwardTime = 3.1250 + firstTurnTime;		//2.75
+				double secondTurnTime = 3.0 + secondForwardTime;		//3.375
+				double forwardToScaleTime = 3.0 + secondTurnTime;		//5.575
+				double dipTime = 0.3 + forwardToScaleTime;				//5.875
+				double lastTime = 8.0;
+
+				if(timeR < startPauseTime){
+				}else if (timeR < firstForwardTime) {
+					//hkdrive.goForwardFacing(forwardVoltage, 0.0);
+					hkdrive.goForwardVoltage(forwardVoltage);
+				}else if(timeR < firstTurnTime) {
+					hkdrive.autoTurn(angleToOurSwitchPlate);
+					//hkdrive.turnVoltage(turnVoltage);
+				}else if(timeR < secondForwardTime) {
+					//hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
+					hkdrive.goForwardVoltage(forwardVoltage);
+				}else if(timeR < secondTurnTime) {
+					hkdrive.autoTurn(0.0);
+					//hkdrive.turnVoltage(-turnVoltage);
+				}else if(timeR < forwardToScaleTime) {
+					//hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
+					hkdrive.goForwardVoltage(forwardVoltage);
+					liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
+				}else if (timeR < dipTime){
+					hkdrive.stop();										//stop driving
+					liftMani.dipMouth();								//let the mouth "Dip"
+				}else if(timeR < lastTime){
+					mouthMani.spit();									//spit out powercube
+				}else{
+					hkdrive.stop();										//stop driving
+				}
+
+				}
 	}
 
 
