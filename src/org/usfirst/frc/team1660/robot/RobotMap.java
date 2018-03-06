@@ -50,7 +50,7 @@ public class RobotMap {
 	public final static int HEADING_X_AXIS = LEFT_X_AXIS;
 	public final static int FIELD_DRIVING_FLAG_ON_BUTTON = RB_BUTTON;
 	public final static int FIELD_DRIVING_FLAG_OFF_BUTTON = LB_BUTTON;
-	public final static int RESET_OFFSET_ANGLE_BUTTON = START_BUTTON;
+	public final static int YAW_ZERO_BUTTON = START_BUTTON;
 	public final static int FACE_BACKWARD_POV = POV_DOWN;
 	public final static int FACE_LEFT_POV = POV_LEFT;
 	public final static int FACE_RIGHT_POV = POV_RIGHT;

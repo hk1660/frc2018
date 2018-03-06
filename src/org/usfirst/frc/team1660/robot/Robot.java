@@ -51,17 +51,17 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.liftInit();
 		mouthMani.mouthInit();
 		//laser3.startMeasuring();
-		
+
 		CameraServer.getInstance().startAutomaticCapture();
 		LedStrip.ledInit();
 		//updateLidarDistance();
-		
+
 		// Auto mode strategies setup
 		strategy.addDefault("justCrossAutoLineStrategy(1)", new Integer(1));
 		strategy.addObject("simpleSwitchStrategy(2)", new Integer(2));
 		strategy.addObject("smartSwitchStrategy(3)", new Integer(3));
 		strategy.addObject("smartSwitchLidarStrategy(4)", new Integer(4));
-		strategy.addObject("simpleScaleStrategy(5)", new Integer(5));
+		strategy.addObject("smartScaleStrategy(5)", new Integer(5));
 		SmartDashboard.putData("strategy selector", strategy); 
 
 		position.addDefault("Left(1)", new Integer(1));
@@ -92,7 +92,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			else
 				return POSITION.C;
 		}
-		
+
 	}
 
 	//AUTONOMOUS MODE
@@ -101,11 +101,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	@SuppressWarnings("unchecked")
 	public void autonomousInit() {
 
-		
+
 		currentStrategy = (int) strategy.getSelected();
 		currentPosition = (int) position.getSelected();
 		timerAuto.start();
-		
+
 		hkdrive.setOffsetAngle();
 
 		angleToOurSwitchPlate = getAngleToSwitchPlate();
@@ -117,7 +117,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		newTravelFlag = true;
 		this.mouthMani.shutUp();
-		
+
 		hkdrive.yawZeroing();
 
 	}
@@ -134,11 +134,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		//currentStrategy = 3;
 		if((currentStrategy== 3) || (currentStrategy ==5)) { //making sure we dont go crossfield
 			if ((( currentPosition == 3) &&  (getAngleToSwitchPlate()==90)) || 
-			(( currentPosition == 1) &&  (getAngleToSwitchPlate()==-90))){
+					(( currentPosition == 1) &&  (getAngleToSwitchPlate()==-90))){
 				//currentStrategy = 1;
 			}
 		}
-		
+
 		SmartDashboard.putNumber("actual strategy", currentStrategy);
 
 		//deciding on which strategy to run
@@ -149,14 +149,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		} else if (currentStrategy == 3) {
 			this.smartSwitchStrategy(autoTime);
 		} 
-		
+
 		/*else if (currentStrategy == 4) {
 			this.smartSwitchLidarStrategy(autoTime);
 		} 
-		*/
-		
+		 */
+
 		else if (currentStrategy == 5) {
-			this.scaleStrategy(autoTime);
+			this.smartScaleStrategy(autoTime);
 		}
 
 	}
@@ -174,7 +174,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		hkdrive.checkDriving();
 		hkdrive.checkAutoTurn();
 		hkdrive.getCurrentAngle();
-		hkdrive.checkSetOffsetAngle();
+		hkdrive.checkYawZero();
 
 		mouthMani.checkEatSpit();
 
@@ -186,7 +186,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkFlipDip();
 		liftMani.checkLockUnlock();
 		liftMani.checkDisengageMotor();
-		
+
 		pressureSensor.updateAirPressureDisplay();
 		//updateLidarDistance();	
 
@@ -266,8 +266,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	//AUTO STRATEGY #3: Starting in position 2, move to the correct switch plate and drop off the powercube -Marlahna
 	//Rickeya,Jocelyn,Mohamed C 
-	public void smartSwitchStrategy(double timeC) {
-
+	public void smartSwitchStrategy(double timeG) {
+		
+		//smartSwitchRightAngles(timeG);
+		smartSwitchDiagonal(timeG);
+	}
+	
+	//AUTO STRATEGY #3A: Using right Angles
+	public void smartSwitchRightAngles(double timeC) {
 		double forwardVoltage = 6.0;
 		double turnVoltage = 8.0;
 
@@ -288,19 +294,19 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if(timeC < startPauseTime){
 		}else if (timeC < firstForwardTime) {
 			//hkdrive.goForwardFacing(forwardVoltage, 0.0);
-				SmartDashboard.putString("auto move", "Going forward");
+			SmartDashboard.putString("auto move", "Going forward");
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < firstTurnTime) {
 			hkdrive.autoTurn(angleToOurSwitchPlate);
-				SmartDashboard.putString("auto move", "turning");
+			SmartDashboard.putString("auto move", "turning");
 			//hkdrive.turnVoltage(turnVoltage);
 		}else if(timeC < secondForwardTime) {
 			//hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
-				SmartDashboard.putString("auto move", "Going forward");
+			SmartDashboard.putString("auto move", "Going forward");
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < secondTurnTime) {
 			hkdrive.autoTurn(0.0);
-				SmartDashboard.putString("auto move", "turning");
+			SmartDashboard.putString("auto move", "turning");
 			//hkdrive.turnVoltage(-turnVoltage);
 		}else if(timeC < forwardToSwitchTime) {
 			//hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
@@ -317,9 +323,43 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	}
 
+	//AUTO STRATEGY #3B: Using diagonal
+	public void smartSwitchDiagonal (double timeH) {
+		double driveVoltage = 6.0;
+		double diagonalAngle = -45.0;
+		
+		//check which direction to go based on plate color
+		if(this.getAngleToSwitchPlate() == -90) {
+			diagonalAngle *= -1;
+		}
+
+		double startPauseTime = 0.1;							//0.1	
+		double firstDiagonalTime = 2.5 + startPauseTime;		//2.6
+		double forwardToSwitchTime = 1.0 + firstDiagonalTime;	//3.6
+		double dipTime = 0.3 + forwardToSwitchTime;				//3.9
+		double lastTime = 5.0;
+
+		if(timeH < startPauseTime){
+		}else if (timeH < firstDiagonalTime) {
+			hkdrive.goDiagonal(driveVoltage, 0.0, diagonalAngle);
+			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
+			SmartDashboard.putString("auto move", "Diagonal");
+		}else if(timeH < forwardToSwitchTime) {
+			hkdrive.goForwardVoltage(driveVoltage);
+		}else if (timeH < dipTime){
+			hkdrive.stop();										//stop driving
+			liftMani.dipMouth();								//let the mouth "Dip"
+		}else if(timeH < lastTime){
+			mouthMani.spit();									//spit out powercube
+		}else{
+			hkdrive.stop();										//stop driving
+		}
+
+	}
+
 	
-	
-/*	
+
+	/*	
 	//AUTO STRATEGY #4: Starting in position 2, move to the correct switch plate and drop off the powercube -Marlahna
 	//Khalil & Mohamed updated with Shubham
 	public void smartSwitchLidarStrategy(double timeD) {
@@ -346,7 +386,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		} else if(timeD < firstForwardTime && hasNotTraveledLidar(dist1inches)){
 			hkdrive.goForwardVoltage(forwardVoltage);
 		} 
-		
+
 		else if(timeD < firstTurnTime) {
 			hkdrive.autoTurn(angleToOurSwitchPlate);	
 			resetTargetDistance();
@@ -366,26 +406,26 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else if(timeD < endAutoTime){
 			mouthMani.spit();									//spit out powercube
 		}
-		 
+
 		else{
 			hkdrive.stop();										//stop driving
 		}
 
 	}
 
-*/
+	 */
 	//AUTO STRATEGY #5:
-	public void scaleStrategy(double time) {
+	public void smartScaleStrategy(double timeF) {
 		if (getScalePlateSide() == POSITION.valueOf(currentPosition)) {
-			sameScaleStrategy(time);
+			sameScaleStrategy(timeF);
 		} else
-			differentScaleStrategy(time);
+			differentScaleStrategy(timeF);
 
 	}
-	
+
 	//AUTO STRATEGY #5a: Go forward to the scale and drop off a cube if its the correct plate
 	public void sameScaleStrategy(double timeE) {
-		
+
 		double forwardVoltage = 5.5;
 		double turnAngle = 90.0;
 
@@ -402,7 +442,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double lastTime = 15;
 
 		if(timeE < startPauseTime){
-			
+
 		}else if (timeE < firstForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
 			liftMani.elevatorLift(liftMani.topHeight);	
@@ -410,7 +450,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.autoTurn(turnAngle);
 		}else if(timeE < secondForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage); 
-			
+
 		} else if (timeE < spitTime) {
 			hkdrive.stop();
 			mouthMani.spit();									//spit out powercube
@@ -420,62 +460,51 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			mouthMani.spit();									//spit out powercube
 		} 
 		else{
-		hkdrive.stop();	
-		this.mouthMani.shutUp();
+			hkdrive.stop();	
+			this.mouthMani.shutUp();
 
 		}
 	}
-	//AUTO STRATEGY #5b POSITION 2 SCALE -marlahna & mal
+	//AUTO STRATEGY #5b POSITION 2 SCALE -marlahna & mal Travel to opposite Scal Plate
 	public void differentScaleStrategy (double timeR) {
 		double forwardVoltage = 5.5;
 		double turnAngle = 90.0;
-		//check which direction to go based on plate color
-		//check which direction to go based on plate color
-				if(this.getAngleToSwitchPlate() == -90) {
-					turnAngle *= -1;
+
+		//position 3 needs a neg turn, position 1 needs a positive turn
+		if(currentPosition == 3) {
+			turnAngle *= -1;
+		}
 		
-				
+		double startPauseTime = 0.5;							//0.5	
+		double firstForwardTime = 0.5 + startPauseTime;			//1.0
+		double firstTurnTime = 3.0 +firstForwardTime;			//1.625
+		double secondForwardTime = 3.1250 + firstTurnTime;		//2.75
+		double secondTurnTime = 3.0 + secondForwardTime;		//3.375
+		double forwardToScaleTime = 3.0 + secondTurnTime;		//5.575
+		double dipTime = 0.3 + forwardToScaleTime;				//5.875
+		double lastTime = 8.0;
 
-				double startPauseTime = 0.5;							//0.5	
-				double firstForwardTime = 0.5 + startPauseTime;			//1.0
-				double firstTurnTime = 3.0 +firstForwardTime;			//1.625
-				double secondForwardTime = 3.1250 + firstTurnTime;		//2.75
-				double secondTurnTime = 3.0 + secondForwardTime;		//3.375
-				double forwardToScaleTime = 3.0 + secondTurnTime;		//5.575
-				double dipTime = 0.3 + forwardToScaleTime;				//5.875
-				double lastTime = 8.0;
+		if(timeR < startPauseTime){
+		}else if (timeR < firstForwardTime) {
+			hkdrive.goForwardVoltage(forwardVoltage);
+		}else if(timeR < firstTurnTime) {
+			hkdrive.autoTurn(angleToOurSwitchPlate);
+		}else if(timeR < secondForwardTime) {
+			hkdrive.goForwardVoltage(forwardVoltage);
+		}else if(timeR < secondTurnTime) {
+			hkdrive.autoTurn(0.0);
+		}else if(timeR < forwardToScaleTime) {
+			hkdrive.goForwardVoltage(forwardVoltage);
+			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
+		}else if (timeR < dipTime){
+			hkdrive.stop();										//stop driving
+			liftMani.dipMouth();								//let the mouth "Dip"
+		}else if(timeR < lastTime){
+			mouthMani.spit();									//spit out powercube
+		}else{
+			hkdrive.stop();										//stop driving
+		}
 
-				if(timeR < startPauseTime){
-				}else if (timeR < firstForwardTime) {
-					//hkdrive.goForwardFacing(forwardVoltage, 0.0);
-					hkdrive.goForwardVoltage(forwardVoltage);
-				}else if(timeR < firstTurnTime) {
-					hkdrive.autoTurn(angleToOurSwitchPlate);
-					//hkdrive.turnVoltage(turnVoltage);
-				}else if(timeR < secondForwardTime) {
-					//hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
-					hkdrive.goForwardVoltage(forwardVoltage);
-				}else if(timeR < secondTurnTime) {
-					hkdrive.autoTurn(0.0);
-					//hkdrive.turnVoltage(-turnVoltage);
-				}else if(timeR < forwardToScaleTime) {
-					//hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
-					hkdrive.goForwardVoltage(forwardVoltage);
-					liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
-				}else if (timeR < dipTime){
-					hkdrive.stop();										//stop driving
-					liftMani.dipMouth();								//let the mouth "Dip"
-				}else if(timeR < lastTime){
-					mouthMani.spit();									//spit out powercube
-				}else{
-					hkdrive.stop();										//stop driving
-				}
-
-				}
-	}
-	//STRAFING AT AN ANGLE METHOD AUTO STRATEGY
-	public void angleStrafe() {
-		
 	}
 
 
@@ -530,8 +559,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			return 90.0;
 		}
 	}
-	
-	
+
+
 	public POSITION getScalePlateSide(){
 
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
