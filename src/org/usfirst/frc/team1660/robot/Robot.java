@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
+
+import javax.swing.text.Position;
+
 import edu.wpi.first.wpilibj.CameraServer;
 
 
@@ -67,6 +70,30 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		SmartDashboard.putData("position selector", position); 
 	}
 
+	enum POSITION{
+		L, C, R;
+
+		public static POSITION valueOf(char charAt) {
+			// TODO Auto-generated method stub
+			if(charAt == 'L')
+				return POSITION.L;
+			else if(charAt == 'R')
+				return POSITION.R;
+			else
+				return POSITION.C;
+		}
+
+		public static POSITION valueOf(int currentPosition) {
+			// TODO Auto-generated method stub
+			if(currentPosition == 1)
+				return POSITION.L;
+			else if(currentPosition == 2)
+				return POSITION.R;
+			else
+				return POSITION.C;
+		}
+		
+	}
 
 	//AUTONOMOUS MODE
 
@@ -129,7 +156,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		*/
 		
 		else if (currentStrategy == 5) {
-			this.simpleScaleStrategy(autoTime);
+			this.scaleStrategy(autoTime);
 		}
 
 	}
@@ -347,9 +374,17 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 
 */
+	//AUTO STRATEGY #5:
+	public void scaleStrategy(double time) {
+		if (getScalePlateSide() == POSITION.valueOf(currentPosition)) {
+			sameScaleStrategy(time);
+		} else
+			differentScaleStrategy(time);
+
+	}
 	
-	//AUTO STRATEGY #5: Go forward to the scale and drop off a cube if its the correct plate
-	public void simpleScaleStrategy(double timeE) {
+	//AUTO STRATEGY #5a: Go forward to the scale and drop off a cube if its the correct plate
+	public void sameScaleStrategy(double timeE) {
 		
 		double forwardVoltage = 5.5;
 		double turnAngle = 90.0;
@@ -390,8 +425,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		}
 	}
-	//AUTO STRATEGY #6 POSITION 2 SCALE
-	public void smartScaleStrategy (double timeR) {
+	//AUTO STRATEGY #5b POSITION 2 SCALE -marlahna & mal
+	public void differentScaleStrategy (double timeR) {
 		double forwardVoltage = 5.5;
 		double turnAngle = 90.0;
 		//check which direction to go based on plate color
@@ -437,6 +472,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 				}
 
 				}
+	}
+	//STRAFING AT AN ANGLE METHOD AUTO STRATEGY
+	public void angleStrafe() {
+		
 	}
 
 
@@ -484,14 +523,20 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 
 		char ourSwitchPlateSide = gameData.charAt(0);
-		char scalePlateSide = gameData.charAt(1);
-		char otherSwitchPlateSide = gameData.charAt(2);
 
 		if(ourSwitchPlateSide == 'L') {
 			return -90.0;
 		}else {
 			return 90.0;
 		}
+	}
+	
+	
+	public POSITION getScalePlateSide(){
+
+		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+
+		return POSITION.valueOf(gameData.charAt(1));
 	}
 
 	public void checkLed(){

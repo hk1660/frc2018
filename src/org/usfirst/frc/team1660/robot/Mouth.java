@@ -15,7 +15,7 @@ public class Mouth {
 	private DigitalInput limitSwitchMouth;
 	private boolean isUpFlag;
 	
-	double mouthSpeed = 1;
+	double mouthSpeed = 1.3;
 	
 	public Mouth(Joystick maniStick) {
 		this.maniStick = maniStick;
