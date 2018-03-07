@@ -131,13 +131,17 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		//updateLidarDistance();
 
-		//currentStrategy = 3;
+		currentStrategy = 3;	//scale
+		currentPosition = 3;  //left
+		
+		/*
 		if((currentStrategy== 3) || (currentStrategy ==5)) { //making sure we dont go crossfield
 			if ((( currentPosition == 3) &&  (getAngleToSwitchPlate()==90)) || 
 					(( currentPosition == 1) &&  (getAngleToSwitchPlate()==-90))){
 				//currentStrategy = 1;
 			}
 		}
+		*/
 
 		SmartDashboard.putNumber("actual strategy", currentStrategy);
 
@@ -325,8 +329,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	//AUTO STRATEGY #3B: Using diagonal
 	public void smartSwitchDiagonal (double timeH) {
-		double driveVoltage = 6.0;
-		double diagonalAngle = -45.0;
+		double driveVoltage = 8.0;
+		double diagonalAngle = 45.0;
 		
 		//check which direction to go based on plate color
 		if(this.getAngleToSwitchPlate() == -90) {
@@ -334,8 +338,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 
 		double startPauseTime = 0.1;							//0.1	
-		double firstDiagonalTime = 2.5 + startPauseTime;		//2.6
-		double forwardToSwitchTime = 1.0 + firstDiagonalTime;	//3.6
+		double firstDiagonalTime = 1.8 + startPauseTime;		//2.6
+		double forwardToSwitchTime = 0.4 + firstDiagonalTime;	//3.6
 		double dipTime = 0.3 + forwardToSwitchTime;				//3.9
 		double lastTime = 5.0;
 
@@ -345,7 +349,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
 			SmartDashboard.putString("auto move", "Diagonal");
 		}else if(timeH < forwardToSwitchTime) {
-			hkdrive.goForwardVoltage(driveVoltage);
+			
+			hkdrive.goStraightAccurate(driveVoltage, 0.0);
+			//hkdrive.goForwardVoltage(driveVoltage);
 		}else if (timeH < dipTime){
 			hkdrive.stop();										//stop driving
 			liftMani.dipMouth();								//let the mouth "Dip"
@@ -416,7 +422,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	 */
 	//AUTO STRATEGY #5:
 	public void smartScaleStrategy(double timeF) {
-		if (getScalePlateSide() == POSITION.valueOf(currentPosition)) {
+	//	if (getScalePlateSide() == POSITION.valueOf(currentPosition)) {
+		if(getScalePlateSide() == currentPosition) {
 			sameScaleStrategy(timeF);
 		} else
 			differentScaleStrategy(timeF);
@@ -476,19 +483,19 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 		
 		double startPauseTime = 0.5;							//0.5	
-		double firstForwardTime = 0.5 + startPauseTime;			//1.0
+		double firstForwardTime = 2.5 + startPauseTime;			//1.0
 		double firstTurnTime = 3.0 +firstForwardTime;			//1.625
-		double secondForwardTime = 3.1250 + firstTurnTime;		//2.75
+		double secondForwardTime = 2.1250 + firstTurnTime;		//2.75
 		double secondTurnTime = 3.0 + secondForwardTime;		//3.375
-		double forwardToScaleTime = 3.0 + secondTurnTime;		//5.575
+		double forwardToScaleTime = .1 + secondTurnTime;		//5.575
 		double dipTime = 0.3 + forwardToScaleTime;				//5.875
-		double lastTime = 8.0;
+		double lastTime = 15.0;
 
 		if(timeR < startPauseTime){
 		}else if (timeR < firstForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeR < firstTurnTime) {
-			hkdrive.autoTurn(angleToOurSwitchPlate);
+			hkdrive.autoTurn(turnAngle);
 		}else if(timeR < secondForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeR < secondTurnTime) {
@@ -498,9 +505,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
 		}else if (timeR < dipTime){
 			hkdrive.stop();										//stop driving
-			liftMani.dipMouth();								//let the mouth "Dip"
+			//liftMani.dipMouth();								//let the mouth "Dip"
 		}else if(timeR < lastTime){
-			mouthMani.spit();									//spit out powercube
+			//mouthMani.spit();									//spit out powercube
 		}else{
 			hkdrive.stop();										//stop driving
 		}
@@ -549,25 +556,43 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//method that gets the direction of our alliance plates from FMS (OurSwitch > Scale > OtherSwitch)
 	public double getAngleToSwitchPlate(){
 
-		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		//String gameData = DriverStation.getInstance().getGameSpecificMessage().charAt(0);
 
-		char ourSwitchPlateSide = gameData.charAt(0);
+		String gameData = DriverStation.getInstance().getGameSpecificMessage().substring(0,1);
+		
+		SmartDashboard.putString("SwitchSide", gameData);
 
-		if(ourSwitchPlateSide == 'L') {
+		if(gameData.equals("L")) {
 			return -90.0;
 		}else {
 			return 90.0;
 		}
 	}
 
-
+/*
 	public POSITION getScalePlateSide(){
 
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
-
+		
 		return POSITION.valueOf(gameData.charAt(1));
 	}
 
+	*/
+	
+	public int getScalePlateSide(){
+
+		String gameData = DriverStation.getInstance().getGameSpecificMessage().substring(1,2);
+
+		SmartDashboard.putString("ScaleSide", gameData);
+		
+		if(gameData.equals("L")) return 1;
+		else if (gameData.equals("R")) return 3;
+		else return -2;
+			
+	}
+
+	
+	
 	public void checkLed(){
 
 		//double matchTime = DriverStation.getInstance().getMatchTime();

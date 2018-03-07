@@ -307,10 +307,18 @@ public class HKDrive implements PIDOutput {
 		turnController.setSetpoint(angleFacing);
 		turnParameter = rotateToAngleRate;
 
-		strafeParameter = Math.sin( Math.toRadians( desiredSpeed ) );
-		forwardParameter =Math.cos( Math.toRadians( desiredSpeed ) );
+		//turnParameter = 0.0;
+		//strafeParameter = Math.sin( Math.toRadians( desiredSpeed ) );
+		//forwardParameter =Math.cos( Math.toRadians( desiredSpeed ) );
+		
+		strafeParameter  = desiredSpeed;
+		forwardParameter = desiredSpeed * 0.5;
 		angleParameter = 0.0;
 
+		if(angleTraveling < 0) {
+			strafeParameter *= -1;
+		}	
+		
 		drive();
 
 	}
