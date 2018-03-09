@@ -312,7 +312,7 @@ public class HKDrive implements PIDOutput {
 		//forwardParameter =Math.cos( Math.toRadians( desiredSpeed ) );
 		
 		strafeParameter  = desiredSpeed;
-		forwardParameter = desiredSpeed * 0.5;		//need to scale down bc FWD with mec wheels is mechanically much easier than STRAFING
+		forwardParameter = desiredSpeed * 0.7;		//need to scale down bc FWD with mec wheels is mechanically much easier than STRAFING
 		angleParameter = 0.0;
 
 		if(angleTraveling < 0) {
