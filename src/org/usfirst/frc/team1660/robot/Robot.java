@@ -304,7 +304,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if(timeH < startPauseTime){
 		}else if (timeH < firstDiagonalTime) {
 			hkdrive.goDiagonal(driveVoltage, 0.0, diagonalAngle);
-			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
+			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube up
 			SmartDashboard.putString("auto move", "Diagonal");
 		}else if(timeH < forwardToSwitchTime) {
 
