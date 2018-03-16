@@ -19,7 +19,9 @@ public class Lift {
 	private DigitalInput limitLiftTop = new DigitalInput(RobotMap.LIFT_LIMIT_TOP_CHANNEL);
 	private AnalogInput limitLiftBottom = new AnalogInput(RobotMap.LIFT_LIMIT_BOTTOM_CHANNEL);
 
-	//Compressor comp = new Compressor(RobotMap.COMPRESSOR_PORT);
+	Compressor comp = new Compressor(RobotMap.COMPRESSOR_PORT);
+	
+	
 	DoubleSolenoid flipDipPistons;
 	DoubleSolenoid liftLockPistons;
 	private static final int kSlotIdx = 0;
@@ -29,14 +31,15 @@ public class Lift {
 	private static final double kP = 0.3;
 	private static final double kI = 0.0;
 	private static final double kD = 0.0;
+	//compressorRelay = new Relay(0);
 	
 	private static final double ANALOG_VOLTAGE_THRESHOLD = 2.5;
 
 	private static boolean isDip = false;
 	private static boolean isLock = false;
-	//boolean enabled = comp.enabled();
-	//boolean pressureSwitch = comp.getPressureSwitchValue();
-	//double current = comp.getCompressorCurrent();
+	boolean enabled = comp.enabled();
+	boolean pressureSwitch = comp.getPressureSwitchValue();
+	double current = comp.getCompressorCurrent();
 
 	//int rawPerRev = 8200;  //pos numbers go up in air
 
@@ -56,6 +59,7 @@ public class Lift {
 	private boolean manualLiftFlag;
 	private boolean haveClimbedFlag;
 	private boolean disengageMotorFlag = false;
+	private boolean isCompressing = false;
 
 	public Lift(Joystick maniStick) {
 		this.maniStick = maniStick;
@@ -66,7 +70,7 @@ public class Lift {
 		flipDipPistons = new DoubleSolenoid(RobotMap.FLIP_PORT, RobotMap.DIP_PORT);
 		liftLockPistons = new DoubleSolenoid(RobotMap.LOCK_PORT, RobotMap.UNLOCK_PORT);
 
-		liftMotor = new WPI_TalonSRX(RobotMap.LIFT_MOTOR_CHANNEL); //A.K.A Elevator/Climb maniulator
+		liftMotor = new WPI_TalonSRX(RobotMap.LIFT_MOTOR_CHANNEL); //A.K.A Elevator/Climb manipulator
 
 		disengageMotorFlag = false;
 		liftMotor.setInverted(true);
@@ -92,6 +96,8 @@ public class Lift {
 
 		this.setEncoderZero();
 		this.elevatorLift(0);
+		
+		this.compressorOn();
 
 	}
 
@@ -266,19 +272,20 @@ public class Lift {
 
 	}
 
-	/*method to turn compressor on and off -nana
+	/*method to turn compressor on and off -nana 
 	public void checkCompressor(){ 
-
-		if(maniStick.getRawButton(RobotMap.COMPRESSOR_ON_BUTTON) == true){
-			this.compressorOn();
-			SmartDashboard.putString("Compressor: ", "ON-button");
+		if(maniStick.getRawButton(RobotMap.COMPRESSOR_BUTTON) == true){
+			if(isCompressing) {
+				this.compressorOff();
+				SmartDashboard.putString("Compressor: ", "OFF-button");
+			}
+			else {
+				this.compressorOn();
+				SmartDashboard.putString("Compressor: ", "ON-button");
+			}
 		}
-		else if(maniStick.getRawButton(RobotMap.COMPRESSOR_OFF_BUTTON) == true){
-			this.compressorOff();
-			SmartDashboard.putString("Compressor: ", "OFF-button");
-		}
-	} */
-
+	} 
+	*/
 
 	/* methods to flip (up) and dip (down) the mouth -Aldenis */
 	public void flipMouth() {
@@ -322,15 +329,15 @@ public class Lift {
 	//method to check if lock & unlock button is pressed
 	public void checkLockUnlock() {
 		if(maniStick.getRawButton(RobotMap.LOCK_BUTTON) == true && haveClimbedFlag == true) {
-			lock();
-			SmartDashboard.putString("lock/unlock", "locked");
-		}
-		else if(maniStick.getRawButton(RobotMap.UNLOCK_BUTTON) == true) {
-			unlock();
-			SmartDashboard.putString("lock/unlock", "unlocked");
-		} else {
-			SmartDashboard.putString("lock/unlock", "NONE");
-		}
+			if (isLock) {
+				unlock();
+				SmartDashboard.putString("lock", "unlocked");
+			} 
+			else {
+				lock();
+				SmartDashboard.putString("lock", "locked");
+			}
+		}	
 	}
 
 	public void checkDisengageMotor() {
@@ -350,31 +357,33 @@ public class Lift {
 		}
 	}
 
-	/* basic compressor functionality methods	-Aldenis 
+	//basic compressor functionality methods	-Aldenis 
 	public void compressorOn(){
 		this.comp.setClosedLoopControl(true);
 		SmartDashboard.putString("compressorStatus", "is on");
+		isCompressing = true;
 	}
 	public void compressorOff(){
 		this.comp.setClosedLoopControl(false);
 		SmartDashboard.putString("compressorStatus", "is off");
+		isCompressing = false;
 	}	
-
-	 */
-
+	 
+/*
 	/* basic compressor functionality methods	
 	public void compressorOn(){
-		//this.compressorRelay.set(Relay.Value.kForward);
+		this.compressorRelay.set(Relay.Value.kForward);
 		SmartDashboard.putString("compressorStatus", "is on");
+		isCompressing = true;
 	}
 	public void compressorOff(){
-		//this.compressorRelay.set(Relay.Value.kOff);
+		this.compressorRelay.set(Relay.Value.kOff);
 		SmartDashboard.putString("compressorStatus", "is off");
-	}
+		isCompressing = false;
+	} 
+	 
 
-	 */
-
-
+*/
 	
 	
 }

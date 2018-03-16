@@ -28,10 +28,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	Lift liftMani = new Lift(maniStick);
 	Mouth mouthMani = new Mouth(maniStick);
 	//Lidar3 laser3 = new Lidar3();
-	@SuppressWarnings("rawtypes")
-	SendableChooser strategy = new SendableChooser();
-	@SuppressWarnings("rawtypes")
-	SendableChooser position = new SendableChooser();
+	
+	SendableChooser<Object> strategy = new SendableChooser<Object>();
+
+	SendableChooser<Object> position = new SendableChooser<Object>();
 	Timer timerAuto = new Timer();
 	AirPressureSensor pressureSensor = new AirPressureSensor(RobotMap.PRESSURE_SENSOR_PORT);
 
@@ -100,12 +100,12 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		//get current Auto time for SmartDash
 		double autoTime = timerAuto.get();
-		SmartDashboard.putNumber("autoTime",autoTime);
+		SmartDashboard.putNumber("autoTime", autoTime);
 
 		//updateLidarDistance();
 
-		currentStrategy = 3;	//switch
-		currentPosition = 3;  //right
+		//currentStrategy = 3;	//switch
+		//currentPosition = 3;  //right
 
 		SmartDashboard.putNumber("actual strategy", currentStrategy);
 
