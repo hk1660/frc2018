@@ -234,8 +234,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//Rickeya,Jocelyn,Mohamed C 
 	public void smartSwitchStrategy(double timeG) {
 
-		//smartSwitchRightAngles(timeG);
-		smartSwitchDiagonal(timeG);
+		smartSwitchRightAngles(timeG);
+		//smartSwitchDiagonal(timeG);
 	}
 
 	//AUTO STRATEGY #3A: Using right Angles
@@ -245,9 +245,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		double startPauseTime = 0.01;							//0.5	
 		double firstForwardTime = 0.5 + startPauseTime;			//1.0
-		double firstTurnTime = 3.0 +firstForwardTime;			//1.625
-		double secondForwardTime = 1.1250 + firstTurnTime;		//2.75
-		double secondTurnTime = 3.0 + secondForwardTime;		//3.375
+		double firstTurnTime = 1.0 +firstForwardTime;			//1.625
+		double secondForwardTime = 0.35 + firstTurnTime;		//2.75
+		double secondTurnTime = 1.0 + secondForwardTime;		//3.375 
 		double forwardToSwitchTime = 1.0 + secondTurnTime;		//5.575
 		double dipTime = 0.3 + forwardToSwitchTime;				//5.875
 		double lastTime = 8.0;
@@ -255,7 +255,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if(timeC < startPauseTime){
 		}else if (timeC < firstForwardTime) {
 			//hkdrive.goForwardFacing(forwardVoltage, 0.0);
-			SmartDashboard.putString("auto move", "Going forward");
+			liftMani.flipMouth();	SmartDashboard.putString("auto move", "Going forward");
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeC < firstTurnTime) {
 			hkdrive.autoTurn(turnAngle);

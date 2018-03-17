@@ -72,7 +72,8 @@ public class RobotMap {
 	public final static int FLIP_AXIS = RT_AXIS;
 	public final static int DIP_AXIS = LT_AXIS;
 	public final static int LOCK_BUTTON = RB_BUTTON;
-	public final static int COMPRESSOR_BUTTON = LB_BUTTON;
+	public final static int LIFT_TOP_HEIGHT = LB_BUTTON;
+	//public final static int COMPRESSOR_BUTTON = LB_BUTTON;
 	public final static int SCALE_HEIGHT_AXIS = RIGHT_Y_AXIS;
 
 	

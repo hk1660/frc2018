@@ -48,7 +48,7 @@ public class Lift {
 	double exchangeHeight = 10048.0;
 	double tier2Height = 26280.0;
 	double switchHeight = 52000.0;
-	double topHeight = 83500.0;
+	double topHeight = 79000.0;
 	
 	double pullUpHeight = 28000.0;
 	double reachHeight = 65300.0;
@@ -140,12 +140,12 @@ public class Lift {
 	//joystick method to make the lift move to a specific height -pinzon & lakiera & Mal
 	public void  checkLiftPoints() {
 
-		/*
-		if (maniStick.getPOV()==RobotMap.LB_BUTTON) {
-			manualFlag = false;
-			liftTargetHeight = this.convert(topHeight);
+		
+		if (maniStick.getPOV()==RobotMap.LIFT_TOP_HEIGHT) {
+			manualLiftFlag = false;
+			liftTargetHeight = this.topHeight;
 		}
-		 */
+		 
 
 		int povVal = maniStick.getPOV();
 
