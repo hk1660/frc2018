@@ -382,7 +382,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if(getScalePlateSide() == currentPosition) {
 			sameScaleStrategy(timeF);
 		} else
-			differentScaleStrategy(timeF);
+			snakeScaleStrategy(timeF);
 
 	}
 
@@ -428,8 +428,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 		}
 	}
-	//AUTO STRATEGY #5b POSITION 2 SCALE -marlahna & mal Travel to opposite Scal Plate
-	public void differentScaleStrategy (double timeR) {
+	//AUTO STRATEGY #5b POSITION 3/1 SCALE -marlahna Travel to opposite Scal Plate
+	public  void snakeScaleStrategy (double timeR) {
 		double forwardVoltage = 5.5;
 		double turnAngle = 90.0;
 
@@ -438,36 +438,35 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			turnAngle *= -1;
 		}
 
-		double startPauseTime = 0.5;							//0.5	
-		double firstForwardTime = 2.5 + startPauseTime;			//1.0
-		double firstTurnTime = 3.0 +firstForwardTime;			//1.625
-		double secondForwardTime = 2.1250 + firstTurnTime;		//2.75
-		double secondTurnTime = 3.0 + secondForwardTime;		//3.375
-		double forwardToScaleTime = .1 + secondTurnTime;		//5.575
-		double dipTime = 0.3 + forwardToScaleTime;				//5.875
-		double lastTime = 15.0;
+		double startPauseTime = 0;								
+		double firstForwardTime = 3.5 + startPauseTime;		//6
+		double firstTurnTime = 1.0 +firstForwardTime;			//8
+		double secondForwardTime = 2.05 + firstTurnTime; //8.5
+		double secondTurnTime = 1.0 + secondForwardTime;
+		double thirdForwardTime = .2 + secondTurnTime;
+		double spitTime = 14.5 + thirdForwardTime;
+		double lastTime = 15;
 
 		if(timeR < startPauseTime){
+
 		}else if (timeR < firstForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
+			liftMani.elevatorLift(liftMani.topHeight);	
 		}else if(timeR < firstTurnTime) {
 			hkdrive.autoTurn(turnAngle);
 		}else if(timeR < secondForwardTime) {
+			hkdrive.goForwardVoltage(forwardVoltage); 
+        } else if (timeR < secondTurnTime) {
+        	hkdrive.autoTurn(-turnAngle);
+		}else if(timeR < thirdForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
-		}else if(timeR < secondTurnTime) {
-			hkdrive.autoTurn(0.0);
-		}else if(timeR < forwardToScaleTime) {
-			hkdrive.goForwardVoltage(forwardVoltage);
-			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
-		}else if (timeR < dipTime){
-			hkdrive.stop();										//stop driving
-			//liftMani.dipMouth();								//let the mouth "Dip"
 		}else if(timeR < lastTime){
-			//mouthMani.spit();									//spit out powercube
-		}else{
-			hkdrive.stop();										//stop driving
-		}
-
+			mouthMani.spit();									//spit out powercube
+		} 
+		else{
+			hkdrive.stop();	
+			this.mouthMani.shutUp();
+	}
 	}
 
 
