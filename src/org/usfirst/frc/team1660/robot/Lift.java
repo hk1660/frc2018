@@ -105,7 +105,7 @@ public class Lift {
 	//method to get the value from the encoder- lakiera and pinzon (Black side faces LEFT, Silver side faces RIGHT)
 	public int getEncoder(){
 
-		int x = liftMotor.getSelectedSensorPosition(kPidIdx);
+		int x = -liftMotor.getSelectedSensorPosition(kPidIdx);
 		SmartDashboard.putNumber("liftHeight", x);
 		return x;
 	}

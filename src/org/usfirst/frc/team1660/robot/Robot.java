@@ -1,5 +1,4 @@
 /*
- * Code for the Harlem Knights (FRC 1660) Robot for 2018
  * website: www.hk1660.com
  * online repository: www.github.com/hk1660/frc2018
  */
@@ -234,8 +233,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//Rickeya,Jocelyn,Mohamed C 
 	public void smartSwitchStrategy(double timeG) {
 
-		smartSwitchRightAngles(timeG);
-		//smartSwitchDiagonal(timeG);
+		//smartSwitchRightAngles(timeG);
+		smartSwitchDiagonal(timeG);
 	}
 
 	//AUTO STRATEGY #3A: Using right Angles
@@ -380,12 +379,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	 */
 	//AUTO STRATEGY #5:
 	public void smartScaleStrategy(double timeF) {
-		//	if (getScalePlateSide() == POSITION.valueOf(currentPosition)) {
 		if(getScalePlateSide() == currentPosition) {
 			sameScaleStrategy(timeF);
 		} else
 			differentScaleStrategy(timeF);
-			//simpleSwitchStrategy(timeF);
 
 	}
 
@@ -401,9 +398,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 
 		double startPauseTime = 0;								
-		double firstForwardTime = 6.5 + startPauseTime;		//6
-		double firstTurnTime = 2.0 +firstForwardTime;			//8
-		double secondForwardTime = 0.7 + firstTurnTime;			//8.5
+		double firstForwardTime = 5.0 + startPauseTime;		//6
+		double firstTurnTime = 1.0 +firstForwardTime;			//8
+		double secondForwardTime = 0.05 + firstTurnTime;			//8.5
 		double spitTime = 14.5;
 		double lastTime = 15;
 
