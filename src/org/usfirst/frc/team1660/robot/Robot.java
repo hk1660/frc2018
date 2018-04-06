@@ -32,7 +32,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	SendableChooser<Object> position = new SendableChooser<Object>();
 	Timer timerAuto = new Timer();
-	AirPressureSensor pressureSensor = new AirPressureSensor(RobotMap.PRESSURE_SENSOR_PORT);
+	
 
 	int currentStrategy;
 	int currentPosition;
@@ -97,6 +97,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//AUTO_PERIODIC
 	public void autonomousPeriodic() {
 
+		liftMani.limitCompressor();
+		
 		//get current Auto time for SmartDash
 		double autoTime = timerAuto.get();
 		SmartDashboard.putNumber("autoTime", autoTime);
@@ -154,7 +156,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		liftMani.checkLockUnlock();
 		liftMani.checkDisengageMotor();
 
-		pressureSensor.updateAirPressureDisplay();
+		liftMani.pressureSensor.updateAirPressureDisplay();
+		liftMani.limitCompressor();
 		//updateLidarDistance();	
 
 	}
@@ -233,8 +236,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	//Rickeya,Jocelyn,Mohamed C 
 	public void smartSwitchStrategy(double timeG) {
 
-		//smartSwitchRightAngles(timeG);
-		smartSwitchDiagonal(timeG);
+		smartSwitchRightAngles(timeG);
+		//smartSwitchDiagonal(timeG);
 	}
 
 	//AUTO STRATEGY #3A: Using right Angles
@@ -261,6 +264,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			SmartDashboard.putString("auto move", "turning");
 			//hkdrive.turnVoltage(turnVoltage);
 		}else if(timeC < secondForwardTime) {
+			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
 			//hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
 			SmartDashboard.putString("auto move", "Going forward");
 			hkdrive.goForwardVoltage(forwardVoltage);
@@ -271,7 +275,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else if(timeC < forwardToSwitchTime) {
 			//hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
 			hkdrive.goForwardVoltage(forwardVoltage);
-			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
+			
 		}else if (timeC < dipTime){
 			hkdrive.stop();										//stop driving
 			liftMani.dipMouth();								//let the mouth "Dip"
@@ -294,8 +298,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			diagonalAngle *= -1;
 		}
 
-		double startPauseTime = 0.01;							//0.1	
-		double firstDiagonalTime = 1.8 + startPauseTime;		//2.6
+                      		double startPauseTime = 0.01;							//0.1	
+		double firstDiagonalTime = 2.8 + startPauseTime;		//2.6
 		double forwardToSwitchTime = 0.4 + firstDiagonalTime;	//3.6
 		double dipTime = 0.3 + forwardToSwitchTime;				//3.9
 		double lastTime = 5.0;
@@ -468,7 +472,56 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			this.mouthMani.shutUp();
 	}
 	}
+	
+	//AUTO STRATEGY #6 DOUBLE CUBE SWITCH FORK
+	/*	public void doubleSwitch(double timeF) {
+			double forwardVoltage = 6.0;
+			double turnAngle = getAngleToSwitchPlate();
 
+			double startPauseTime = 0.01;							//0.5	
+			double firstForwardTime = 0.5 + startPauseTime;			//1.0
+			double firstTurnTime = 1.0 +firstForwardTime;			//1.625
+			double secondForwardTime = 0.35 + firstTurnTime;		//2.75
+			double secondTurnTime = 1.0 + secondForwardTime;		//3.375 
+			double forwardToSwitchTime = 1.0 + secondTurnTime;		//5.575
+			double dipTime = 0.3 + forwardToSwitchTime;				//5.875
+			double backUpTime= 5
+			double lastTime = 8.0;
+
+			if(
+
+ 
+ < startPauseTime){
+			}else if (timeF < firstForwardTime) {
+				//hkdrive.goForwardFacing(forwardVoltage, 0.0);
+				liftMani.flipMouth();	SmartDashboard.putString("auto move", "Going forward");
+				hkdrive.goForwardVoltage(forwardVoltage);
+			}else if(timeF < firstTurnTime) {
+				hkdrive.autoTurn(turnAngle);
+				SmartDashboard.putString("auto move", "turning");
+				//hkdrive.turnVoltage(turnVoltage);
+			}else if(timeF < secondForwardTime) {
+				//hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
+				SmartDashboard.putString("auto move", "Going forward");
+				hkdrive.goForwardVoltage(forwardVoltage);
+			}else if(timeF < secondTurnTime) {
+				hkdrive.autoTurn(0.0);
+				SmartDashboard.putString("auto move", "turning");
+				//hkdrive.turnVoltage(-turnVoltage);
+			}else if(timeF < forwardToSwitchTime) {
+				//hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
+				hkdrive.goForwardVoltage(forwardVoltage);
+				liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
+			}else if (timeF < dipTime){
+				hkdrive.stop();										//stop driving
+				liftMani.dipMouth();								//let the mouth "Dip"
+			}else if(timeF < lastTime){
+				mouthMani.spit();									//spit out powercube
+			}else{
+				hkdrive.stop();										//stop driving
+			}
+		}
+*/
 
 	public void updateLidarDistance(){
 		//lidarDistance = laser3.pidGet();
@@ -579,26 +632,13 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 	public void checkLed(){
 
-		//double matchTime = DriverStation.getInstance().getMatchTime();
-		int thresh = 1000;
+		double matchTime = DriverStation.getInstance().getMatchTime();
 		LedStrip.ledAllianceColor();
 
-		/*
-		if(matchTime < 30.0 && matchTime > 25.0){
+		
+		if(matchTime < 30.0){
 			LedStrip.partyTime();			
-		} else if (matchTime < 25.0 
-				&& liftMani.getEncoder() < (liftMani.pullUpHeight + thresh) 
-				&& liftMani.getEncoder() > (liftMani.pullUpHeight - thresh)){
-
-			LedStrip.ledLockTheClimbNow();
-		} else if (matchTime < 5.0 && matchTime > 0.0){
-			LedStrip.partyTime();
-		} else {
-			LedStrip.ledAllianceColor();			
 		}
-
-		 */
-
 	}
 }
 

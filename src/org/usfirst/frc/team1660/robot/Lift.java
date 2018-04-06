@@ -20,7 +20,7 @@ public class Lift {
 	private AnalogInput limitLiftBottom = new AnalogInput(RobotMap.LIFT_LIMIT_BOTTOM_CHANNEL);
 
 	Compressor comp = new Compressor(RobotMap.COMPRESSOR_PORT);
-	
+	AirPressureSensor pressureSensor;
 	
 	DoubleSolenoid flipDipPistons;
 	DoubleSolenoid liftLockPistons;
@@ -48,7 +48,7 @@ public class Lift {
 	double exchangeHeight = 10048.0;
 	double tier2Height = 26280.0;
 	double switchHeight = 52000.0;
-	double topHeight = 79000.0;
+	double topHeight = 84000.0;
 	
 	double pullUpHeight = 28000.0;
 	double reachHeight = 65300.0;
@@ -69,6 +69,7 @@ public class Lift {
 
 		flipDipPistons = new DoubleSolenoid(RobotMap.FLIP_PORT, RobotMap.DIP_PORT);
 		liftLockPistons = new DoubleSolenoid(RobotMap.LOCK_PORT, RobotMap.UNLOCK_PORT);
+		pressureSensor = new AirPressureSensor(RobotMap.PRESSURE_SENSOR_PORT);
 
 		liftMotor = new WPI_TalonSRX(RobotMap.LIFT_MOTOR_CHANNEL); //A.K.A Elevator/Climb manipulator
 
@@ -360,15 +361,23 @@ public class Lift {
 	//basic compressor functionality methods	-Aldenis 
 	public void compressorOn(){
 		this.comp.setClosedLoopControl(true);
+		this.comp.start();
 		SmartDashboard.putString("compressorStatus", "is on");
 		isCompressing = true;
 	}
 	public void compressorOff(){
 		this.comp.setClosedLoopControl(false);
+		this.comp.stop();
 		SmartDashboard.putString("compressorStatus", "is off");
 		isCompressing = false;
 	}	
-	 
+	 public void limitCompressor() {
+		 if(pressureSensor.getAirPressurePsi() > 60.0 && !maniStick.getRawButton(RobotMap.PRESSURE_OVERRIDE_BUTTON)) {
+			 compressorOff();
+		 }else {
+			 compressorOn();
+		 }
+	 }
 /*
 	/* basic compressor functionality methods	
 	public void compressorOn(){

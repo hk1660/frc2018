@@ -113,12 +113,20 @@ public class HKDrive implements PIDOutput {
 		SmartDashboard.putNumber("turnParam",	turnParameter);
 		SmartDashboard.putNumber("angleParam",	angleParameter);
 		SmartDashboard.putBoolean("AutoTurning?", autoTurnFlag);
-/*		
-		SmartDashboard.putNumber("frontLeftCurrent", this.frontLeft.getOutputCurrent());
+		
+		SmartDashboard.putNumber("speed control frontLeftCurrent", this.frontLeft.getOutputCurrent());
 		SmartDashboard.putNumber("backLeftCurrent", this.backLeft.getOutputCurrent());
 		SmartDashboard.putNumber("frontRightCurrent", this.frontRight.getOutputCurrent());
 		SmartDashboard.putNumber("backRightCurrent", this.backRight.getOutputCurrent());
-*/
+
+		SmartDashboard.putNumber("pdp backRightCurrent", pdp.getCurrent(0));
+		SmartDashboard.putNumber("pdp frontRightCurrent", pdp.getCurrent(1));
+		SmartDashboard.putNumber("pdp backLeftCurrent", pdp.getCurrent(14));
+		SmartDashboard.putNumber("pdp frontLeftCurrent", pdp.getCurrent(13));
+		SmartDashboard.putNumber("Lift Current", pdp.getCurrent(15));
+		
+		
+		
 
 		
 	}

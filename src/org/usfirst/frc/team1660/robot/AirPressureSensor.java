@@ -20,7 +20,8 @@ public class AirPressureSensor {
 
     public double getAirPressurePsi() {
         // taken from the spec sheet
-        return ((250.0 * m_pressureSensor.getVoltage()) / 5.0) - 25.0;
+    	return (120/2.2) * m_pressureSensor.getVoltage() - 32.3;
+        //return (((250.0 * m_pressureSensor.getVoltage()) / 5.0) - 25.0)*10 - 500;
     }
     
     public void updateAirPressureDisplay() {
