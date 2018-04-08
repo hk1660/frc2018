@@ -47,7 +47,7 @@ public class Lift {
 	double bottomHeight = 0.0;
 	double exchangeHeight = 10048.0;
 	double tier2Height = 26280.0;
-	double switchHeight = 52000.0;
+	double switchHeight = 52000.0 + 10000;
 	double topHeight = 84000.0;
 	
 	double pullUpHeight = 28000.0;

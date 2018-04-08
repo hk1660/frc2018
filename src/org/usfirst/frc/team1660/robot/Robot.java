@@ -60,6 +60,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		strategy.addObject("smartSwitchStrategy(3)", new Integer(3));
 		strategy.addObject("smartSwitchLidarStrategy(4)", new Integer(4));
 		strategy.addObject("smartScaleStrategy(5)", new Integer(5));
+		strategy.addObject("Double Switch(6)", new Integer(6));
 		SmartDashboard.putData("strategy selector", strategy); 
 
 		position.addDefault("Left(1)", new Integer(1));
@@ -127,7 +128,9 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		else if (currentStrategy == 5) {
 			this.smartScaleStrategy(autoTime);
 		}
-
+		else if (currentStrategy == 6) {
+			this.doubleSwitch(autoTime);
+		}
 	}
 
 	//TELEOP MODE
@@ -197,7 +200,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 
 		double startPauseTime = .5;								//1.0	
-		double firstForwardTime = 2.25 + startPauseTime;		//2.0
+		double firstForwardTime = 2.308 + startPauseTime;		//2.0
 		double firstTurnTime = 3.0 +firstForwardTime;			//2.5
 		double secondForwardTime = .5 + firstTurnTime;			//3.5
 		double dipTime = 0.6 + secondForwardTime;				//7.0
@@ -399,7 +402,6 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		//position 3 needs a neg turn, position 1 needs a positive turn
 		if(currentPosition == 3) {
 			turnAngle *= -1;
-		}
 
 		double startPauseTime = 0;								
 		double firstForwardTime = 5.0 + startPauseTime;		//6
@@ -430,6 +432,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.stop();	
 			this.mouthMani.shutUp();
 
+		}
 		}
 	}
 	//AUTO STRATEGY #5b POSITION 3/1 SCALE -marlahna Travel to opposite Scal Plate
@@ -474,54 +477,69 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	}
 	
 	//AUTO STRATEGY #6 DOUBLE CUBE SWITCH FORK
-	/*	public void doubleSwitch(double timeF) {
-			double forwardVoltage = 6.0;
-			double turnAngle = getAngleToSwitchPlate();
+	public void doubleSwitch(double timeF) {
+		double forwardVoltage = 6.0;
+		double turnAngle = getAngleToSwitchPlate();
 
-			double startPauseTime = 0.01;							//0.5	
-			double firstForwardTime = 0.5 + startPauseTime;			//1.0
-			double firstTurnTime = 1.0 +firstForwardTime;			//1.625
-			double secondForwardTime = 0.35 + firstTurnTime;		//2.75
-			double secondTurnTime = 1.0 + secondForwardTime;		//3.375 
-			double forwardToSwitchTime = 1.0 + secondTurnTime;		//5.575
-			double dipTime = 0.3 + forwardToSwitchTime;				//5.875
-			double backUpTime= 5
-			double lastTime = 8.0;
+		double startPauseTime = 0.01;							//0.5	
+		double firstForwardTime = 0.5 + startPauseTime;			//1.0
+		double firstTurnTime = 1.0 +firstForwardTime;			//1.625
+		double secondForwardTime = 0.35 + firstTurnTime;		//2.75
+		double secondTurnTime = 1.0 + secondForwardTime;		//3.375 
+		double forwardToSwitchTime = 1.0 + secondTurnTime;		//5.575
+		double dipTime = 0.3 + forwardToSwitchTime;				//5.875
+		double spitTime = 8.0;									//8.0
+		double backFromSwitchTime = 1.0 + spitTime;				//9.0
+		double thirdTurnTime = 1.0 + backFromSwitchTime;		//10.0
+		double backFromTurnTime = 1.0 + thirdTurnTime;			//11.0
+		double fourthTurnTime = 0.5 + backFromTurnTime;			//11.5
+		double forwardTimeToCubes = 0.7 + fourthTurnTime;		//12.2
 
-			if(
 
- 
- < startPauseTime){
-			}else if (timeF < firstForwardTime) {
-				//hkdrive.goForwardFacing(forwardVoltage, 0.0);
-				liftMani.flipMouth();	SmartDashboard.putString("auto move", "Going forward");
-				hkdrive.goForwardVoltage(forwardVoltage);
-			}else if(timeF < firstTurnTime) {
-				hkdrive.autoTurn(turnAngle);
-				SmartDashboard.putString("auto move", "turning");
-				//hkdrive.turnVoltage(turnVoltage);
-			}else if(timeF < secondForwardTime) {
-				//hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
-				SmartDashboard.putString("auto move", "Going forward");
-				hkdrive.goForwardVoltage(forwardVoltage);
-			}else if(timeF < secondTurnTime) {
-				hkdrive.autoTurn(0.0);
-				SmartDashboard.putString("auto move", "turning");
-				//hkdrive.turnVoltage(-turnVoltage);
-			}else if(timeF < forwardToSwitchTime) {
-				//hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
-				hkdrive.goForwardVoltage(forwardVoltage);
-				liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
-			}else if (timeF < dipTime){
-				hkdrive.stop();										//stop driving
-				liftMani.dipMouth();								//let the mouth "Dip"
-			}else if(timeF < lastTime){
-				mouthMani.spit();									//spit out powercube
-			}else{
-				hkdrive.stop();										//stop driving
-			}
+		if(timeF < startPauseTime){
+		}else if (timeF < firstForwardTime) {
+			//hkdrive.goForwardFacing(forwardVoltage, 0.0);
+			liftMani.flipMouth();	SmartDashboard.putString("auto move", "Going forward");
+			hkdrive.goForwardVoltage(forwardVoltage);
+			liftMani.elevatorLift(liftMani.switchHeight);		//bring the cube "up"
+		}else if(timeF < firstTurnTime) {
+			hkdrive.autoTurn(turnAngle);
+			SmartDashboard.putString("auto move", "turning");
+			//hkdrive.turnVoltage(turnVoltage);
+		}else if(timeF < secondForwardTime) {
+			//hkdrive.goForwardFacing(forwardVoltage, angleToOurSwitchPlate);
+			SmartDashboard.putString("auto move", "Going forward");
+			hkdrive.goForwardVoltage(forwardVoltage);
+		}else if(timeF < secondTurnTime) {
+			hkdrive.autoTurn(0.0);
+			SmartDashboard.putString("auto move", "turning");
+			//hkdrive.turnVoltage(-turnVoltage);
+		}else if(timeF < forwardToSwitchTime) {
+			//hkdrive.goForwardFacing(forwardVoltage, -angleToOurSwitchPlate);
+			hkdrive.goForwardVoltage(forwardVoltage);
+		}else if (timeF < dipTime){
+			hkdrive.stop();										//stop driving
+			liftMani.dipMouth();								//let the mouth "Dip"
+		}else if(timeF < spitTime){
+			mouthMani.spit();									//spit out powercube
+		}else if(timeF < backFromSwitchTime){
+			hkdrive.goForwardVoltage(-forwardVoltage);
+			liftMani.elevatorLift(liftMani.bottomHeight);
+		}else if(timeF < thirdTurnTime) { 
+			hkdrive.autoTurn(-turnAngle);
+		}else if(timeF < backFromTurnTime) { 
+			hkdrive.goForwardVoltage(forwardVoltage);
+		}else if(timeF < fourthTurnTime) { 
+			hkdrive.autoTurn(0.0);
+		}else if(timeF < forwardTimeToCubes) { 
+			hkdrive.goForwardVoltage(forwardVoltage);
+			mouthMani.eat();
+		}else{
+			hkdrive.stop();										//stop driving
 		}
-*/
+	}
+
+
 
 	public void updateLidarDistance(){
 		//lidarDistance = laser3.pidGet();
