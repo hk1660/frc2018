@@ -55,25 +55,23 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		//updateLidarDistance();
 
 		// Auto mode strategies setup
-		strategy.addDefault("justCrossAutoLineStrategy(1)", new Integer(1));
-		strategy.addObject("simpleSwitchStrategy(2)", new Integer(2));
-		strategy.addObject("smartSwitchStrategy(3)", new Integer(3));
-		strategy.addObject("smartSwitchLidarStrategy(4)", new Integer(4));
-		strategy.addObject("smartScaleStrategy(5)", new Integer(5));
-		strategy.addObject("Double Switch(6)", new Integer(6));
+		strategy.addDefault("Just Cross Auto Line Strategy (1)", new Integer(1));
+		strategy.addObject("Simple Switch Strategy(2)", new Integer(2));
+		strategy.addObject("Smart Switch Strategy (3)", new Integer(3));
+		strategy.addObject("Smart Switch LidarStrategy (4)", new Integer(4));
+		strategy.addObject("Smart Scale Strategy (5)", new Integer(5));
+		strategy.addObject("Double Switch (6)", new Integer(6));
 		SmartDashboard.putData("strategy selector", strategy); 
 
-		position.addDefault("Left(1)", new Integer(1));
-		position.addObject("Middle(2)", new Integer(2));
-		position.addObject("Right(3)", new Integer(3));
+		position.addDefault("Left (1)", new Integer(1));
+		position.addObject("Middle (2)", new Integer(2));
+		position.addObject("Right (3)", new Integer(3));
 		SmartDashboard.putData("position selector", position); 
 	}
 
 	
 	//AUTONOMOUS MODE
 
-	/* Autonomous INIT Stuff \o/ -Khalil */
-	@SuppressWarnings("unchecked")
 	public void autonomousInit() {
 
 
@@ -436,6 +434,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 	}
 	//AUTO STRATEGY #5b POSITION 3/1 SCALE -marlahna Travel to opposite Scal Plate
+	@SuppressWarnings("unused")
 	public  void snakeScaleStrategy (double timeR) {
 		double forwardVoltage = 5.5;
 		double turnAngle = 90.0;
@@ -480,20 +479,27 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	public void doubleSwitch(double timeF) {
 		double forwardVoltage = 6.0;
 		double turnAngle = getAngleToSwitchPlate();
-
-		double startPauseTime = 0.01;							//0.5	
-		double firstForwardTime = 0.5 + startPauseTime;			//1.0
-		double firstTurnTime = 1.0 +firstForwardTime;			//1.625
-		double secondForwardTime = 0.35 + firstTurnTime;		//2.75
-		double secondTurnTime = 1.0 + secondForwardTime;		//3.375 
-		double forwardToSwitchTime = 1.0 + secondTurnTime;		//5.575
-		double dipTime = 0.3 + forwardToSwitchTime;				//5.875
-		double spitTime = 8.0;									//8.0
-		double backFromSwitchTime = 1.0 + spitTime;				//9.0
-		double thirdTurnTime = 1.0 + backFromSwitchTime;		//10.0
-		double backFromTurnTime = 1.0 + thirdTurnTime;			//11.0
-		double fourthTurnTime = 0.5 + backFromTurnTime;			//11.5
-		double forwardTimeToCubes = 0.7 + fourthTurnTime;		//12.2
+																//Old Values need to be double checked		//Newer maybe more correct values
+		double startPauseTime = 0.01;							//0.5										//.01
+		double firstForwardTime = 0.5 + startPauseTime;			//1.0										//.51
+		double firstTurnTime = 1.0 + firstForwardTime;			//1.625										//1.51
+		double secondForwardTime = 0.35 + firstTurnTime;		//2.75										//1.86
+		double secondTurnTime = 1.0 + secondForwardTime;		//3.375 									//2.86
+		double forwardToSwitchTime = 1.0 + secondTurnTime;		//5.575										//3.86
+		double dipTime = 0.3 + forwardToSwitchTime;				//5.875										//4.16
+		double spitTime = 8.0 /* 1.34 + dipTime */;				//8.0										//5.50		Changed 8 to 1.34 + dipTime
+		double backFromSwitchTime = 1.0 + spitTime;				//9.0										//6.50
+		double thirdTurnTime = 1.0 + backFromSwitchTime;		//10.0										//7.50
+		double toCubeTurnTime = 1.0 + thirdTurnTime;			//11.0										//8.50
+		double fourthTurnTime = 0.5 + toCubeTurnTime;			//11.5										//9
+		double forwardTimeToCubes = 0.7 + fourthTurnTime;		//12.2										//9.7
+/*		double backFromCubes = .7 + forwardTime;															//10.4
+ *		double fifthTurnTime = .5 + backFromCubes; 															//10.9
+ * 		double toSwitchTurnTime = 1.0 + fithTurnTime;														//11.9
+ * 		double sixthTurnTime = 1.0 + toSwitchTurnTime;														//12.9
+ * 		double toSwitchAgainTime = 1.0 +sixthTurnTime;														//13.9
+ * 		double spitAgainTime = .5 + toSwitchAgainTime;														//14.4
+ * */		
 
 
 		if(timeF < startPauseTime){
@@ -527,14 +533,30 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			liftMani.elevatorLift(liftMani.bottomHeight);
 		}else if(timeF < thirdTurnTime) { 
 			hkdrive.autoTurn(-turnAngle);
-		}else if(timeF < backFromTurnTime) { 
+		}else if(timeF < toCubeTurnTime) { 
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeF < fourthTurnTime) { 
 			hkdrive.autoTurn(0.0);
 		}else if(timeF < forwardTimeToCubes) { 
 			hkdrive.goForwardVoltage(forwardVoltage);
 			mouthMani.eat();
-		}else{
+		}
+/*		else if(timeF < backFromCubes ){
+ * 			hkdrive.goForwardVoltage(-forwardVoltage);
+ * 		}else if(timeF < fifthTurnTime){
+ * 			hkdrive.autoTurn(turnAngle);
+ * 		}else if(timeF < toSwitchTurnTime){
+ * 			hkdrive.goForwardVoltage(forwardVoltage);
+ * 			liftMani.elevatorLift(liftMani.switchHeight);
+ * 		}else if(timeF < sixthTurnTime){
+ * 			hkdrive.autoTurn(0.0);
+ * 		}else if(timeF < toSwitchAgainTime){
+ * 			hkdrive.goForwardVoltage(forwardVoltage);
+ * 		}else if(timeF < spitAgainTime){
+ * 			mouthMani.spit();
+ * 		}
+ * */
+		else{
 			hkdrive.stop();										//stop driving
 		}
 	}

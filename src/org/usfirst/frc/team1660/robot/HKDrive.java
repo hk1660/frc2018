@@ -66,6 +66,7 @@ public class HKDrive implements PIDOutput {
 	}
 
 	//HKDrive init method
+	@SuppressWarnings("deprecation")
 	public void driveInit() {
 
 		//Drivetrain Initializations
