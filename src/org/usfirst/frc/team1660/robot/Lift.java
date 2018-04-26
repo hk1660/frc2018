@@ -105,8 +105,8 @@ public class Lift {
 
 	//method to get the value from the encoder- lakiera and pinzon (Black side faces LEFT, Silver side faces RIGHT)
 	public int getEncoder(){
-		int x = -liftMotor.getSelectedSensorPosition(kPidIdx);
-		double y = -liftMotor.getSelectedSensorPosition(kPidIdx)/1.8;
+		int x = liftMotor.getSelectedSensorPosition(kPidIdx);
+		double y = liftMotor.getSelectedSensorPosition(kPidIdx)/1.8;
 		SmartDashboard.putNumber("liftHeight", x);
 		return (int)x;
 	}
@@ -227,6 +227,7 @@ public class Lift {
 				liftMotor.set(ControlMode.PercentOutput, 0.0);
 			} else {							//move up & down with joystick axis
 				liftMotor.set(ControlMode.PercentOutput, liftJoyValue);
+				SmartDashboard.putString("Limits", "cool");
 			}
 
 			//shut off lift when you stop pushing the axis
@@ -238,8 +239,7 @@ public class Lift {
 		elevatorLift(liftJoyValue);
 	}
 
-
-	/*	WIP	*/
+	/*	WIP	c*/
 	//method to lift up (to a SET Position) -mathew & marlahna
 	public void elevatorLift(double setHeight) {
 

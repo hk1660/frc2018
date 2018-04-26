@@ -306,7 +306,7 @@ public class HKDrive implements PIDOutput {
 	}
 
 	//auto method to drive at a constant voltage WHILE rotating to desired angle
-	public void goDiagonal(double desiredVoltage, double angleFacing, double angleTraveling){
+	public void goDiagonal(double desiredVoltage, double angleFacing, double fwdpct){
 
 		double mVoltage = pdp.getVoltage();
 		double desiredSpeed = desiredVoltage / mVoltage;
@@ -321,10 +321,10 @@ public class HKDrive implements PIDOutput {
 		//forwardParameter =Math.cos( Math.toRadians( desiredSpeed ) );
 		
 		strafeParameter  = desiredSpeed;
-		forwardParameter = desiredSpeed * 0.7;		//need to scale down bc FWD with mec wheels is mechanically much easier than STRAFING
+		forwardParameter = desiredSpeed * fwdpct;		//need to scale down bc FWD with mec wheels is mechanically much easier than STRAFING
 		angleParameter = 0.0;
 
-		if(angleTraveling < 0) {
+		if(fwdpct < 0) {
 			strafeParameter *= -1;
 		}	
 		
