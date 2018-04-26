@@ -122,6 +122,7 @@ public class Lift {
 	}
 
 	//base method to set the encoder value to zero -pinzon & lakiera
+	@SuppressWarnings("static-access")
 	public void setEncoderZero() {
 		liftMotor.setSelectedSensorPosition(0, this.kPidIdx, this.ktimeout);
 	}

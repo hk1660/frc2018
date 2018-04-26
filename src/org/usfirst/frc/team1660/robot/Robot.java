@@ -446,7 +446,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			turnAngle *= -1;
 		}
 
-		double startPauseTime = 0;								
+		double startPauseTime = 0.1;								
 		double firstForwardTime = 3.5 + startPauseTime;		//6
 		double firstTurnTime = 1.0 +firstForwardTime;			//8
 		double secondForwardTime = 2.05 + firstTurnTime; //8.5
