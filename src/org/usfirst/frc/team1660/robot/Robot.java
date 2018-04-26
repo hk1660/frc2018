@@ -41,6 +41,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 	private double startValueDistance = 0.0;
 	private double travelDistance = 0.0;
 	private boolean newTravelFlag;
+	double autoMouthSpeed = 1.0;
+	double autoSpitSpeed = .5;
 
 	/*----- REQUIRED FRC MAIN METHODS -----*/
 	public void robotInit() {
@@ -221,7 +223,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 				hkdrive.stop();										//stop driving
 				liftMani.dipMouth();								//let the mouth "Dip"
 			}else if(timeB < lastTime){
-				mouthMani.spit();									//spit out powercube
+				mouthMani.spit(autoSpitSpeed);									//spit out powercube
 			} 
 		}
 		else{
@@ -280,7 +282,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.stop();										//stop driving
 			liftMani.dipMouth();								//let the mouth "Dip"
 		}else if(timeC < lastTime){
-			mouthMani.spit();									//spit out powercube
+			mouthMani.spit(autoSpitSpeed);									//spit out powercube
 		}else{
 			hkdrive.stop();										//stop driving
 		}
@@ -323,14 +325,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.stop();										//stop driving
 			liftMani.dipMouth();								//let the mouth "Dip"
 		}else if(timeH < lastTime){
-			mouthMani.spit();									//spit out powercube
+			mouthMani.spit(autoSpitSpeed);									//spit out powercube
 		}else if(timeH < backFromSwitchTime) {
 			hkdrive.goStraightAccurate(-driveVoltage, 0.0);
 		} else if(timeH < firstTurn) {
 			hkdrive.autoTurn(-turnAngle);
 		} else if(timeH < forwardTime) {
 			hkdrive.goStraightAccurate(-driveVoltage, 0.0);
-			mouthMani.eat();
+			mouthMani.eat(autoMouthSpeed);
 		}else {
 			hkdrive.stop();										//stop driving
 		}
@@ -383,7 +385,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.stop();										//stop driving
 			liftMani.dipMouth();								//let the mouth "Dip"
 		}else if(timeD < endAutoTime){
-			mouthMani.spit();									//spit out powercube
+			mouthMani.spit(autoSpitSpeed);									//spit out powercube
 		}
 
 		else{
@@ -431,11 +433,11 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 			} else if (timeE < spitTime) {
 				hkdrive.stop();
-				mouthMani.spit();									//spit out powercube
+				mouthMani.spit(autoSpitSpeed);									//spit out powercube
 			}
 			else if(timeE < lastTime){
 				//hkdrive.goForwardVoltage(forwardVoltage); 
-				mouthMani.spit();									//spit out powercube
+				mouthMani.spit(autoSpitSpeed);									//spit out powercube
 			} 
 			else{
 				hkdrive.stop();	
@@ -478,7 +480,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else if(timeR < thirdForwardTime) {
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeR < lastTime){
-			mouthMani.spit();									//spit out powercube
+			mouthMani.spit(autoSpitSpeed);									//spit out powercube
 		} 
 		else{
 			hkdrive.stop();	
@@ -537,7 +539,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.stop();										//stop driving
 			liftMani.dipMouth();								//let the mouth "Dip"
 		}else if(timeF < spitTime){
-			mouthMani.spit();									//spit out powercube
+			mouthMani.spit(autoSpitSpeed);									//spit out powercube
 		}else if(timeF < backFromSwitchTime){
 			hkdrive.goForwardVoltage(-forwardVoltage);
 			liftMani.elevatorLift(liftMani.bottomHeight);
@@ -549,7 +551,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.autoTurn(0.0);
 		}else if(timeF < forwardTimeToCubes) { 
 			hkdrive.goForwardVoltage(forwardVoltage);
-			mouthMani.eat();
+			mouthMani.eat(autoMouthSpeed);
 		}
 		else if(timeF < backFromCubes ){
 			hkdrive.goForwardVoltage(-forwardVoltage);
@@ -564,7 +566,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else if(timeF < toSwitchAgainTime){
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeF < spitAgainTime){
-			mouthMani.spit();
+			mouthMani.spit(autoSpitSpeed);
 		}
 
 		else{
@@ -572,31 +574,36 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 	}
 
-	//Double switch but with 45 angle not 90
+	//Double switch but with 45 angle not 90  #4
 	public void doubleSwitchAngled(double timeF) {
 		double forwardVoltage = 6.0;
 		double turnAngle = getAngleToSwitchPlate() / 2;
 		//Old Values need to be double checked		//Newer maybe more correct values
 		double startPauseTime = 0.01;							//0.5										//.01
-		double firstForwardTime = 0.8 + startPauseTime;			//1.0										//.51
-		double firstTurnTime = 0.6 + firstForwardTime;			//1.625										//1.51
-		double secondForwardTime = 0.7 + firstTurnTime;		//2.75										//1.86
-		double secondTurnTime = 0.65 + secondForwardTime;		//3.375 									//2.86
-		double forwardToSwitchTime = .9 + secondTurnTime;		//5.575										//3.86
-		double dipTime = 0.30 + forwardToSwitchTime;			//5.875										//4.16
-		double spitTime = /* 8.0 */  .1 + dipTime;				//8.0										//4.26		Changed 8 to 1.34 + dipTime
-		double backFromSwitchTime = 0.7+ spitTime;				//9.0										//5.26
-		double thirdTurnTime = 0.6 + backFromSwitchTime;		//10.0										//6.26
-		double toCubeTime = 1.1 + thirdTurnTime;			//11.0										//7.36
-		double backFromCubes = 0.8 + toCubeTime;														//9.66
-		double sixthTurnTime = 0.5 + backFromCubes;															//13.06
-		double toSwitchAgainTime = 1.2 +sixthTurnTime;														//14.06
-		double spitAgainTime = .5 + toSwitchAgainTime;														//14.56	
+		double firstForwardTime = 0.7 + startPauseTime;			//1.0										//.81
+		double firstTurnTime = 0.6 + firstForwardTime;			//1.625										//1.41
+		double secondForwardTime = 0.7 + firstTurnTime;			//2.75										//2.11
+		double secondTurnTime = 0.65 + secondForwardTime;		//3.375 									//2.76
+		double forwardToSwitchTime = .9 + secondTurnTime;		//5.575										//3.66
+		double dipTime = 0.30 + forwardToSwitchTime;			//5.875										//3.96
+		double spitTime =  0.2 + dipTime;				//8.0										//4.06		Changed 8 to 1.34 + dipTime
+		double backFromSwitchTime = 0.7 + spitTime;				//9.0										//4.76
+		double thirdTurnTime = 0.6 + backFromSwitchTime;		//10.0										//5.36
+		double toCubeTime = 1.2 + thirdTurnTime;				//11.0										//6.46
+		double backFromCubes = 0.6 + toCubeTime;															//7.26
+		double sixthTurnTime = 0.7 + backFromCubes;															//7.76
+		double toSwitchAgainTime = 1.0 +sixthTurnTime;														//8.76
+		double spitAgainTime = .5 + toSwitchAgainTime;														//9.26	
 
 		double turnAwayTime = 0.6 + spitAgainTime;															//13.06
 		double forwardAwayTime = 0.5 + turnAwayTime;														//14.06
 		double turnForwardTime = 0.6 + forwardAwayTime;														//14.56	
 
+		double backUpTime = 0.6 + spitAgainTime;															//13.06
+		double farTurnAwayTime = 0.6 + spitAgainTime;														//13.06
+		double farForwardAwayTime = 1.5 + turnAwayTime;														//14.06
+		//double turnForwardTime = 0.6 + forwardAwayTime;	
+		
 
 		//modify if necessary section
 		//if left
@@ -605,10 +612,12 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 
 
 		if (switchPlate.equals("L")) {
-			secondForwardTime = 0.8;
-			backFromSwitchTime = 0.7;
-			toCubeTime = 1.1;
-			backFromCubes = 0.8;
+			secondForwardTime = .95 + firstTurnTime;
+			backFromSwitchTime = 0.8 + spitTime;
+			toCubeTime = 1.4 + thirdTurnTime;
+			backFromCubes = 1.0 + toCubeTime;
+			toSwitchAgainTime = 1.2 +sixthTurnTime;														//14.06
+
 		}
 
 
@@ -638,7 +647,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.stop();										//stop driving
 			liftMani.dipMouth();								//let the mouth "Dip"
 		}else if(timeF < spitTime){
-			mouthMani.spit();									//spit out powercube
+			mouthMani.spit(autoSpitSpeed);									//spit out powercube
 		}else if(timeF < backFromSwitchTime){
 			hkdrive.goForwardVoltage(-forwardVoltage);
 			liftMani.elevatorLift(liftMani.bottomHeight);
@@ -646,7 +655,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.autoTurn(-turnAngle);
 		}else if(timeF < toCubeTime) { 
 			hkdrive.goForwardVoltage(forwardVoltage);
-			mouthMani.eat();
+			mouthMani.eat(autoMouthSpeed);
 		}
 		/*		else if(timeF < atCubes) { 
 
@@ -659,11 +668,13 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}else if(timeF < toSwitchAgainTime){
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeF < spitAgainTime){
-			mouthMani.spit();
+			mouthMani.spit(autoSpitSpeed);
 		}
 
-		//go to starve cubes
-		if(timeF < turnAwayTime && !scalePlate.equals(switchPlate)){
+	/*	
+		
+		//go to starve cubes NEAR
+		else if(timeF < turnAwayTime && !scalePlate.equals(switchPlate)){
 			hkdrive.autoTurn(turnAngle*2);
 		}else if(timeF < forwardAwayTime && !scalePlate.equals(switchPlate)){
 			hkdrive.goForwardVoltage(forwardVoltage);
@@ -672,6 +683,19 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 
 
+		//go to starve cubes FAR
+		
+		else if(timeF < backUpTime && scalePlate.equals(switchPlate)){
+			hkdrive.goForwardVoltage(-forwardVoltage);
+		} else if(timeF < farTurnAwayTime && scalePlate.equals(switchPlate)){
+			hkdrive.autoTurn(-turnAngle*2);
+		}else if(timeF < farForwardAwayTime && scalePlate.equals(switchPlate)){
+			hkdrive.goForwardVoltage(forwardVoltage);
+		}else if(timeF < turnForwardTime && scalePlate.equals(switchPlate)){
+			hkdrive.autoTurn(0.0);
+		}
+
+		*/
 		else{
 			hkdrive.stop();										//stop driving
 		}
