@@ -95,7 +95,7 @@ public class RobotMap {
 	
 	//PCM ports
 	public final static int COMPRESSOR_PORT = 0;
-	public final static int FLIP_PORT = 6;
+	public final static int FLIP_PORT = 4;
 	public final static int DIP_PORT = 3;
 	public final static int LOCK_PORT = 2;
 	public final static int UNLOCK_PORT = 5;
