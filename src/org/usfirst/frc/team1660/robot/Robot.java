@@ -486,18 +486,18 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double secondTurnTime = 1.0 + secondForwardTime;		//3.375 									//2.86
 		double forwardToSwitchTime = 1.0 + secondTurnTime;		//5.575										//3.86
 		double dipTime = 0.3 + forwardToSwitchTime;				//5.875										//4.16
-		double spitTime = /* 8.0 */  .5 + dipTime;			//8.0										//5.50		Changed 8 to 1.34 + dipTime
-		double backFromSwitchTime = 1.0 + spitTime;				//9.0										//6.50
-		double thirdTurnTime = 1.0 + backFromSwitchTime;		//10.0										//7.50
-		double toCubeTurnTime = 1.0 + thirdTurnTime;			//11.0										//8.50
-		double fourthTurnTime = 1.0 + toCubeTurnTime;			//11.5										//9
-		double forwardTimeToCubes = 0.8 + fourthTurnTime;		//12.2										//9.7
-		double backFromCubes = .7 + forwardTimeToCubes;															//10.4
- 		double fifthTurnTime = 1.0 + backFromCubes; 															//10.9
-  		double toSwitchTurnTime = 1.0 + fifthTurnTime;														//11.9
-  		double sixthTurnTime = 1.0 + toSwitchTurnTime;														//12.9
-  		double toSwitchAgainTime = 1.0 +sixthTurnTime;														//13.9
-  		double spitAgainTime = .5 + toSwitchAgainTime;														//14.4		
+		double spitTime = /* 8.0 */  .5 + dipTime;			//8.0										//4.66		Changed 8 to 1.34 + dipTime
+		double backFromSwitchTime = 1.0 + spitTime;				//9.0										//6.66
+		double thirdTurnTime = 1.0 + backFromSwitchTime;		//10.0										//8.66
+		double toCubeTurnTime = 1.2 + thirdTurnTime;			//11.0										//9.86
+		double fourthTurnTime = 1.0 + toCubeTurnTime;			//11.5										//10.86
+		double forwardTimeToCubes = 0.7 + fourthTurnTime;		//12.2										//11.56
+		double backFromCubes = .7 + forwardTimeToCubes;															//12.26
+ 		double fifthTurnTime = 1.0 + backFromCubes; 															//13.26
+  		double toSwitchTurnTime = 1.0 + fifthTurnTime;														//14.26
+  		double sixthTurnTime = 1.0 + toSwitchTurnTime;														//15.26
+  		double toSwitchAgainTime = 1.0 +sixthTurnTime;														//16.26
+  		double spitAgainTime = .5 + toSwitchAgainTime;														//16.76	
 
 
 		if(timeF < startPauseTime){
@@ -541,6 +541,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 		else if(timeF < backFromCubes ){
   			hkdrive.goForwardVoltage(-forwardVoltage);
+  			
   		}else if(timeF < fifthTurnTime){
   			hkdrive.autoTurn(turnAngle);
   			liftMani.elevatorLift(liftMani.switchHeight);
