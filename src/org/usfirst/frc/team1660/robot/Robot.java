@@ -301,9 +301,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		}
 
         double startPauseTime = 0.01;							//0.1	
-		double firstDiagonalTime = 2.8 + startPauseTime;		//2.6
-		double forwardToSwitchTime = 0.4 + firstDiagonalTime;	//3.6
-		double dipTime = 0.3 + forwardToSwitchTime;				//3.9
+		double firstDiagonalTime = 2.8 + startPauseTime;		//2.81
+		double forwardToSwitchTime = 0.4 + firstDiagonalTime;	//3.21
+		double dipTime = 0.3 + forwardToSwitchTime;				//3.51
+		double backFromSwitchTime = 0.4 + dipTime;				//3.91
 		double lastTime = 5.0;
 
 		if(timeH < startPauseTime){
@@ -319,6 +320,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			liftMani.dipMouth();								//let the mouth "Dip"
 		}else if(timeH < lastTime){
 			mouthMani.spit();									//spit out powercube
+		}else if(timeH < backFromSwitchTime) {
+			hkdrive.goStraightAccurate(-driveVoltage, 0.0);
 		}else{
 			hkdrive.stop();										//stop driving
 		}
@@ -485,19 +488,19 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double secondForwardTime = 0.35 + firstTurnTime;		//2.75										//1.86
 		double secondTurnTime = 1.0 + secondForwardTime;		//3.375 									//2.86
 		double forwardToSwitchTime = 1.0 + secondTurnTime;		//5.575										//3.86
-		double dipTime = 0.3 + forwardToSwitchTime;				//5.875										//4.16
-		double spitTime = /* 8.0 */  .5 + dipTime;			//8.0										//4.66		Changed 8 to 1.34 + dipTime
-		double backFromSwitchTime = 1.0 + spitTime;				//9.0										//6.66
-		double thirdTurnTime = 1.0 + backFromSwitchTime;		//10.0										//8.66
-		double toCubeTurnTime = 1.2 + thirdTurnTime;			//11.0										//9.86
-		double fourthTurnTime = 1.0 + toCubeTurnTime;			//11.5										//10.86
-		double forwardTimeToCubes = 0.7 + fourthTurnTime;		//12.2										//11.56
-		double backFromCubes = .7 + forwardTimeToCubes;															//12.26
- 		double fifthTurnTime = 1.0 + backFromCubes; 															//13.26
-  		double toSwitchTurnTime = 1.0 + fifthTurnTime;														//14.26
-  		double sixthTurnTime = 1.0 + toSwitchTurnTime;														//15.26
-  		double toSwitchAgainTime = 1.0 +sixthTurnTime;														//16.26
-  		double spitAgainTime = .5 + toSwitchAgainTime;														//16.76	
+		double dipTime = 0.30 + forwardToSwitchTime;			//5.875										//4.16
+		double spitTime = /* 8.0 */  .5 + dipTime;				//8.0										//4.66		Changed 8 to 1.34 + dipTime
+		double backFromSwitchTime = 1.0 + spitTime;				//9.0										//5.66
+		double thirdTurnTime = 1.0 + backFromSwitchTime;		//10.0										//6.66
+		double toCubeTurnTime = 1.2 + thirdTurnTime;			//11.0										//7.86
+		double fourthTurnTime = 1.0 + toCubeTurnTime;			//11.5										//8.86
+		double forwardTimeToCubes = 0.7 + fourthTurnTime;		//12.2										//9.56
+		double backFromCubes = .7 + forwardTimeToCubes;														//10.26
+ 		double fifthTurnTime = 1.0 + backFromCubes; 														//11.26
+  		double toSwitchTurnTime = 1.0 + fifthTurnTime;														//12.26
+  		double sixthTurnTime = 1.0 + toSwitchTurnTime;														//13.26
+  		double toSwitchAgainTime = 1.0 +sixthTurnTime;														//14.26
+  		double spitAgainTime = .5 + toSwitchAgainTime;														//14.76	
 
 
 		if(timeF < startPauseTime){
