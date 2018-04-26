@@ -578,10 +578,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double turnAngle = getAngleToSwitchPlate() / 2;
 																//Old Values need to be double checked		//Newer maybe more correct values
 		double startPauseTime = 0.01;							//0.5										//.01
-		double firstForwardTime = 0.6 + startPauseTime;			//1.0										//.51
+		double firstForwardTime = 0.7 + startPauseTime;			//1.0										//.51
 		double firstTurnTime = 0.6 + firstForwardTime;			//1.625										//1.51
 		double secondForwardTime = 0.8 + firstTurnTime;		//2.75										//1.86
-		double secondTurnTime = 0.7 + secondForwardTime;		//3.375 									//2.86
+		double secondTurnTime = 0.65 + secondForwardTime;		//3.375 									//2.86
 		double forwardToSwitchTime = .9 + secondTurnTime;		//5.575										//3.86
 		double dipTime = 0.30 + forwardToSwitchTime;			//5.875										//4.16
 		double spitTime = /* 8.0 */  .1 + dipTime;				//8.0										//4.26		Changed 8 to 1.34 + dipTime
