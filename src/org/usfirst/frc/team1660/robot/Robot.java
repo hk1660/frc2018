@@ -614,10 +614,10 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		if (switchPlate.equals("L")) {
 			secondForwardTime = .95 + firstTurnTime;
 			backFromSwitchTime = 0.8 + spitTime;
-			toCubeTime = 1.4 + thirdTurnTime;
+		//	toCubeTime = 1.4 + thirdTurnTime;
 			backFromCubes = 1.0 + toCubeTime;
 			sixthTurnTime = 1.2 + backFromCubes;
-			toSwitchAgainTime = 1.4 +sixthTurnTime;														//14.06
+			toSwitchAgainTime = 1.6 +sixthTurnTime;														//14.06
 
 		}
 
@@ -651,7 +651,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			mouthMani.spit(autoSpitSpeed);									//spit out powercube
 		}else if(timeF < backFromSwitchTime){
 			hkdrive.goForwardVoltage(-forwardVoltage);
-			liftMani.elevatorLift(liftMani.bottomHeight);
+			liftMani.elevatorLift(liftMani.bottomHeight - 250);
 		}else if(timeF < thirdTurnTime) { 
 			hkdrive.autoTurn(-turnAngle);
 		}else if(timeF < toCubeTime) { 
