@@ -60,7 +60,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		strategy.addDefault("Just Cross Auto Line Strategy (1)", new Integer(1));
 		strategy.addObject("Simple Switch Strategy(2)", new Integer(2));
 		strategy.addObject("Smart Switch Strategy (3)", new Integer(3));
-		strategy.addObject("Smart Switch LidarStrategy (4)", new Integer(4));
+		strategy.addObject("Double Switch Angled (4)", new Integer(4));
 		strategy.addObject("Smart Scale Strategy (5)", new Integer(5));
 		strategy.addObject("Double Switch (6)", new Integer(6));
 		SmartDashboard.putData("strategy selector", strategy); 
@@ -586,14 +586,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double secondTurnTime = 0.65 + secondForwardTime;		//3.375 									//2.76
 		double forwardToSwitchTime = .9 + secondTurnTime;		//5.575										//3.66
 		double dipTime = 0.30 + forwardToSwitchTime;			//5.875										//3.96
-		double spitTime =  0.2 + dipTime;				//8.0										//4.06		Changed 8 to 1.34 + dipTime
-		double backFromSwitchTime = 0.7 + spitTime;				//9.0										//4.76
-		double thirdTurnTime = 0.6 + backFromSwitchTime;		//10.0										//5.36
-		double toCubeTime = 1.2 + thirdTurnTime;				//11.0										//6.46
-		double backFromCubes = 0.6 + toCubeTime;															//7.26
-		double sixthTurnTime = 0.7 + backFromCubes;															//7.76
-		double toSwitchAgainTime = 1.0 +sixthTurnTime;														//8.76
-		double spitAgainTime = .5 + toSwitchAgainTime;														//9.26	
+		double spitTime =  0.2 + dipTime;						//8.0										//4.16		Changed 8 to 1.34 + dipTime
+		double backFromSwitchTime = 0.8 + spitTime;				//9.0										//4.86
+		double thirdTurnTime = 0.6 + backFromSwitchTime;		//10.0										//5.46
+		double toCubeTime = 1.4 + thirdTurnTime;				//11.0										//6.66
+		double backFromCubes = 0.7 + toCubeTime;															//7.26
+		double sixthTurnTime = 1.0 + backFromCubes;															//7.96
+		double toSwitchAgainTime = 1.0 + sixthTurnTime;														//8.96
+		double spitAgainTime = .5 + toSwitchAgainTime;														//9.46	
 
 		double turnAwayTime = 0.6 + spitAgainTime;															//13.06
 		double forwardAwayTime = 0.5 + turnAwayTime;														//14.06
@@ -616,7 +616,8 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			backFromSwitchTime = 0.8 + spitTime;
 			toCubeTime = 1.4 + thirdTurnTime;
 			backFromCubes = 1.0 + toCubeTime;
-			toSwitchAgainTime = 1.2 +sixthTurnTime;														//14.06
+			sixthTurnTime = 1.2 + backFromCubes;
+			toSwitchAgainTime = 1.4 +sixthTurnTime;														//14.06
 
 		}
 
@@ -669,12 +670,14 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 			hkdrive.goForwardVoltage(forwardVoltage);
 		}else if(timeF < spitAgainTime){
 			mouthMani.spit(autoSpitSpeed);
-		}
+		} 
 
-	/*	
+	
 		
 		//go to starve cubes NEAR
-		else if(timeF < turnAwayTime && !scalePlate.equals(switchPlate)){
+		else if(timeF < backUpTime && scalePlate.equals(switchPlate)){
+			hkdrive.goForwardVoltage(-forwardVoltage);
+		}/*else if(timeF < turnAwayTime && !scalePlate.equals(switchPlate)){
 			hkdrive.autoTurn(turnAngle*2);
 		}else if(timeF < forwardAwayTime && !scalePlate.equals(switchPlate)){
 			hkdrive.goForwardVoltage(forwardVoltage);
