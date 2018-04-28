@@ -592,7 +592,7 @@ public class Robot<m_robotDrive> extends IterativeRobot {
 		double toCubeTime = 1.4 + thirdTurnTime;				//11.0										//6.66
 		double backFromCubes = 0.7 + toCubeTime;															//7.26
 		double sixthTurnTime = 1.0 + backFromCubes;															//7.96
-		double toSwitchAgainTime = 1.0 + sixthTurnTime;														//8.96
+		double toSwitchAgainTime = 1.3 + sixthTurnTime;														//8.96
 		double spitAgainTime = .5 + toSwitchAgainTime;														//9.46	
 
 		double turnAwayTime = 0.6 + spitAgainTime;															//13.06
